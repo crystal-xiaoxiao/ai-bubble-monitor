@@ -1,0 +1,52 @@
+name: Feishu Relay
+
+# Trigger when routine writes a payload file to feishu_outbox/
+on:
+  push:
+    paths:
+      - 'feishu_outbox/**.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send pending payloads to Feishu
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+        run: |
+          shopt -s nullglob
+          if [ -z "$FEISHU_WEBHOOK_URL" ]; then
+            echo "ERROR: FEISHU_WEBHOOK_URL secret not set"
+            exit 1
+          fi
+          sent=()
+          for f in feishu_outbox/*.json; do
+            echo "→ Sending $f"
+            resp=$(curl -sS -X POST "$FEISHU_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              --data-binary "@$f")
+            echo "Response: $resp"
+            if echo "$resp" | grep -q '"code":0'; then
+              echo "✓ OK: $f"
+              sent+=("$f")
+            else
+              echo "✗ FAILED: $f"
+              exit 1
+            fi
+          done
+          if [ ${#sent[@]} -gt 0 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git rm "${sent[@]}"
+            git commit -m "feishu-relay: sent ${#sent[@]} payload(s)"
+            git push
+          else
+            echo "No payloads to send."
+          fi
