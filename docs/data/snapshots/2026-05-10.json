@@ -9,8 +9,8 @@
     "green_count": 11,
     "red_pct": 21.7,
     "weighted_risk_score": 37.0,
-    "verdict_label": "观察期",
-    "verdict_desc": "市场广度由 71% 回落至 51%，breadth 由绿转黄；估值（CAPE 42.05）与资金面（VC AI 占比 81%、Mag4 FCF -91%）核心红灯持续，整体仍处观察期但内部承压加剧，加权风险分由 34.8 升至 37.0"
+    "verdict_label": "高风险预警",
+    "verdict_desc": "市场广度由 71% 回落至 51%，breadth 由绿转黄；估值（CAPE 42.05、Top-5 28.5%）与资金面（VC AI 占比 81%、Mag4 FCF -91%、NVDA 客户投资/收入 67%）持续亮红，整体红灯比例 21.7% 虽未到 40%，但估值类 2/3 红 + 资金面 3/4 红触发分类强制升级（历史上估值+资金面双类共振是泡沫顶部最一致的领先信号）"
   },
   "wow_changes": [
     {"indicator_id": "breadth_50d", "type": "status_downgrade", "from": "green", "to": "yellow", "note": "S&P 50 日均线上方比例 71% → 51%，市场广度走弱，由绿转黄"}
