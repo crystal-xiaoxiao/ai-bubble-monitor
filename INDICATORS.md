@@ -204,11 +204,13 @@ red_pct >= 25  → 中度警戒（风险积累中）         · 黄灯
 
 ---
 
-## 输出 JSON Schema
+## 输出 JSON Schema（双语）
+
+JSON 喂给两个 dashboard：中文版（aibubble-cn.github.io）和英文版（bubblewatch.github.io）。所以**每条文字字段都要中英文都出**。
 
 ```json
 {
-  "issue_number": 2,
+  "issue_number": 4,
   "as_of_date": "YYYY-MM-DD",
   "generated_at": "YYYY-MM-DDTHH:MM:SSZ",
   "summary": {
@@ -219,10 +221,19 @@ red_pct >= 25  → 中度警戒（风险积累中）         · 黄灯
     "red_pct": 26.1,
     "weighted_risk_score": 41.3,
     "verdict_label": "中度警戒",
-    "verdict_desc": "..."
+    "verdict_label_en": "Moderate Caution",
+    "verdict_desc": "中文判读说明...",
+    "verdict_desc_en": "English verdict description..."
   },
   "wow_changes": [
-    {"indicator_id": "capex_reaction", "type": "status_upgrade", "from": "green", "to": "yellow", "note": "..."}
+    {
+      "indicator_id": "capex_reaction",
+      "type": "status_upgrade",
+      "from": "green",
+      "to": "yellow",
+      "note": "中文一句话",
+      "note_en": "English one-liner"
+    }
   ],
   "indicators": [
     {
@@ -234,9 +245,12 @@ red_pct >= 25  → 中度警戒（风险积累中）         · 黄灯
       "value": 38.5,
       "unit": "",
       "value_display": "38.5",
+      "value_display_en": "38.5",
       "status": "red",
       "threshold_text": ">35 红 / 25-35 黄 / <25 绿",
-      "note": "...",
+      "threshold_text_en": ">35 red / 25-35 yellow / <25 green",
+      "note": "中文 1-2 句解读",
+      "note_en": "English 1-2 sentence interpretation",
       "source_name": "multpl.com",
       "source_url": "https://www.multpl.com/shiller-pe",
       "as_of": "YYYY-MM-DD",
@@ -245,3 +259,14 @@ red_pct >= 25  → 中度警戒（风险积累中）         · 黄灯
   ]
 }
 ```
+
+### 双语字段约定
+
+- `value_display_en`：仅当 `value_display` 是中文文本时（如 "升温"/"加速中"/"强劲"）需要给英文翻译；纯数字单位（如 "+22%", "279 bps"）不需要 _en
+- `note_en` / `verdict_desc_en` / `wow_changes[].note_en`：**必须**给。译文不要逐字对译，写得自然像英文新闻
+- `verdict_label_en` 取以下固定映射，不要改：
+  - 系统性顶部信号 → Systemic Top Signal
+  - 高风险预警 → High Risk Alert
+  - 中度警戒 → Moderate Caution
+  - 观察期 → Observation
+- `threshold_text_en`：用 `red / yellow / green` 替代 `红 / 黄 / 绿`，其它结构保持一致
