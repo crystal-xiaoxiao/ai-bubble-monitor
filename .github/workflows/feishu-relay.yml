@@ -46,7 +46,19 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git rm "${sent[@]}"
             git commit -m "feishu-relay: sent ${#sent[@]} payload(s)"
-            git push
+            # Retry-on-race: routine may push snapshot commits while we send Feishu
+            for attempt in 1 2 3 4 5; do
+              if git pull --rebase origin main && git push; then
+                echo "✓ Push succeeded on attempt $attempt"
+                break
+              fi
+              echo "Push attempt $attempt failed, retrying in 3s..."
+              sleep 3
+              if [ $attempt -eq 5 ]; then
+                echo "✗ Push failed after 5 attempts"
+                exit 1
+              fi
+            done
           else
             echo "No payloads to send."
           fi
