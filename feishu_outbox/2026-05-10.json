@@ -1,0 +1,42 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #004 · 2026-05-10",
+        "content": [
+          [{"tag": "text", "text": "🔴 红灯比例 21.7% （阈值 60%）"}],
+          [{"tag": "text", "text": "📊 加权风险分 37.0%"}],
+          [{"tag": "text", "text": "🔴 5 红 / 🟠 7 黄 / 🟢 11 绿"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "📌 判读: 高风险预警"}],
+          [{"tag": "text", "text": "本周指标矩阵相对上周保持稳定（5 红 / 7 黄 / 11 绿），整体红灯比例 21.7% 仍处观察区间下沿。但估值 2/3 红（CAPE 42.05、Top-5 28.5%）叠加资金面 3/4 红（Mag4 FCF -91%、VC AI 80%、NVDA 客户投资/收入 67%）持续触发分类强制升级——历史上估值+资金面双类共振是泡沫顶部最一致的领先信号。本周新增信号：Anthropic ARR 升至 $30B 超越 OpenAI、Cerebras 5 月登陆纳斯达克、Powell 5/15 离任由 Warsh 接棒；估值与资金面双重共振触发分类强制升级。"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "▲ 本周变化"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  📈 等权重 vs 市值加权的 6 月差由 -3.4% 收窄至 -1.5%，RSP 跑赢幅度收敛，头部集中度有再启迹象"}],
+          [{"tag": "text", "text": "  📈 Cerebras S-1 提交后 5 月登陆纳斯达克（$26.6B 估值，募资 $3.5B），AI IPO 管道首单从公告变成现实"}],
+          [{"tag": "text", "text": "  📈 Powell 5/15 卸任主席并继续留任理事；Warsh 提名通过参议院银行委员会，6/16-17 FOMC 将由其主持，市场仍预期 2026 年仅 1 次降息"}],
+          [{"tag": "text", "text": "  📈 Anthropic ARR 单月再增 $11B 至 $30B，正式反超 OpenAI 的 $24B / $2B 月跑步速；二阶导持续为正"}],
+          [{"tag": "text", "text": "  📈 CloudHQ $1.4B 5 年期 AAA 4 月以 125bp 定价，较 Switch 3 月 18 日的 185bp 收窄 60bps；ABS 市场对 AI 数据中心抵押品仍报以紧利差"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔴 当前红灯指标"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  • CAPE 周期调整 PE: 42.05"}],
+          [{"tag": "text", "text": "    Multpl 持平 42.05（YCharts 月度读数 39.58），155 年来第 2 高，距 2000 年峰值 44.19 仅 5%；隐含未来 10 年年化回报约 1.3%，较 20 年均值 27.5 高 48.6%"}],
+          [{"tag": "text", "text": "  • 前 5 大权重占比: 28.5%"}],
+          [{"tag": "text", "text": "    NVDA ~7.0 + AAPL ~6.3 + MSFT ~4.6 + GOOGL ~5.5 + AMZN ~5.1 ≈ 28.5%；Top10 仍超 36%；仍远高于 2000 年峰值 ~18%"}],
+          [{"tag": "text", "text": "  • Mag4 自由现金流变化: -91%"}],
+          [{"tag": "text", "text": "    Amazon Q1 FCF 同比 -95% 至 $1.2B（capex 单季 $44.2B 几乎吃光 OCF），Bernstein/Pivotal 测算 Mag4 全年 FCF 可能转负；Meta、MSFT 同步承压"}],
+          [{"tag": "text", "text": "  • AI 占 VC 投资比重: 80%"}],
+          [{"tag": "text", "text": "    Crunchbase Q1 2026 全球 VC 80% 流向 AI；2 月单月更达 90%（OpenAI $40B + Anthropic $13B + xAI 等推动）；PitchBook 截至 Q3 测算累计 65%"}],
+          [{"tag": "text", "text": "  • NVDA 客户投资/收入比: 67%"}],
+          [{"tag": "text", "text": "    NVDA 2026 年至今股权投资突破 $40B（OpenAI $30B + Anthropic 至 $10B + xAI + CoreWeave $2B + Nebius $2B + IREN $2.1B + Corning $3.2B），叠加客户承诺 ~$110B；Huang 称 OpenAI 为 \"最后一笔\"，但 circular financing 担忧加剧"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag": "text", "text": "🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
