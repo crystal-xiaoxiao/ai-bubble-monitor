@@ -1,0 +1,42 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #005 · 2026-05-17",
+        "content": [
+          [{"tag":"text","text":"🔴 红灯比例 21.7% （阈值 60%）"}],
+          [{"tag":"text","text":"📊 加权风险分 37.0%"}],
+          [{"tag":"text","text":"🔴 5 红 / 🟠 7 黄 / 🟢 11 绿"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"📌 判读: 高风险预警"}],
+          [{"tag":"text","text":"本周计数与上周持平（5 红 / 7 黄 / 11 绿），红灯比例 21.7% 仍位于观察区间，但分类强制升级再次生效——估值 2/3 红（CAPE 41.66、Top-5 ≈27.8%）叠加资金面 3/4 红（Mag4 FCF 仍深度负、VC AI 占比 66%、NVDA 客户投资/收入 67%）。本周三大新增信号：Cerebras 周三 IPO 定价 $185、首日 +68% 收 $311，市值由发行的 $26.6B 跃至 $95B（公开浮动股市值 $39.8B）；S&P 50 日均线上方比例由 51% 跌至 45.5%，市场广度持续走弱；Warsh 5/15 接棒主席，6/16-17 FOMC 由其主持，并主张废除点阵图。"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"▲ 本周变化"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  📈 Cerebras 5/13 定价 $185、上市首日 +68% 收 $311，市值跃至约 $95B（公开浮动 $39.8B），远超原 $26.6B 目标——管道首单的需求被验证，SpaceX/OpenAI/Anthropic 后续路演热度抬升"}],
+          [{"tag":"text","text":"  📉 S5FI 一周由 51.19 跌至 45.5（区间 45.12-48.90）、技术信号转为强卖出；仍处黄区但贴近 40% 红线，市场广度边际走弱"}],
+          [{"tag":"text","text":"  📉 Crunchbase 4 月数据：全球 VC $56B 中 AI 占 66%（$37B），较 Q1 累计 80% 回落，但 Anthropic $15B + Bezos Project Prometheus $10B 合计占 4 月 45%；仍远高于 50% 红线"}],
+          [{"tag":"text","text":"  📉 RSP 2026 年至今领先 SPY 近 5pp，6 月差由 -1.5% 重新走阔至约 -4%——等权重再度跑赢，头部独涨阶段未启动"}],
+          [{"tag":"text","text":"  📈 Powell 5/15 卸任主席（继续留任理事），Warsh 接棒并将主持 6/16-17 首次会议；公开主张废除点阵图与前瞻指引，4 月会议 4 名异议表明降息门槛仍高"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔴 当前红灯指标"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  • CAPE 周期调整 PE: 41.66"}],
+          [{"tag":"text","text":"    Multpl 41.66（日内 -0.52）、GuruFocus 月度 40.93、YCharts 39.58；155 年来第 2 高，距 2000 峰值 44.19 仅 6%，长期年化预期回报压至 ~1.3%"}],
+          [{"tag":"text","text":"  • 前 5 大权重占比: ≈27.8%"}],
+          [{"tag":"text","text":"    SPY 权重 5/12 读数 AAPL 7.12 / MSFT 6.58 / NVDA 6.24 / GOOGL ≈5.7 / AMZN ≈5.0 → Top-5 ≈27.8%；Top-10 35.59%、Mag7 30.44%；NVDA 自高位回落但 AAPL 反超，集中度仍贴 2000 年极值"}],
+          [{"tag":"text","text":"  • Mag4 自由现金流变化: -91%"}],
+          [{"tag":"text","text":"    Morgan Stanley/Bank of America 测算 Amazon 2026 全年 FCF -$17B 至 -$28B；Microsoft FCF 同比 -28%；GOOGL capex 175-185B 几乎吃光 OCF；Asymco 测算 GOOGL 2027 FCF 触零；Mag7 整体环比 -10%、同比 -13%"}],
+          [{"tag":"text","text":"  • AI 占 VC 投资比重: 66%"}],
+          [{"tag":"text","text":"    Crunchbase 4 月：全球 VC $56B 中 AI $37B 占 66%（AI 模型 $26.7B + 物理 AI $5.3B + 基础设施 $1.8B）；Anthropic $15B + Bezos Project Prometheus $10B 合计 45%；较 Q1 累计 80% 回落但仍远超红线"}],
+          [{"tag":"text","text":"  • NVDA 客户投资/收入比: 67%"}],
+          [{"tag":"text","text":"    NVDA 2026 年至今股权投资 >$40B（OpenAI $30B + Anthropic $10B + CoreWeave 增至 $3.66B/11% + Nebius $2B + Marvell/Lumentum/Coherent 各 $2B）；公司表态暂停新 AI 初创投注；circular financing 担忧未消"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag":"text","text":"🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
