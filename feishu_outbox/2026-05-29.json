@@ -1,0 +1,42 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #007 · 2026-05-29",
+        "content": [
+          [{"tag": "text", "text": "🔴 红灯比例 21.7% （阈值 60%）"}],
+          [{"tag": "text", "text": "📊 加权风险分 37.0%"}],
+          [{"tag": "text", "text": "🔴 5 红 / 🟠 7 黄 / 🟢 11 绿"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "📌 判读: 高风险预警"}],
+          [{"tag": "text", "text": "red_pct 维持 21.7%、加权风险分回升至 37.0%；唯一状态变化是 SPY vs RSP 6 月差由 -3.5% 翻正至约 +6%（绿→黄），头部独涨苗头初现。估值 2/3 红 + 资金面 3/4 红，双类共振触发分类强制升级至高风险预警。"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "▲ 本周变化"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  🔴 SPY vs RSP 6 月差由 -3.5% 翻正至约 +6%：SPY 3 月领先 RSP 约 8pp，市值加权重新跑赢，头部独涨苗头初现"}],
+          [{"tag": "text", "text": "  📈 Fed 转偏鹰：Warsh 5/22 接任主席，6 月维持概率 99% 但市场预计移除宽松倾向、为潜在加息铺路"}],
+          [{"tag": "text", "text": "  📈 AI IPO 管道升温：Cerebras 5/14 上市首日 +68%、募资 $5.6B；SpaceX 路演 6/4 启动、目标 $1.75T"}],
+          [{"tag": "text", "text": "  📈 行业 token 量加速：OpenRouter 月量破 100 万亿（半年 5 倍）、估值翻倍至 $1.3B"}],
+          [{"tag": "text", "text": "  📈 Anthropic ARR 升至 $45B（2025 底仅 $9B），二阶导维持正向"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔴 当前红灯指标"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  • CAPE 周期调整 PE: 41.6"}],
+          [{"tag": "text", "text": "    155 年来第 2 高，距 2000 年峰值仅约 6%，earnings yield 仅 ~2.4%"}],
+          [{"tag": "text", "text": "  • 前 5 大权重占比: ≈27.5%"}],
+          [{"tag": "text", "text": "    NVDA ~7.0% 居首，Mag7 占 34.8%，集中度仍贴近 2000 年极值"}],
+          [{"tag": "text", "text": "  • Mag4 自由现金流变化: -92%"}],
+          [{"tag": "text", "text": "    Amazon 尾随 FCF 暴跌 95%、全年预计转负，Mag4 合计 FCF 料创 2014 年以来最低"}],
+          [{"tag": "text", "text": "  • AI 占 VC 投资比重: 80%"}],
+          [{"tag": "text", "text": "    Q1 全球 VC 创纪录 $297-331B，AI 占 80-81%，较 2025 Q1 的 55% 大幅跃升"}],
+          [{"tag": "text", "text": "  • NVDA 客户投资/收入比: ≈43%"}],
+          [{"tag": "text", "text": "    累计股权承诺 $110B+ 再加 $15B+ GPU 抵押债务，循环融资规模远超 Lucent 1999 峰值 24%"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag": "text", "text": "🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
