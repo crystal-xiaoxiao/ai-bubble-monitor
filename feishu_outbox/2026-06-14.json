@@ -1,0 +1,42 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #010 · 2026-06-14",
+        "content": [
+          [{"tag":"text","text":"🔴 红灯比例 21.7% （阈值 60%）"}],
+          [{"tag":"text","text":"📊 加权风险分 34.8%"}],
+          [{"tag":"text","text":"🔴 5 红 / 🟠 6 黄 / 🟢 12 绿"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"📌 判读: 高风险预警"}],
+          [{"tag":"text","text":"本周 5 红 / 6 黄 / 12 绿，红灯数持平但两个市场结构指标由黄转绿，加权风险分由 39.1% 降至 34.8%（近一月最低）。广度明显修复：50 日均线上方比例升至约 61%、等权重 RSP 年内首次反超 SPY，头部独涨松动。AI 板块从上周 Broadcom 暴跌中企稳，SpaceX 6/12 完成史上最大 IPO（首日 +19%）。Oracle Q4 RPO 飙至 $638B（+363%）但逾半来自 OpenAI。基础判读本在观察期，但估值 2/3 红 + 资金面 3/4 红，双类共振触发分类强制升级。"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"▲ 本周变化"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  🟢 S&P 50 日均线上方比例升至约 61.2%（5/29 为 52.3%）站上 60% 绿线，广度由头部独涨转向普涨，翻绿"}],
+          [{"tag":"text","text":"  🟢 等权重 RSP 年内首次反超 SPY（+9.7-10.0% vs +8.4-8.5%），6 月收益差转负，头部独涨松动，翻绿"}],
+          [{"tag":"text","text":"  📈 SpaceX 6/12 以 $135 定价、首日收 $161（+19%）完成史上最大 IPO，但待发公司数仍 <10 未达洪流"}],
+          [{"tag":"text","text":"  📈 Oracle Q4 RPO 飙至 $638B（+363% YoY、单季 +$85B），但逾 50% 来自 OpenAI、FY26 FCF -$23.7B"}],
+          [{"tag":"text","text":"  📉 Broadcom 仅维持 $56B AI 指引未上调，6/4 暴跌 14% 拖累芯片股；本周板块企稳，惩罚转为选择性"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔴 当前红灯指标"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  • CAPE 周期调整 PE: ≈40.5"}],
+          [{"tag":"text","text":"    155 年来第 2 高、距 2000 年峰值仅约 8%，earnings yield 仅约 2.5%，估值极度拉伸"}],
+          [{"tag":"text","text":"  • 前 5 大权重占比: ≈27%"}],
+          [{"tag":"text","text":"    Top-5（NVDA/AAPL/MSFT/AMZN/GOOGL）约 27%，仍贴近 2000 年极值，市值高度押注少数龙头"}],
+          [{"tag":"text","text":"  • Mag4 自由现金流变化: -92%"}],
+          [{"tag":"text","text":"    Amazon 尾随 FCF 暴跌约 95%，合计 FCF 料创 2014 年来最低；$725B capex 持续吞噬现金流"}],
+          [{"tag":"text","text":"  • AI 占 VC 投资比重: 80-81%"}],
+          [{"tag":"text","text":"    Q1 全球 VC 创纪录 $297-300B，AI 占 80-81%，高度集中于少数巨额轮次"}],
+          [{"tag":"text","text":"  • NVDA 客户投资/收入比: ≈43%"}],
+          [{"tag":"text","text":"    累计承诺 $110B+、对 LTM 收入约 43%，远超 Lucent 1999 峰值 24%，全行业循环融资估超 $800B"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag":"text","text":"🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
