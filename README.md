@@ -1,6 +1,6 @@
 # AI Bubble Monitor
 
-监测美股 AI 泡沫风险的 23 个领先指标，每周一早 7 点（北京时间）自动飞书推送。
+监测美股 AI 泡沫风险的 24 个领先指标，每周一早 7 点（北京时间）自动飞书推送。
 
 **Dashboard**: https://crystal-xiaoxiao.github.io/ai-bubble-monitor/
 
@@ -17,7 +17,7 @@
         ▼                                                       ▼
   读 INDICATORS.md                                       读上周 snapshot
   + web_search/WebFetch 抓                              （用于 WoW 对比）
-  23 个指标当前值
+  24 个指标当前值
         │                                                       │
         └──────────────────────────┬──────────────────────────┘
                                    ▼
@@ -40,7 +40,7 @@
 ```
 ai-bubble-monitor/
 ├── README.md                  # 这个文件
-├── INDICATORS.md              # 23 个指标的定义和阈值（routine 读这个）
+├── INDICATORS.md              # 24 个指标的定义和阈值（routine 读这个）
 ├── ROUTINE_PROMPT.md          # 要喂给 /schedule 的 prompt
 └── docs/                      # GitHub Pages 源目录
     ├── index.html             # Dashboard

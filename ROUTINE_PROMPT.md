@@ -54,20 +54,21 @@ GitHub Token: <<GITHUB_PAT>>
 ### 1. 读配置和上周数据
 
 - 用 WebFetch 读 https://raw.githubusercontent.com/crystal-xiaoxiao/ai-bubble-monitor/main/INDICATORS.md
-  → 这里有 23 个指标定义、阈值、direction 规则、聚合判读规则、JSON schema
+  → 这里有 24 个指标定义、阈值、direction 规则、聚合判读规则、JSON schema
 - 用 WebFetch 读 https://raw.githubusercontent.com/crystal-xiaoxiao/ai-bubble-monitor/main/docs/data/latest.json
   → 上周快照，用于 WoW 对比和 fallback
 
 记下上一期的 issue_number，新一期 = 上期 + 1。
 新一期 as_of_date = 今天日期 (YYYY-MM-DD)。
 
-### 2. 抓 23 个指标当前值
+### 2. 抓 24 个指标当前值
 
 按 INDICATORS.md 里每个指标的 source，并行尽量抓取（一次跑可同时发起多个 web_search / WebFetch）。
 
 抓数策略：
 - **稳定 URL（multpl, slickcharts, FRED CSV, openinsider）**: 用 WebFetch
 - **定性指标（capex 指引、CEO 表态、IPO pipeline 等）**: 用 web_search
+- **`debt_capex_ratio`（全口径债务/Capex 流量比）**: 用 web_search 综合最新研报（Morgan Stanley / Moody's / JPM 数据中心债务报告）、neocloud（CoreWeave/Crusoe/Lambda/Nebius）财报与债券发行、CSP 表外租赁/SPV 披露，**估算** 2026E 全口径新增债务 ÷ 2026E 全年预期 Capex，输出百分比 + 区间（如"≈50% (45-55%)"），note 里写明估算依据与口径。抓不到则沿用 latest.json 上周值并标 stale
 
 每个指标返回结构：
 {
@@ -92,8 +93,8 @@ GitHub Token: <<GITHUB_PAT>>
 ### 4. 算聚合
 
 red_count, yellow_count, green_count
-red_pct = red_count / 23 * 100  (保留 1 位小数)
-weighted_risk_score = (red_count + yellow_count * 0.5) / 23 * 100  (保留 1 位小数)
+red_pct = red_count / 24 * 100  (保留 1 位小数)
+weighted_risk_score = (red_count + yellow_count * 0.5) / 24 * 100  (保留 1 位小数)
 
 verdict_label / verdict_desc 按 INDICATORS.md 的判读阈值表选取。
 
@@ -113,12 +114,12 @@ verdict_label / verdict_desc 按 INDICATORS.md 的判读阈值表选取。
 
 按 INDICATORS.md 里的 schema 拼好。注意：
 - 沿用 history_seed 字段：从 latest.json 取出 history_seed 数组，append 一条 {week, red_pct, risk_score}（week 为 MM-DD），保留最近 10 条
-- 完整 23 个指标都在 indicators 数组里
+- 完整 24 个指标都在 indicators 数组里
 - 即使值没变也要写完整记录，不能省略
 
 校验：
-- indicators 数组长度必须 = 23
-- summary.red_count + yellow_count + green_count = 23
+- indicators 数组长度必须 = 24
+- summary.red_count + yellow_count + green_count = 24
 - summary.red_pct 和 indicators 里的 red 数量一致
 
 ### 7. 推送飞书
@@ -183,7 +184,7 @@ routine 最后输出（给用户看）：
 
 - 不要在日志或输出里完整打印 webhook URL 和 GITHUB_PAT
 - 数值阈值取 INDICATORS.md 里的，不要自己改
-- 指标 id 严格按 INDICATORS.md 里的 23 个，不增不减
+- 指标 id 严格按 INDICATORS.md 里的 24 个（含 debt_capex_ratio），不增不减
 - 抓 multpl.com 时找页面顶部数字，slickcharts 找前 5 行权重相加
 - 抓 FRED 用 https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2，取最后一行非空值
 - 抓 openinsider 时聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 这 12 个 ticker 的 30 天美元卖买比
