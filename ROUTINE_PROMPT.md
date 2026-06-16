@@ -1,204 +1,261 @@
-# Routine Prompt — 喂给 `/schedule`
+# Routine Prompt — 线上周报 routine 的真理副本
 
-下面那个代码块就是你要塞给 Claude `/schedule` 的完整 prompt。**先填两个占位符**：
-
-1. `<<FEISHU_WEBHOOK_URL>>` → 替换成你的飞书机器人 webhook 完整 URL
-2. `<<GITHUB_PAT>>` → 替换成你刚生成的 fine-grained PAT（教程见下方）
-
-填好之后，直接 `/schedule "0 23 * * 0"` 然后把整段 prompt 粘进去。Cron `0 23 * * 0` = 每周日 UTC 23:00 = 周一北京 07:00。
+> ⚠️ 这个文件是**线上正在跑的 routine 的版本化副本 + 运维说明**。改 routine 行为时，请同步改这里，保持一致。
+>
+> 历史提示：早期版本用过 GitHub PAT + Contents API + 直接 curl 飞书。**那套已废弃**。现在的机制见下方「工作机制」。
 
 ---
 
-## 设置流程（10 分钟）
+## 当前 routine 身份
 
-### Step 1 — 开飞书机器人（3 分钟）
+| 项 | 值 |
+|---|---|
+| 名称 | AI Bubble Monitor Weekly |
+| Routine ID | `trig_01PWcXSgNk1CVHAPQN52Ye1z` |
+| Cron | `0 23 * * 0`（每周日 UTC 23:00 = 周一北京 07:00） |
+| Model | `claude-opus-4-8` |
+| 仓库 | `crystal-xiaoxiao/ai-bubble-monitor`（沙箱自动 clone） |
+| 管理页 | https://claude.ai/code/routines |
 
-1. 在飞书创建一个"AI 泡沫监测"群（或在已有群里）
-2. 群设置 → 群机器人 → 添加机器人 → "自定义机器人"
-3. 名字填 "AI Bubble Watch"，复制 webhook URL（形如 `https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx`）
-
-### Step 2 — 创建 GitHub Fine-Grained PAT（5 分钟）
-
-我建议生成一个**只能写这一个仓库**的 token，安全最小化。
-
-1. 打开 https://github.com/settings/personal-access-tokens/new
-2. **Token name**: `ai-bubble-monitor-routine`
-3. **Expiration**: 1 year（或你想要的）
-4. **Repository access** → "Only select repositories" → 选 `crystal-xiaoxiao/ai-bubble-monitor`
-5. **Permissions** → Repository permissions → **Contents: Read and write**（其他都不要）
-6. 点 Generate token → **复制下来**（只会显示一次！）
-
-### Step 3 — 粘 prompt 到 `/schedule`（2 分钟）
-
-在 Claude Code 对话框输入：
+## 工作机制（重要，和老文档不同）
 
 ```
-/schedule "0 23 * * 0"
+        每周日 UTC 23:00
+              │
+              ▼
+   云端 routine（沙箱里 clone 好仓库）
+   读 INDICATORS.md + 上周 latest.json
+              │
+   抓 24 个指标 → 评分 → 拼双语 JSON
+              │
+     ┌────────┴─────────┐
+     ▼                  ▼
+  写快照文件          写 feishu_outbox/{date}.json
+  docs/data/*.json    （飞书 payload）
+     │                  │
+     └────────┬─────────┘
+              ▼
+   git add/commit/push origin HEAD:main   ← 沙箱自带 git 认证，无需 token
+              │
+     ┌────────┴───────────────────────┐
+     ▼                                 ▼
+  GH Pages 重建（三个看板）      feishu-relay.yml 触发
+  从 latest.json 拉数据          POST 到 FEISHU_WEBHOOK_URL → 删 outbox 文件
 ```
 
-回车后把下面整段 prompt 粘贴进去（**记得替换占位符**）。
+**三条关键设计：**
+1. **写仓库一律用 git 直推**（`git push origin HEAD:main`），沙箱自带 git 认证 —— **prompt 里不放任何 token**，不用 GitHub Contents API。
+2. **飞书不能在沙箱里直接 curl**（Anthropic egress proxy 拦 `open.feishu.cn`，403）。所以 routine 把飞书消息写成 `feishu_outbox/{as_of_date}.json` 文件 push 上来，由 `.github/workflows/feishu-relay.yml` 检测、转发、删除。webhook 存在 GitHub Actions secret `FEISHU_WEBHOOK_URL` 里。
+3. **双语**：中文站 aibubble-cn.github.io 与英文站 bubblewatch.github.io 共用同一份 `docs/data/latest.json`，所以每条文字字段必须中英文都出。
+
+## 改 routine 怎么办
+
+- **改指标定义/阈值/评分/拆解方法/节奏** → 只改 `INDICATORS.md`。routine 每次运行实时读它，**自动生效**，不用动 routine 本身。
+- **改 routine prompt 本身**（如指标总数、`/N` 聚合公式、长度校验、流程步骤）→ 改下面这段「线上 prompt」，并同步更新线上 routine：
+  - 网页：https://claude.ai/code/routines 编辑该 routine，或
+  - 在 Claude Code 里用 `/schedule`（底层用 `RemoteTrigger` 工具：`list` → 找到 `trig_01PWcXSgNk1CVHAPQN52Ye1z` → `update` 替换 `job_config.ccr.events[].data.message.content`）。OAuth 走账号内，**无需任何密钥**。
+- **删 routine** → 只能在 https://claude.ai/code/routines 手动删（API 不支持删除）。
+- 加减指标时记得：`INDICATORS.md`（定义 + 头部数量 + `/N` 聚合公式）、线上 routine prompt（指标数、`/N`、长度校验）、三个前端写死的计数文字，都要同步。
+
+## 一次性设置（已完成，留档备查）
+
+1. **飞书机器人** → 拿到 webhook URL。
+2. **GitHub Actions secret**：仓库 Settings → Secrets and variables → Actions → 新建 `FEISHU_WEBHOOK_URL` = 你的 webhook。（`feishu-relay.yml` 用它转发。）
+3. **workflow**：`.github/workflows/feishu-relay.yml`（已在仓库里，push outbox 文件即触发）。
+4. **routine**：已创建（见上方身份表）。
+
+> 不再需要生成 GitHub PAT —— routine 用沙箱 git 认证，relay 用 Actions 自带的 `GITHUB_TOKEN`。
 
 ---
 
-## Routine Prompt（完整内容）
+## 线上 prompt（完整内容 · 与 routine 一致）
 
 ```
-你是 AI Bubble Monitor 周报 routine。每次运行一遍完整的数据采集 → 评分 → 飞书推送 → 提交快照到 GitHub。
+调度说明：每周一北京时间 07:00（即每周日 UTC 23:00）运行一次。Cron 表达式：0 23 * * 0
+
+你是 AI Bubble Monitor 周报 routine。每次运行执行完整流程：数据采集 → 评分 → 写飞书 outbox → 提交快照到 GitHub。
+
+## 重要：仓库与提交方式（已改为 git 直推，不再用任何 token）
+
+你的工作目录就是已经 clone 好的 `crystal-xiaoxiao/ai-bubble-monitor` 仓库，沙箱自带 git 认证，**不需要任何 GitHub token**。所有写仓库的操作都用 git：直接写/改文件 → `git add` → `git commit` → `git push origin HEAD:main`。**不要再用 GitHub Contents API，也不要在 prompt 或代码里放任何 token。**
+
+如果 commit 报 "Author identity unknown"，先设本地身份：
+`git config user.email "routine@aibubble.local" && git config user.name "AI Bubble Routine"`
+
+## 重要：飞书发送方式
+
+本 sandbox 出站到 open.feishu.cn 被 Anthropic egress proxy 拦截（403 Host not in allowlist）。所以飞书消息**不能**直接 curl 发送，必须改成：把 Feishu payload 写到仓库的 `feishu_outbox/{as_of_date}.json` 文件并 push 到 main，仓库里已经配置了 `.github/workflows/feishu-relay.yml`，会自动检测、转发到飞书、并删除文件。
+
+## 重要：双语 JSON
+
+本期 dashboard 有两个版本：
+- 中文 https://aibubble-cn.github.io（读 verdict_desc / note / threshold_text 等中文字段）
+- 英文 https://bubblewatch.github.io（读 verdict_desc_en / note_en / threshold_text_en 等英文字段）
+
+两个版本都从同一个 latest.json 拉数据，所以 **每条文字字段都必须中英文都出**。具体字段约定见 INDICATORS.md 末尾的 JSON Schema 段落。
 
 仓库: crystal-xiaoxiao/ai-bubble-monitor
-飞书 webhook: <<FEISHU_WEBHOOK_URL>>
-GitHub Token: <<GITHUB_PAT>>
 
 ## 步骤
 
 ### 1. 读配置和上周数据
 
-- 用 WebFetch 读 https://raw.githubusercontent.com/crystal-xiaoxiao/ai-bubble-monitor/main/INDICATORS.md
-  → 这里有 24 个指标定义、阈值、direction 规则、聚合判读规则、JSON schema
-- 用 WebFetch 读 https://raw.githubusercontent.com/crystal-xiaoxiao/ai-bubble-monitor/main/docs/data/latest.json
-  → 上周快照，用于 WoW 对比和 fallback
+仓库已 clone 在工作目录，直接读本地文件（读不到再用 WebFetch raw 兜底）：
+- `INDICATORS.md` → 24 个指标定义、阈值、direction、聚合判读规则、JSON schema（含双语字段约定）
+- `docs/data/latest.json` → 上周快照，用于 WoW 对比和 fallback
 
-记下上一期的 issue_number，新一期 = 上期 + 1。
-新一期 as_of_date = 今天日期 (YYYY-MM-DD)。
+新一期 issue_number = 上期 + 1
+新一期 as_of_date = 今天日期 (YYYY-MM-DD)
 
-### 2. 抓 24 个指标当前值
+### 2. 抓 24 个指标当前值（尽量并行）
 
-按 INDICATORS.md 里每个指标的 source，并行尽量抓取（一次跑可同时发起多个 web_search / WebFetch）。
+按 INDICATORS.md 里每个指标的 source：
+- 稳定 URL（multpl, slickcharts, FRED CSV, openinsider）→ WebFetch
+- 定性指标（capex 指引、CEO 表态、IPO pipeline、ARR、token 量等）→ WebSearch
+- `debt_capex_ratio`（全口径债务/Capex 流量比）→ 严格按 INDICATORS.md 里该指标的「更新节奏」与「完整拆解」流程：它是周期性深度指标，约每 28 天才完整自下而上拆一次（分子=当年全口径 AI 新增债务，抓 Morgan Stanley AI debt issuance 最新估 + neocloud 发债 + 表外 SPV；分母=全口径 AI 基建 capex ~$1.0-1.1T）。距上次完整拆解（看该指标 as_of）不足 28 天，就沿用上期 value/status/note/as_of，stale 保持 false（这是有意的节奏性沿用，不是取数失败、不计入 stale>5）；只有拆解所需关键数据（如 MS 当期估算）真抓不到才标 stale=true
 
-抓数策略：
-- **稳定 URL（multpl, slickcharts, FRED CSV, openinsider）**: 用 WebFetch
-- **定性指标（capex 指引、CEO 表态、IPO pipeline 等）**: 用 web_search
-- **`debt_capex_ratio`（全口径债务/Capex 流量比）**: **严格按 INDICATORS.md 里该指标的「更新节奏」与「完整拆解」流程办**——它是周期性深度指标，约每 4 周（28 天）才完整自下而上拆解一次（分子=当年全口径 AI 新增债务，抓 Morgan Stanley AI debt issuance 最新估 + neocloud 发债 + 表外 SPV；分母=全口径 AI 基建 capex ~$1.0-1.1T）。距上次拆解（看该指标 `as_of`）不足 28 天就沿用上期值、`stale` 保持 false（这是有意的节奏性沿用，**不是**取数失败，不计入 stale>5 中止）。只有该拆解所需关键数据（如 MS 当期估算）真抓不到才标 `stale: true`
-
-每个指标返回结构：
+每个指标产出（**注意双语**）：
 {
-  "id": "...",
-  "value": <数字或字符串>,
-  "value_display": "供 dashboard 显示的字符串",
-  "as_of": "YYYY-MM-DD",
-  "source_url": "实际抓到数据的 URL",
-  "note": "1-2 句话的当前值含义解读",
-  "stale": false
+  id, value, value_display,
+  value_display_en (仅当 value_display 是中文文本，比如"升温"/"加速中"，需要英文翻译；纯数字单位如 "+22%" 不需要),
+  status, as_of, source_url,
+  threshold_text (中文版, 例如 ">35 红 / 25-35 黄 / <25 绿"),
+  threshold_text_en (英文版, 例如 ">35 red / 25-35 yellow / <25 green"),
+  note (中文 1-2 句解读),
+  note_en (英文 1-2 句解读，自然像英文新闻不要逐字对译),
+  stale: false
 }
 
-抓不到怎么办：
-- 沿用 latest.json 里上周的 value / status，把 stale 设为 true，note 改为"沿用上周值（数据源暂不可用）"
-- 累计 stale 超过 5 个 → 中止，跳到第 7 步发错误提醒
+抓不到时：
+- 沿用 latest.json 上周值（包括 _en 字段），stale=true，note 改为"沿用上周值（数据源暂不可用）"，note_en 改为 "Using last week's value (source unavailable)"
+- stale 累计 > 5 个 → 中止，跳到第 7 步发错误提醒
 
 ### 3. 评分
 
-按 INDICATORS.md 里的 direction 规则给每个指标打 status (red / yellow / green)。
-对 qualitative 指标，由 web_search 结果直接判断 status，写在 note 里说明依据。
+按 INDICATORS.md direction 规则给每个指标打 status (red / yellow / green)。
+qualitative 指标由 WebSearch 结果直接判断 status。
 
 ### 4. 算聚合
 
 red_count, yellow_count, green_count
-red_pct = red_count / 24 * 100  (保留 1 位小数)
-weighted_risk_score = (red_count + yellow_count * 0.5) / 24 * 100  (保留 1 位小数)
+red_pct = red_count / 24 * 100  (1 位小数)
+weighted_risk_score = (red_count + yellow_count*0.5) / 24 * 100  (1 位小数)
 
-verdict_label / verdict_desc 按 INDICATORS.md 的判读阈值表选取。
+判读 verdict_label / verdict_label_en 取以下固定映射：
+- 系统性顶部信号 / Systemic Top Signal
+- 高风险预警 / High Risk Alert
+- 中度警戒 / Moderate Caution
+- 观察期 / Observation
 
-### 5. 算 WoW 变化
+基础判读按 INDICATORS.md 阈值表（red_pct >= 60/40/25/else），加上**分类强制升级规则**：估值 ≥2/3 红 + 资金面 ≥3/4 红 → 至少升级到"高风险预警"。
 
-对比 latest.json 里每个指标上周的 status：
+verdict_desc 和 verdict_desc_en 都要写。
+
+### 5. WoW 变化
+
+对比 latest.json 每个指标上周 status：
 - status_upgrade: green→yellow / yellow→red / green→red
 - status_downgrade: red→yellow / yellow→green / red→green
-- value_change: status 没变但数值变化 >10%（仅对数值型指标）
+- value_change: status 没变但数值变化 >10%（仅数值型）
 
-每个变化生成一个对象：
-{ "indicator_id": "...", "type": "...", "from": "...", "to": "...", "note": "一句话说明" }
+每条变化（双语）：{ indicator_id, type, from, to, note (中文一句话), note_en (英文一句话) }
+保留最重要的 5 条（红灯转换优先）。
 
-只保留**最重要的 5 条**（红灯转换优先，再到接近阈值的黄→红）。
+### 6. 拼新快照 JSON
 
-### 6. 拼装新快照 JSON
-
-按 INDICATORS.md 里的 schema 拼好。注意：
-- 沿用 history_seed 字段：从 latest.json 取出 history_seed 数组，append 一条 {week, red_pct, risk_score}（week 为 MM-DD），保留最近 10 条
-- 完整 24 个指标都在 indicators 数组里
-- 即使值没变也要写完整记录，不能省略
-
-校验：
+按 INDICATORS.md 里的 schema（双语完整）。检查清单：
+- history_seed: 从 latest.json 取出，append {week (MM-DD), red_pct, risk_score}，保留最近 10 条
 - indicators 数组长度必须 = 24
-- summary.red_count + yellow_count + green_count = 24
-- summary.red_pct 和 indicators 里的 red 数量一致
+- summary.red+yellow+green = 24
+- 每个 indicator 必有 note 和 note_en；textual value 必有 value_display_en
+- summary 必有 verdict_label / verdict_label_en / verdict_desc / verdict_desc_en
+- wow_changes 每条必有 note 和 note_en
 
-### 7. 推送飞书
+### 7. 写飞书 payload 到 outbox 文件（**写文件，不要 curl 飞书**）
 
-用 curl POST 到 <<FEISHU_WEBHOOK_URL>>，msg_type 用 "post"（rich text）。
+飞书消息只发中文（用户是中文阅读者）。构造完整 Feishu payload（msg_type="post" rich text），写入文件 `feishu_outbox/{as_of_date}.json`（不存在则创建，已存在则覆盖）：
 
-消息结构（北京时间）：
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #{issue_number 三位数} · {as_of_date}",
+        "content": [
+          [{"tag":"text","text":"🔴 红灯比例 {red_pct}% （阈值 60%）"}],
+          [{"tag":"text","text":"📊 加权风险分 {weighted_risk_score}%"}],
+          [{"tag":"text","text":"🔴 {red_count} 红 / 🟠 {yellow_count} 黄 / 🟢 {green_count} 绿"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"📌 判读: {verdict_label}"}],
+          [{"tag":"text","text":"{verdict_desc}"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"▲ 本周变化"}],
+          [{"tag":"text","text":"────────────────"}],
+          (对每条 wow_changes 最多 5 条):
+          [{"tag":"text","text":"  {icon} {note}"}]  // status_upgrade=🔴, status_downgrade=🟢, value_change=📈/📉
+          (如 wow_changes 为空):
+          [{"tag":"text","text":"本周状态无变化"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔴 当前红灯指标"}],
+          [{"tag":"text","text":"────────────────"}],
+          (对每个 status=red 指标):
+          [{"tag":"text","text":"  • {name_zh}: {value_display}"}],
+          [{"tag":"text","text":"    {note}"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag":"text","text":"🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
 
-标题: 📊 AI 泡沫监测 · Issue #{issue_number 三位数} · {as_of_date}
+stale > 5 时（错误情形）：outbox 文件改为：
+{ "msg_type": "text", "content": { "text": "⚠️ AI Bubble Monitor 周报失败 · {as_of_date}\n\n{stale 数} 个指标取数失败，超阈值。" } }
+写完 outbox 后，不写 docs/ 下的快照，直接跳到第 8 步 commit+push（只提交 outbox），然后结束。
 
-正文 content（每行一个 [{tag:"text",text:"..."}] 数组）：
-- "🔴 红灯比例 {red_pct}% （阈值 60%）"
-- "📊 加权风险分 {weighted_risk_score}%"
-- "🔴 {red_count} 红 / 🟠 {yellow_count} 黄 / 🟢 {green_count} 绿"
-- "" (空行)
-- "📌 判读: {verdict_label}"
-- "{verdict_desc}"
-- "" (空行)
-- "▲ 本周变化"
-- "────────────────"
-- 对每条 wow_changes (最多 5 条):
-  - "  [icon] {note}"  其中 status_upgrade 用 "🔴", status_downgrade 用 "🟢", value_change 用 "📈/📉"
-- 如果 wow_changes 为空，写 "本周状态无变化"
-- "" (空行)
-- "🔴 当前红灯指标"
-- "────────────────"
-- 对每个 status=red 的指标:
-  - "  • {name_zh}: {value_display}"
-  - "    {note}"
-- "" (空行)
-- "🔗 完整 Dashboard: https://crystal-xiaoxiao.github.io/ai-bubble-monitor/"
+### 8. 写快照文件并 git 提交推送
 
-如果 stale 数量 > 5（中止情形）：
-- 改发 msg_type=text 的简短错误：
-  "⚠️ AI Bubble Monitor 周报失败 · {as_of_date}\n\n{stale 数量} 个指标取数失败，超过阈值。请检查数据源或登录 routine 查看日志。"
-- 不提交快照，直接结束 routine
+如果不是错误情形，先写两个快照文件（直接覆盖，手动重跑也覆盖即可，不需要 sha）：
+a) `docs/data/snapshots/{as_of_date}.json` ← 本期完整快照
+b) `docs/data/latest.json` ← 覆盖为本期内容
 
-### 8. 提交快照到 GitHub
+两个 dashboard（aibubble-cn 和 bubblewatch）从这份 latest.json 自动拉数据，不需要单独更新它们。
 
-用 curl + GitHub Contents API 写两个文件（PAT 在 Authorization header）：
-
-a) `docs/data/snapshots/{as_of_date}.json` — 新建
-   PUT https://api.github.com/repos/crystal-xiaoxiao/ai-bubble-monitor/contents/docs/data/snapshots/{as_of_date}.json
-   body: { "message": "Issue #{N} · {as_of_date}", "content": <base64>, "branch": "main" }
-
-b) `docs/data/latest.json` — 覆盖
-   先 GET 拿到当前文件的 sha，然后 PUT 时带上 sha 字段
-   PUT https://api.github.com/repos/crystal-xiaoxiao/ai-bubble-monitor/contents/docs/data/latest.json
-   body: { "message": "Update latest to #{N}", "content": <base64>, "sha": "<old_sha>", "branch": "main" }
+然后一次性提交并推送（outbox + 两个快照一起）：
+```
+git add -A
+git commit -m "Issue #{N} · {as_of_date}"
+git push origin HEAD:main
+```
+确认 `git push` 退出码为 0。**如果 push 失败，把完整的 git 报错原样写进运行总结（不要吞错误），然后停止——不要尝试别的写入方式。**
 
 ### 9. 输出运行总结
 
-routine 最后输出（给用户看）：
+routine 最后输出：
 - Issue 编号 + 日期
-- 红黄绿计数 + 红灯比例 + 判读
+- 红黄绿计数 + 红灯比例 + 判读（中英）
 - WoW 变化数
 - stale 指标数
-- GitHub commit URL
-- 飞书是否成功
+- git push 结果（成功的 commit SHA，或失败的完整报错）
+- Outbox 文件路径（飞书消息将由 GitHub Actions 转发）
 
 ## 注意事项
 
-- 不要在日志或输出里完整打印 webhook URL 和 GITHUB_PAT
-- 数值阈值取 INDICATORS.md 里的，不要自己改
+- 不要在日志里打印任何敏感信息或 webhook URL
+- **绝对不要直接 curl https://open.feishu.cn/...** —— sandbox 出站被拦，会 403
+- 写仓库一律用 git（add/commit/push origin HEAD:main），不要用 GitHub Contents API，不要用 token
+- 阈值取 INDICATORS.md，不要自改
 - 指标 id 严格按 INDICATORS.md 里的 24 个（含 debt_capex_ratio），不增不减
-- 抓 multpl.com 时找页面顶部数字，slickcharts 找前 5 行权重相加
-- 抓 FRED 用 https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2，取最后一行非空值
-- 抓 openinsider 时聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 这 12 个 ticker 的 30 天美元卖买比
+- 双语字段必须都有；中英文不要逐字对译，分别写得自然
+- multpl.com 找页面顶部数字；slickcharts 取前 5 行权重相加；FRED 用 https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2 取最后非空行；openinsider 聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 30 天美元卖买比
 ```
 
 ---
 
-## 跑测试
+## 跑测试（可选）
 
-填好 webhook 和 PAT、用 `/schedule` 创建 routine 之后：
-
-1. 在 routine 列表里手动触发一次（不用等周一）
-2. 检查飞书是不是收到消息
-3. 检查 https://crystal-xiaoxiao.github.io/ai-bubble-monitor/ 是不是更新到 Issue #002
-4. 都 OK 就让它自己每周一跑
-
-如果飞书消息没收到 / GH 没更新 → 看 routine 运行日志，把错误贴回来给 Claude 看就行。
+不想等周日的话，去 https://claude.ai/code/routines 找到 "AI Bubble Monitor Weekly" 手动触发一次。会真实推一条飞书 + 生成新一期 Issue。跑完检查：
+1. 飞书群收到周报
+2. 仓库 `docs/data/latest.json` 有新 commit、`total_indicators` = 24
+3. 三个看板（含信用类的「全口径债务/Capex 流量比」卡片）硬刷新后正常
