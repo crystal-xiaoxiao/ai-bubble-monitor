@@ -68,7 +68,7 @@ GitHub Token: <<GITHUB_PAT>>
 抓数策略：
 - **稳定 URL（multpl, slickcharts, FRED CSV, openinsider）**: 用 WebFetch
 - **定性指标（capex 指引、CEO 表态、IPO pipeline 等）**: 用 web_search
-- **`debt_capex_ratio`（全口径债务/Capex 流量比）**: 用 web_search 综合最新研报（Morgan Stanley / Moody's / JPM 数据中心债务报告）、neocloud（CoreWeave/Crusoe/Lambda/Nebius）财报与债券发行、CSP 表外租赁/SPV 披露，**估算** 2026E 全口径新增债务 ÷ 2026E 全年预期 Capex，输出百分比 + 区间（如"≈50% (45-55%)"），note 里写明估算依据与口径。抓不到则沿用 latest.json 上周值并标 stale
+- **`debt_capex_ratio`（全口径债务/Capex 流量比）**: **严格按 INDICATORS.md 里该指标的「更新节奏」与「完整拆解」流程办**——它是周期性深度指标，约每 4 周（28 天）才完整自下而上拆解一次（分子=当年全口径 AI 新增债务，抓 Morgan Stanley AI debt issuance 最新估 + neocloud 发债 + 表外 SPV；分母=全口径 AI 基建 capex ~$1.0-1.1T）。距上次拆解（看该指标 `as_of`）不足 28 天就沿用上期值、`stale` 保持 false（这是有意的节奏性沿用，**不是**取数失败，不计入 stale>5 中止）。只有该拆解所需关键数据（如 MS 当期估算）真抓不到才标 `stale: true`
 
 每个指标返回结构：
 {

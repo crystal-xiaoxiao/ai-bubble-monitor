@@ -149,11 +149,15 @@ red_pct >= 25  → 中度警戒（风险积累中）         · 黄灯
 - **Status mapping**: 任何已确认事件 = red / Watch 评级 = yellow / 无 = green
 
 ### `debt_capex_ratio` — 全口径债务/Capex 流量比 (%)
-- **Source**: web_search 综合估算——Morgan Stanley / Moody's / JPM 数据中心债务报告 + neocloud 财报与债券发行 + CSP 表外租赁/SPV 披露。**估算** 2026E 全口径新增债务 ÷ 2026E 全年预期 Capex，输出百分比 + 区间
-- **口径**: 分子 = 全口径新增债务（CSP 表内 + 表外杠杆如租赁/SPV/数据中心 ABS + 下游 neoclouds 如 CoreWeave/Crusoe/Lambda/Nebius 全部债务）；分母 = 全年预期 Capex。流量口径优先
 - **Direction**: high_bad
 - **Thresholds**: red=70, yellow=50
-- **Anchor**: 互联网/电信基建周期顶点 80-100%；当前 AI 周期（2026）估算 45-55%。衡量"这轮基建有多少靠借债烧"，与信用压力指标（HY 利差/ABS/neocloud 事件）互补——测信用累积而非压力
+- **Anchor**: 互联网/电信基建周期顶点 80-100%；当前 AI 周期（2026）自下而上估算约 54%（区间 48-60%）。测"这轮基建有多少靠借债烧"，与信用压力指标（HY 利差/ABS/neocloud 事件）互补——测信用累积而非压力
+- **更新节奏（重要）**：这是周期性深度指标，**不必每周重算**。`as_of` 字段 = 上次完整拆解的日期。每次 routine 跑时：若 `今天 − as_of ≥ 28 天`（约月度；输入多为月度/季度的卖方报告与财报，2 周内通常无新料），执行下面【完整拆解】并把 `as_of` 更新为今天；否则**沿用上期** value/status/note/as_of，并在 note 末尾追加"（{today} 周期内无新数据，沿用 {as_of} 拆解）"。**节奏性沿用时 `stale` 保持 false**，不算取数失败、不计入"stale>5 中止"阈值。（若想改成两周一次，把 28 改 14。）
+- **【完整拆解】流量口径 = 2026E 全口径 AI 新增债务 ÷ 2026E 全口径 AI 基建 capex**。分子分母口径必须对齐（都用"全口径/all-in"，否则比值失真）：
+  - **分子（新增债务，流量）**：web_search 当年 AI 相关新发债务总额。优先抓 Morgan Stanley「AI debt issuance / AI debt monitor」年度估算（最新一期，含已发 vs 全年预测）——它是全口径（公开债 + 私募信用 + ABS + JV/SPV）。交叉核对三块：① hyperscaler + JV 发债（MSFT/META/AMZN/GOOGL/Oracle 债券、Stargate 等）；② neoclouds 全部新增债务（CoreWeave/Nebius/Crusoe/Lambda 的债券、银行贷款、GPU 抵押 ABS）；③ 表外 SPV / 经营租赁融资（Meta Hyperion、Oracle Stargate-Abilene、Blue Owl/PIMCO/Blackstone 私募信用 SPV）。
+  - **分母（capex，流量）**：web_search 2026E 全口径 AI 基建 capex。基线 = 五大 hyperscaler（含 Oracle）合计（MS 最新约 $805B），**再加** neoclouds 及其他 colo/主权/企业 AI capex → 全口径约 $1.0-1.1T。**别只用 big-4 的 ~$700B 当分母**（会漏掉 neocloud capex，与全口径分子不匹配、比值虚高）。
+  - **算比值**：分子 ÷ 分母，给**中心值 + 区间**（区间主要来自分母宽窄）。note 里写清分子数、分母数、来源与日期，便于追溯。
+  - 抓不到关键数据（如 MS 当期估算）→ 沿用上期值并标 `stale: true`（这才是真失败）。
 
 ---
 
