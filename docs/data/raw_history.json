@@ -1,0 +1,56 @@
+{
+  "_meta": {
+    "purpose": "原始值台账（反锚定规则 2）：数值型指标每期的原始输入。环比/增速/比值一律从此处上期原始值计算，不允许 web_search 直接抄增速结论。每指标保留最近 26 期。",
+    "created": "2026-07-06",
+    "schema": "{indicator_id: [{date, raw: {自由字段}, value}]}"
+  },
+  "cape": [
+    { "date": "2026-07-05", "raw": { "multpl": 41.6, "gurufocus": 39.5, "macroradar": 41.66 }, "value": 40.5 }
+  ],
+  "top5_weight": [
+    { "date": "2026-07-05", "raw": { "nvda": 7.32, "aapl": 7.04, "googl": 5.89, "msft": 4.5, "amzn": 3.69 }, "value": 28.4 }
+  ],
+  "nvda_fpe": [
+    { "date": "2026-07-05", "raw": { "gurufocus": 21.85, "yahoo": 22.52, "finbox": 22.1, "stockanalysis": 19.6 }, "value": 22.0 }
+  ],
+  "hyperscaler_capex_yoy": [
+    { "date": "2026-07-05", "raw": { "big4_capex_2026e_usd_b": 725, "amzn": 200, "msft": 190, "googl_mid": 180, "meta_mid": 135 }, "value": 77 }
+  ],
+  "mag4_fcf_yoy": [
+    { "date": "2026-07-05", "raw": { "amzn_fcf_2026e_usd_b_range": [-28, -17], "googl_fcf_2026e_usd_b": 8.2, "googl_fcf_2025_usd_b": 73.3, "msft_fcf_yoy_pct": -28 }, "value": -90 }
+  ],
+  "vc_ai_share": [
+    { "date": "2026-07-05", "raw": { "ai_share_pct_q2": 70, "ai_share_pct_q1": 80, "h1_global_vc_usd_b": 510, "openai_anthropic_share_pct": 43 }, "value": 70 }
+  ],
+  "nvda_invest_revenue": [
+    { "date": "2026-07-05", "raw": { "equity_commitments_usd_b": 40, "openai_direct_usd_b": 30, "ltm_revenue_usd_b": 300 }, "value": 43 }
+  ],
+  "breadth_50d": [
+    { "date": "2026-07-05", "raw": { "s5fi": 55.3, "recent_range": [54, 56] }, "value": 55.3 }
+  ],
+  "insider_sell_buy": [
+    { "date": "2026-07-05", "raw": { "nvda_june_sales_usd_m": 109.9, "nvda_june_buys_usd_m": 0, "aggregate_sell_buy_note": "本期未记录聚合卖/买总金额——自下期起必须记录 12 家聚合卖出与买入美元原始值" }, "value": 8 }
+  ],
+  "hy_oas": [
+    { "date": "2026-06-07", "raw": { "bamlh0a0hym2_bps": 272 }, "value": 272 },
+    { "date": "2026-06-14", "raw": { "bamlh0a0hym2_bps": 275 }, "value": 275 },
+    { "date": "2026-06-21", "raw": { "bamlh0a0hym2_bps": 271 }, "value": 271 },
+    { "date": "2026-06-28", "raw": { "bamlh0a0hym2_bps": 278 }, "value": 278 },
+    { "date": "2026-07-05", "raw": { "bamlh0a0hym2_bps": 263 }, "value": 263 }
+  ],
+  "debt_capex_ratio": [
+    { "date": "2026-07-06", "raw": { "numerator_usd_b": 570, "ytd_may_usd_b": 236, "denominator_usd_b": 1040 }, "value": 55 }
+  ],
+  "token_volume_mom": [
+    { "date": "2026-07-05", "raw": { "openrouter_monthly_tokens_t": 100, "openrouter_weekly_tokens_t": 25, "early_june_weekly_tokens_t": 33 }, "value": 35 }
+  ],
+  "gpu_rental_price": [
+    { "date": "2026-07-06", "raw": { "h100_ondemand_usd_hr_range": [2.01, 2.53], "h100_spot_low_usd_hr": 1.43, "h200_cloud_usd_hr_range": [3.72, 10.6], "trend": "1yr 合约 1 月底破 $2/hr、2 月 +15-20%，3 月起容量紧俏" }, "value": "tight" }
+  ],
+  "private_secondary_marks": [
+    { "date": "2026-07-06", "raw": { "anthropic_forge_implied_usd_b": 1000, "anthropic_last_primary_usd_b": 965, "openai_forge_implied_usd_b": 880, "openai_last_primary_usd_b": 852, "openai_q1_flow": "卖方意向 > 买方 (Caplight)" }, "value": "premium" }
+  ],
+  "enterprise_deploy": [
+    { "date": "2026-07-05", "raw": { "mckinsey_q1_production_pct": 72, "scaled_pct": 28 }, "value": 72 }
+  ]
+}

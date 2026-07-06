@@ -6,6 +6,22 @@
 
 ---
 
+## ⚠ 待同步到线上 prompt（2026-07-06 框架升级）
+
+2026-07-06 INDICATORS.md 做了大版本升级（详见该文件）。指标定义/聚合规则 routine 会实时读到、自动生效；但线上 prompt 里**硬编码的部分**需要人工同步一次（claude.ai/code/routines 手改，或 Claude Code `/schedule` → RemoteTrigger update）：
+
+1. **指标清单变化**（总数仍 24，长度校验数字不用改）：移出 `token_revenue_ratio`、`spy_vs_rsp_6m`；新增 `gpu_rental_price`、`private_secondary_marks`。若 prompt 里点名过旧指标要替换。
+2. **summary 新增字段**：`stage_score` / `stage_label` / `stage_label_en` / `trigger_score` / `trigger_label` / `trigger_label_en` / `momentum` / `category_scores` / `similarity`。若 prompt 有 summary 字段清单校验要补。
+3. **新增步骤**：
+   - `debt_capex_ratio` 按 INDICATORS.md 周度台账规则执行（读写 `docs/data/debt_ledger.json`，每 28 天完整对账）
+   - 每期把数值型指标原始输入追加写 `docs/data/raw_history.json`（环比一律从台账算）
+   - 反锚定纪律：活源指标 note 必含本期原始数据点；连续 3 期同值 → `suspect_static: true` + 飞书提醒行
+4. **校验断言建议改为与 N 解耦**：`indicators 长度 = INDICATORS.md 定义的指标数`、`red+yellow+green = 总数`（避免以后加减指标再改 prompt）。
+
+同步完成后删掉本节。
+
+---
+
 ## 当前 routine 身份
 
 | 项 | 值 |

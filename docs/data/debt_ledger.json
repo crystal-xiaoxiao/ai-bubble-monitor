@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "purpose": "AI 债务交易台账：debt_capex_ratio 的周度增量数据源。routine 每周把新公告的 AI/数据中心债务 deal 去重后追加进 deals，每 28 天做一次完整对账修正 ms_anchor 与分母。",
+    "created": "2026-07-06",
+    "dedupe_rule": "borrower + amount 近似 + 公告日 ±7 天视为同一 deal，多篇报道只记一次",
+    "coverage_note": "deals 为 2026 年内可公开追溯的大额 deal 流水（非完备清单，完备口径以 ms_anchor 为准）；单笔 ≥$10B 的新 deal 需同时写入 wow_changes 与飞书推送"
+  },
+  "last_full_recon": "2026-07-06",
+  "ms_anchor": {
+    "numerator_usd_b": 570,
+    "as_of": "2026-06-10",
+    "source": "Morgan Stanley 2026E all-in AI debt issuance ~$570B（公开债+私募信用+ABS+JV/SPV）；YTD through May ~$236B（~4x 上年同期）",
+    "offbs_spv_usd_b": 120,
+    "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
+  },
+  "capex_denominator_usd_b": 1040,
+  "denominator_note": "2026E 全口径 compute capex：Big4 $725B + Oracle $50B + Apple $13B + neoclouds $60B + 中国 $80B + 主权 $60B + 其他 $48B（首个万亿美元 compute capex 年）",
+  "deals": [
+    {
+      "date": "2026-04-15",
+      "borrower": "QTS (Blackstone)",
+      "instrument": "abs",
+      "amount_usd_b": 4.6,
+      "source_url": "https://www.forbes.com/sites/daraabasiita/2026/06/18/ai-data-center-bonds-are-being-priced-as-project-finance-at-last/",
+      "note": "5.700% senior secured notes due 2036，Fayetteville GA 园区（租户 Microsoft）；4 月定价，具体日为近似"
+    },
+    {
+      "date": "2026-06-10",
+      "borrower": "Amazon",
+      "instrument": "loan",
+      "amount_usd_b": 17.5,
+      "source_url": "https://startupfortune.com/citi-says-ai-data-center-bonds-are-finally-being-priced-as-the-project-finance-deals-they-actually-are/",
+      "note": "delayed-draw term loan，Citi 牵头，表内直接负债"
+    },
+    {
+      "date": "2026-06-15",
+      "borrower": "NVIDIA",
+      "instrument": "bond",
+      "amount_usd_b": 25,
+      "source_url": "https://www.bloomberg.com/news/articles/2026-06-15/nvidia-kicks-off-first-high-grade-bond-offering-since-2021",
+      "note": "IG 债 7 tranches（2-30 年），$85B 认购，2021 以来首发；30 年期利差 65bps"
+    }
+  ]
+}

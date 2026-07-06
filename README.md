@@ -31,21 +31,26 @@
 ```
 
 **关键设计**：
-- 没有服务器、没有 GitHub Actions、没有 Anthropic API key
+- 没有服务器、没有 Anthropic API key；唯一的 GitHub Actions 是 `feishu-relay.yml`（把 routine 写入 `feishu_outbox/` 的 payload 转发到飞书 webhook 后删除——routine 沙箱 egress 直连飞书会被拦）
 - Claude routine 在订阅内运行，零额外费用
-- 这个仓库纯当文件柜：存指标定义、历史快照、托管 dashboard
+- 这个仓库当文件柜 + 数据台账：存指标定义、历史快照、债务台账、原始值台账，托管 dashboard
 
 ## 文件结构
 
 ```
 ai-bubble-monitor/
 ├── README.md                  # 这个文件
-├── INDICATORS.md              # 24 个指标的定义和阈值（routine 读这个）
-├── ROUTINE_PROMPT.md          # 要喂给 /schedule 的 prompt
+├── INDICATORS.md              # 24 个指标的定义/阈值/聚合规则/历史校准表（routine 读这个）
+├── ROUTINE_PROMPT.md          # 线上 routine prompt 的版本化副本 + 运维说明
+├── .github/workflows/
+│   └── feishu-relay.yml       # 飞书转发 relay（监听 feishu_outbox/ push）
+├── feishu_outbox/             # routine 写、relay 发完即删（平时为空）
 └── docs/                      # GitHub Pages 源目录
     ├── index.html             # Dashboard
     └── data/
-        ├── latest.json        # 最新一期（dashboard 默认读这个）
+        ├── latest.json        # 最新一期（三个 dashboard 都读这个）
+        ├── debt_ledger.json   # AI 债务交易台账（debt_capex_ratio 周度增量源）
+        ├── raw_history.json   # 原始值台账（反锚定：环比一律从这里算）
         └── snapshots/
             └── YYYY-MM-DD.json  # 历史快照
 ```
@@ -76,4 +81,4 @@ ai-bubble-monitor/
 
 ## Issue 历史
 
-- **#001 · 2026-05-10** · 6 红 / 7 黄 / 10 绿 · 红灯比例 26.1% · 中度警戒
+完整历史见 `docs/data/snapshots/`（最早 #4 · 2026-05-10）。2026-07-06 起框架升级为两轴判读（stage/trigger）+ 历史相似度 + 周度债务台账，详见 INDICATORS.md。
