@@ -76,7 +76,7 @@ category_scores = 每个类别内指标分的均值（6 个 0-100 值）
 momentum = { "deteriorated": 本期状态恶化的指标数, "improved": 好转数, "net": deteriorated - improved }
 ```
 
-对比上期快照的 status 迁移；绿→黄、黄→红各算恶化 1，绿→红算恶化 2（两级）。`net ≥ +4` 时 verdict_desc 必须提示「边际恶化加速」；`net ≤ -4` 提示「边际普遍改善」。
+对比上期快照的 status 迁移；绿→黄、黄→红各算恶化 1，绿→红算恶化 2（两级），好转对称计。上期快照中不存在的指标（新增/换入首期）不计入 momentum 与 wow_changes。`net ≥ +4` 时 verdict_desc 必须提示「边际恶化加速」；`net ≤ -4` 提示「边际普遍改善」。
 
 ### 历史相似度（模式识别）
 
