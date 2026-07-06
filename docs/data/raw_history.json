@@ -50,6 +50,9 @@
   "private_secondary_marks": [
     { "date": "2026-07-06", "raw": { "anthropic_forge_implied_usd_b": 1000, "anthropic_last_primary_usd_b": 965, "openai_forge_implied_usd_b": 880, "openai_last_primary_usd_b": 852, "openai_q1_flow": "卖方意向 > 买方 (Caplight)" }, "value": "premium" }
   ],
+  "frontier_progress": [
+    { "date": "2026-07-06", "raw": { "metr_50pct_horizon_hours": "12-20", "metr_doubling_months_since_2024": 3, "metr_doubling_months_allperiod": 6.3, "hle_sota_pct": 53.3, "hle_sota_model": "Claude Fable 5", "frontiermath_sota_pct": 52.4, "frontiermath_sota_model": "GPT-5.5 Pro", "arc_agi_2_sota_pct": 70, "arc_agi_3_frontier_pct": 0.4, "swebench_verified_sota_pct": 91, "releases_90d": "GPT-5.5 / Claude 5 家族 / Gemini 3.1" }, "value": "accelerating" }
+  ],
   "enterprise_deploy": [
     { "date": "2026-07-05", "raw": { "mckinsey_q1_production_pct": 72, "scaled_pct": 28 }, "value": 72 }
   ]

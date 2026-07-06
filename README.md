@@ -1,6 +1,6 @@
 # AI Bubble Monitor
 
-监测美股 AI 泡沫风险的 24 个领先指标，每周一早 7 点（北京时间）自动飞书推送。
+监测美股 AI 泡沫风险的一组领先指标（当前 25 个，以 INDICATORS.md 为准），两轴判读（泡沫成熟度 × 破裂临近度），每周一早 7 点（北京时间）自动飞书推送。
 
 **Dashboard**: https://crystal-xiaoxiao.github.io/ai-bubble-monitor/
 
@@ -40,7 +40,7 @@
 ```
 ai-bubble-monitor/
 ├── README.md                  # 这个文件
-├── INDICATORS.md              # 24 个指标的定义/阈值/聚合规则/历史校准表（routine 读这个）
+├── INDICATORS.md              # 全部指标的定义/阈值/聚合规则/历史校准表（routine 读这个，总数以此为准）
 ├── ROUTINE_PROMPT.md          # 线上 routine prompt 的版本化副本 + 运维说明
 ├── .github/workflows/
 │   └── feishu-relay.yml       # 飞书转发 relay（监听 feishu_outbox/ push）
