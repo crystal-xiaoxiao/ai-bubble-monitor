@@ -23,7 +23,7 @@
 
 1. **原始数据点强制**：数据源为活源（日更/周更，如 openinsider、OpenRouter、FRED、barchart）的数值型指标，note 里**必须写出本期实际抓到的原始数据点**——例如 `insider_sell_buy` 要写「30 日卖出 $X.XB / 买入 $XM」、`token_volume_mom` 要写本期 token 绝对量。给不出原始数据点 = 本期没抓到数 = 沿用上期并标 `stale: true`，不允许"as_of 更新了、值是抄的"。
 2. **原始值台账**：每次运行把各数值型指标的本期原始输入追加进 `docs/data/raw_history.json`（结构：`{"indicator_id": [{"date": "YYYY-MM-DD", "raw": {...自由字段...}, "value": N}]}`，每指标保留最近 26 期）。**环比/增速/比值一律用台账里的上期原始值计算**，不允许直接 web_search 搜"环比增速"抄结论。
-3. **同值预警**：活源数值型指标连续 3 期 value 完全相同 → 该指标输出 `suspect_static: true`（可选字段，前端可忽略），并在飞书推送里单列一行「⚠ 疑似静态：{指标} 连续 {N} 期 = {value}，请人工核查」。周期性/低频指标不适用本条（debt_capex_ratio 的对账节奏、enterprise_deploy 等季度调查类）。
+3. **同值预警**：活源数值型指标连续 3 期 value 完全相同 → 该指标输出 `suspect_static: true`（可选字段，前端可忽略），并在飞书推送里单列一行「⚠ 疑似静态：{指标} 连续 {N} 期 = {value}，请人工核查」。**判断方法：数 raw_history.json（含本期）该指标最近 3 期的 value**。即使本期 note 里给了部分原始数据点，只要核心 value 是沿用/估算而非从新原始值算出的，同值仍然计数——例如 `insider_sell_buy` 若连续 ≥3 期 =8x 且始终拿不到 12 家聚合卖/买美元总额，必须标 `suspect_static: true`。周期性/低频指标不适用本条（debt_capex_ratio 的对账节奏、enterprise_deploy 等季度调查类）。
 
 ## 聚合判读
 
