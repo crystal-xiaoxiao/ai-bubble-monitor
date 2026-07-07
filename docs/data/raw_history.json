@@ -5,13 +5,16 @@
     "schema": "{indicator_id: [{date, raw: {自由字段}, value}]}"
   },
   "cape": [
-    { "date": "2026-07-05", "raw": { "multpl": 41.6, "gurufocus": 39.5, "macroradar": 41.66 }, "value": 40.5 }
+    { "date": "2026-07-05", "raw": { "multpl": 41.6, "gurufocus": 39.5, "macroradar": 41.66 }, "value": 40.5 },
+    { "date": "2026-07-07", "raw": { "multpl": 41.6, "gurufocus": 39.46 }, "value": 40.5 }
   ],
   "top5_weight": [
-    { "date": "2026-07-05", "raw": { "nvda": 7.32, "aapl": 7.04, "googl": 5.89, "msft": 4.5, "amzn": 3.69 }, "value": 28.4 }
+    { "date": "2026-07-05", "raw": { "nvda": 7.32, "aapl": 7.04, "googl": 5.89, "msft": 4.5, "amzn": 3.69 }, "value": 28.4 },
+    { "date": "2026-07-07", "raw": { "nvda": 7.0, "aapl": 6.3, "msft": 4.6, "note": "GOOGL/AMZN 未获清晰读数（slickcharts WebFetch 受限）；沿用上期结构估约 28%" }, "value": 28.0 }
   ],
   "nvda_fpe": [
-    { "date": "2026-07-05", "raw": { "gurufocus": 21.85, "yahoo": 22.52, "finbox": 22.1, "stockanalysis": 19.6 }, "value": 22.0 }
+    { "date": "2026-07-05", "raw": { "gurufocus": 21.85, "yahoo": 22.52, "finbox": 22.1, "stockanalysis": 19.6 }, "value": 22.0 },
+    { "date": "2026-07-07", "raw": { "gurufocus": 21.85, "finbox": 21.7, "stockanalysis": 19.6 }, "value": 22.0 }
   ],
   "hyperscaler_capex_yoy": [
     { "date": "2026-07-05", "raw": { "big4_capex_2026e_usd_b": 725, "amzn": 200, "msft": 190, "googl_mid": 180, "meta_mid": 135 }, "value": 77 }
@@ -26,23 +29,28 @@
     { "date": "2026-07-05", "raw": { "equity_commitments_usd_b": 40, "openai_direct_usd_b": 30, "ltm_revenue_usd_b": 300 }, "value": 43 }
   ],
   "breadth_50d": [
-    { "date": "2026-07-05", "raw": { "s5fi": 55.3, "recent_range": [54, 56] }, "value": 55.3 }
+    { "date": "2026-07-05", "raw": { "s5fi": 55.3, "recent_range": [54, 56] }, "value": 55.3 },
+    { "date": "2026-07-07", "raw": { "s5fi": 55.26, "read_as_of": "2026-06-18", "note": "barchart 实时读数受限，55.26 为公开可得最新" }, "value": 55.3 }
   ],
   "insider_sell_buy": [
-    { "date": "2026-07-05", "raw": { "nvda_june_sales_usd_m": 109.9, "nvda_june_buys_usd_m": 0, "aggregate_sell_buy_note": "本期未记录聚合卖/买总金额——自下期起必须记录 12 家聚合卖出与买入美元原始值" }, "value": 8 }
+    { "date": "2026-07-05", "raw": { "nvda_june_sales_usd_m": 109.9, "nvda_june_buys_usd_m": 0, "aggregate_sell_buy_note": "本期未记录聚合卖/买总金额——自下期起必须记录 12 家聚合卖出与买入美元原始值" }, "value": 8 },
+    { "date": "2026-07-07", "raw": { "nvda_18mo_sales_usd_b": 3.3, "huang_18mo_usd_b": 2.9, "insiders_with_buys_18mo": 0, "stevens_trust_shares_618": 885000, "note": "仍未获 12 家 30 日聚合卖/买美元总额；沿用约 8x" }, "value": 8 }
   ],
   "hy_oas": [
     { "date": "2026-06-07", "raw": { "bamlh0a0hym2_bps": 272 }, "value": 272 },
     { "date": "2026-06-14", "raw": { "bamlh0a0hym2_bps": 275 }, "value": 275 },
     { "date": "2026-06-21", "raw": { "bamlh0a0hym2_bps": 271 }, "value": 271 },
     { "date": "2026-06-28", "raw": { "bamlh0a0hym2_bps": 278 }, "value": 278 },
-    { "date": "2026-07-05", "raw": { "bamlh0a0hym2_bps": 263 }, "value": 263 }
+    { "date": "2026-07-05", "raw": { "bamlh0a0hym2_bps": 263 }, "value": 263 },
+    { "date": "2026-07-07", "raw": { "bamlh0a0hym2_bps": 275, "read_as_of": "2026-07-02" }, "value": 275 }
   ],
   "debt_capex_ratio": [
-    { "date": "2026-07-06", "raw": { "numerator_usd_b": 570, "ytd_may_usd_b": 236, "denominator_usd_b": 1040 }, "value": 55 }
+    { "date": "2026-07-06", "raw": { "numerator_usd_b": 570, "ytd_may_usd_b": 236, "denominator_usd_b": 1040 }, "value": 55 },
+    { "date": "2026-07-07", "raw": { "numerator_usd_b": 570, "denominator_usd_b": 1040, "new_deals_this_week_gte_10b": 0 }, "value": 55 }
   ],
   "token_volume_mom": [
-    { "date": "2026-07-05", "raw": { "openrouter_monthly_tokens_t": 100, "openrouter_weekly_tokens_t": 25, "early_june_weekly_tokens_t": 33 }, "value": 35 }
+    { "date": "2026-07-05", "raw": { "openrouter_monthly_tokens_t": 100, "openrouter_weekly_tokens_t": 25, "early_june_weekly_tokens_t": 33 }, "value": 35 },
+    { "date": "2026-07-07", "raw": { "openrouter_monthly_tokens_t": 100, "source_print": "2026-05", "note": "无新月度披露，沿用最新公开值" }, "value": 35 }
   ],
   "gpu_rental_price": [
     { "date": "2026-07-06", "raw": { "h100_ondemand_usd_hr_range": [2.01, 2.53], "h100_spot_low_usd_hr": 1.43, "h200_cloud_usd_hr_range": [3.72, 10.6], "trend": "1yr 合约 1 月底破 $2/hr、2 月 +15-20%，3 月起容量紧俏" }, "value": "tight" }
