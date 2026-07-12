@@ -39,6 +39,22 @@
       "amount_usd_b": 25,
       "source_url": "https://www.bloomberg.com/news/articles/2026-06-15/nvidia-kicks-off-first-high-grade-bond-offering-since-2021",
       "note": "IG 债 7 tranches（2-30 年），$85B 认购，2021 以来首发；30 年期利差 65bps"
+    },
+    {
+      "date": "2026-07-07",
+      "borrower": "Amazon",
+      "instrument": "bond",
+      "amount_usd_b": 25,
+      "source_url": "https://www.bloomberg.com/news/articles/2026-07-07/amazon-returns-to-us-bond-market-to-fund-ai-infrastructure-build",
+      "note": "IG 债，3-40 年期，AA- 评级，峰值需求约 $62B；为 $200B 2026 AI capex 融资；需求较前几笔现轻微疲劳、投资者更挑剔要求更高收益"
+    },
+    {
+      "date": "2026-07-12",
+      "borrower": "QTS (Blackstone)",
+      "instrument": "abs",
+      "amount_usd_b": 2,
+      "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
+      "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
     }
   ]
 }
