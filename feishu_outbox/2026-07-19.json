@@ -1,0 +1,46 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #016 · 2026-07-19",
+        "content": [
+          [{"tag": "text", "text": "🔴 风险温度（红灯比例）24.0% （阈值 60%）"}],
+          [{"tag": "text", "text": "📊 加权风险分 38.0%"}],
+          [{"tag": "text", "text": "🔴 6 红 / 🟠 7 黄 / 🟢 12 绿"}],
+          [{"tag": "text", "text": "🧭 两轴: 泡沫成熟度 60.0（亢奋 Euphoria）· 破裂临近度 23.3（引线未燃）"}],
+          [{"tag": "text", "text": "🕰 历史相似度: 最像 1999-06 互联网泡沫顶前 9 个月（76%）"}],
+          [{"tag": "text", "text": "📈 本周边际: 1 恶化 / 1 好转（净 0）"}],
+          [{"tag": "text", "text": "⚠ 疑似静态: AI 行业 Token 月度环比 连续 4 期 = +35%，请人工核查"}],
+          [{"tag": "text", "text": "💰 本周新增 AI 债务 deal: Nebius $0.78B（GPU 抵押 SPV）· General Compute $0.40B（首笔推理芯片抵押）· 本周无单笔 ≥$10B · 台账可追溯累计约 $75B（MS 全口径锚定 $570B）"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "📌 判读: 高风险预警"}],
+          [{"tag": "text", "text": "头条持平（红灯 24.0%、加权 38.0%）但内部轮动、一进一出恰好对冲：内部人卖压转为决定性红灯（近 5 家龙头卖出约 $688M、买盘几近归零，据新披露改判、撤下约 8x 静态标记），Fed 隐含加息预期本周逆转（12 月加息概率由约 77% 骤降至约 5%）由红降黄。估值 2 红叠加资金面 3 红触发『估值+资金面』双类共振强制升级，维持高风险预警。内部人转红使当前向量向 2000-02（顶前 1 个月）靠拢，与其主要差异收敛至：信用利差未走阔、广度未确认崩溃（但 7/17 指数跌破自身 50 日均线）、IPO 未成洪流、NVDA 远期 PE 仍便宜（22.7x）。"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "▲ 本周变化"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  🔴 内部人卖买比 转红：近 5 家科技龙头卖出约 $688M（Broadcom $250M / NVDA $186M / Oracle $63.7M / Palantir Karp 等），买盘几近归零，比值远超 20x；本轮首次触红"}],
+          [{"tag": "text", "text": "  🟢 Fed 政策 转黄：CME FedWatch(7/18) 显示 12 月加息概率由约 77% 降至约 5%（78% 维持 / 15% 降息），由『隐含加息』回落至『维持高利率』"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔴 当前红灯指标"}],
+          [{"tag": "text", "text": "────────────────"}],
+          [{"tag": "text", "text": "  • CAPE 周期调整 PE: ≈41.3"}],
+          [{"tag": "text", "text": "    逼近 2000 峰值 44.2，远高于均值约 32，估值极度拉伸"}],
+          [{"tag": "text", "text": "  • 前 5 大权重占比: ≈27%（26-28）"}],
+          [{"tag": "text", "text": "    集中度历史高位，市值高度押注少数 AI 龙头（slickcharts 实时源受限，取二手中值）"}],
+          [{"tag": "text", "text": "  • Mag4 自由现金流变化: ≈-90%"}],
+          [{"tag": "text", "text": "    Amazon FCF 转负、Alphabet 骤降约 90% 至 $8.2B，capex 料 Q3 超经营现金流"}],
+          [{"tag": "text", "text": "  • AI 占 VC 投资比重: ≈70%"}],
+          [{"tag": "text", "text": "    H1 全球创投 70%、美国 86%，OpenAI+Anthropic 两家占 43%（$217B）"}],
+          [{"tag": "text", "text": "  • NVDA 客户投资/收入比: ≈43%"}],
+          [{"tag": "text", "text": "    $40B+ 股权承诺（$30B OpenAI）/ $300B LTM，远超 Lucent 1999 峰值 24%，循环融资受质疑"}],
+          [{"tag": "text", "text": "  • AI 龙头内部人卖买比: ≈25x（买盘归零）"}],
+          [{"tag": "text", "text": "    近 5 家龙头卖出约 $688M、买盘几近归零，逼近/超越 2000 年 23x 极值"}],
+          [{"tag": "text", "text": ""}],
+          [{"tag": "text", "text": "🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag": "text", "text": "🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}

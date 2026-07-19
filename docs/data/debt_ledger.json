@@ -55,6 +55,22 @@
       "amount_usd_b": 2,
       "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
       "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
+    },
+    {
+      "date": "2026-07-10",
+      "borrower": "Nebius Group",
+      "instrument": "spv_jv",
+      "amount_usd_b": 0.775,
+      "source_url": "https://www.stocktitan.net/sec-filings/NBIS/6-k-nebius-group-n-v-current-report-foreign-issuer-c2147f361191.html",
+      "note": "GPU/资产抵押 SPV 高级担保定期贷款（Senior Facility Agreement 7/10，约 7/15-17 经 6-K 披露）；单笔 <$10B"
+    },
+    {
+      "date": "2026-07-17",
+      "borrower": "General Compute",
+      "instrument": "private_credit",
+      "amount_usd_b": 0.40,
+      "source_url": "https://techcrunch.com/2026/07/17/why-the-first-gpu-financiers-are-turning-to-inference-chips-in-a-400-million-deal/",
+      "note": "Upper90 私募信用贷款，以 SambaNova SN50 推理 ASIC 为抵押——首笔以推理芯片作抵押的债务融资；单笔 <$10B"
     }
   ]
 }
