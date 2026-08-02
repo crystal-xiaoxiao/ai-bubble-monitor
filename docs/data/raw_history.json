@@ -57,6 +57,16 @@
         ]
       },
       "value": 40.6
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "multpl": 40.91,
+        "gurufocus": 41.29,
+        "in2013dollars": 41.37,
+        "asof": "2026-08 early"
+      },
+      "value": 41.0
     }
   ],
   "top5_weight": [
@@ -123,6 +133,21 @@
         "note": "slickcharts egress 受限；二手读，AI 硬件回调略削集中度"
       },
       "value": 26.5
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "nvda": 7.74,
+        "msft": 6.87,
+        "aapl": 6.32,
+        "amzn": 3.94,
+        "googl_a": 2.26,
+        "googl_combined": 4.09,
+        "top5_single_class": 27.1,
+        "top5_googl_combined": 28.96,
+        "note": "slickcharts egress 受限，SPY holdings 二手读；MSFT 因财报 +15.5% 权重跳升"
+      },
+      "value": 28.0
     }
   ],
   "nvda_fpe": [
@@ -184,6 +209,19 @@
         ]
       },
       "value": 21.5
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "gurufocus": 22.45,
+        "valueinvesting": 19.54,
+        "analyst_based": 21.7,
+        "other": 24.04,
+        "trailing": 30.6,
+        "stock_usd": 200.75,
+        "asof": "2026-07-31"
+      },
+      "value": 22.0
     }
   ],
   "hyperscaler_capex_yoy": [
@@ -213,6 +251,33 @@
         "meta_mid": 135
       },
       "value": 80
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "msft_fy27_guide_usd_b": [
+          255,
+          260
+        ],
+        "msft_q4_capex_usd_b": 41,
+        "meta_2026_raised_usd_b": [
+          130,
+          145
+        ],
+        "meta_q2_capex_usd_b": 31.1,
+        "amzn_2026_usd_b": 220,
+        "googl_2026_usd_b": [
+          195,
+          205
+        ],
+        "big4_2026e_usd_b": [
+          740,
+          770
+        ],
+        "yoy_pct": 80,
+        "note": "三家本周全部上调、无一下调"
+      },
+      "value": 80
     }
   ],
   "mag4_fcf_yoy": [
@@ -236,6 +301,18 @@
         "alphabet_first_negative_fcf": true,
         "alphabet_q2_capex_usd_b": 44.9,
         "amzn_2026e_fcf": "negative"
+      },
+      "value": -90
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "meta_q2_fcf_usd_m": 784,
+        "meta_fcf_yoy_pct": -91,
+        "amzn_ttm_fcf_usd_b": -7.6,
+        "msft_q4_fcf_usd_b": 19.6,
+        "alphabet_q2_fcf_usd_b": -5.855,
+        "note": "Meta -91%、Amazon TTM 转负、仅 MSFT 仍正"
       },
       "value": -90
     }
@@ -285,6 +362,18 @@
         "note": "沿用 H1 硬数据，无新季度披露"
       },
       "value": 70
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "ai_share_global_h1_pct": 70,
+        "ai_share_us_h1_pct": 86,
+        "us_ai_h1_usd_b": 355.9,
+        "h1_global_vc_usd_b": 510,
+        "openai_anthropic_h1_usd_b": 217,
+        "note": "沿用 H1，无新 Q3 披露"
+      },
+      "value": 70
     }
   ],
   "nvda_invest_revenue": [
@@ -304,6 +393,16 @@
         "openai_direct_usd_b": 30,
         "ltm_revenue_usd_b": 300,
         "note": "承诺额环比未再扩张；CoreWeave $6.3B CPA 为循环案例"
+      },
+      "value": 43
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "equity_commitments_usd_b": 40,
+        "openai_direct_usd_b": 30,
+        "ltm_revenue_usd_b": 300,
+        "note": "本周无新增承诺；Nvidia 暂停新投、承诺额自 5 月持平至边际收敛"
       },
       "value": 43
     }
@@ -359,6 +458,20 @@
         "note": "本期获现值读数，较上期沿用约54.1明显走弱"
       },
       "value": 48.5
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "s5fi": 71.57,
+        "s5fi_range": [
+          70.97,
+          73.75
+        ],
+        "s5fi_asof": "2026-07-31",
+        "pct_above_200d": 70,
+        "note": "环比 +约22pt，MSFT +15.5% 领涨广度修复，2 月以来首次多数个股上 50 日线"
+      },
+      "value": 71.6
     }
   ],
   "insider_sell_buy": [
@@ -423,6 +536,23 @@
         "note": "无新增聚合美元比，沿用约25x 方向性估算（第2期）"
       },
       "value": 25
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "huang_sold_usd_m": 39.16,
+        "huang_shares": 202797,
+        "huang_dates": "2026-07-24..28",
+        "huang_price_range": [
+          172.07,
+          176.37
+        ],
+        "nvda_exec_trailing_usd_b": 3.3,
+        "buys": "near-zero",
+        "note": "openinsider 连续第 3 周 egress 受限；12 家聚合美元比仍无法精确获取，沿用约 25x 方向性估算（连续第 3 期同值）→ suspect_static"
+      },
+      "value": 25,
+      "suspect_static": true
     }
   ],
   "hy_oas": [
@@ -501,6 +631,16 @@
         "note": "FRED 主源 egress 受限，取镜像"
       },
       "value": 277
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "convex_bps": 284,
+        "convex_asof": "2026-07-30",
+        "tradingeconomics_bps": 279,
+        "note": "FRED 主源 egress 受限，取 Convex/TradingEconomics 镜像"
+      },
+      "value": 284
     }
   ],
   "debt_capex_ratio": [
@@ -562,6 +702,21 @@
         "days_since_full_recon": 20
       },
       "value": 55
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "numerator_usd_b": 570,
+        "denominator_usd_b": 1040,
+        "new_deals_this_week_gte_10b": 1,
+        "meta_blackrock_usd_b": 12.5,
+        "meta_blackrock_yield_pct": 7.53,
+        "cloud_capital_abs_usd_b": 0.52,
+        "new_this_week_total_usd_b": 13.02,
+        "days_since_full_recon": 27,
+        "note": "Meta/BlackRock $12.5B 定价 7.53%、认购覆盖 <2x；ABS 侧仍最紧"
+      },
+      "value": 55
     }
   ],
   "token_volume_mom": [
@@ -617,6 +772,16 @@
       },
       "value": 35,
       "suspect_static": true
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "openrouter_monthly_tokens_t": 125,
+        "openrouter_annual_runrate_quadrillion": 1.5,
+        "daily_tokens_t": 1,
+        "note": "绝对量升破约100T/月平台至约125T/月（+约25%），静态锚打破；但底层 tracker 数据约 4-8 周旧、openrouter/rankings 403"
+      },
+      "value": 25
     }
   ],
   "gpu_rental_price": [
@@ -680,6 +845,23 @@
         ]
       },
       "value": "tight"
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "h100_sxm_ondemand_median_usd_hr": [
+          3.2,
+          3.5
+        ],
+        "h100_spot_low_usd_hr": 0.35,
+        "h200_median_usd_hr": [
+          3.72,
+          4.11
+        ],
+        "availability": "混合，Lambda 部分缺货，无过剩",
+        "note": "H100 on-demand 由约 $3.94 边际转松至约 $3.2-3.5，H200 大体持平；无过剩"
+      },
+      "value": "tight"
     }
   ],
   "private_secondary_marks": [
@@ -733,6 +915,21 @@
         "flow": "溢价扩大；OpenAI 因 GPT-5.6 回暖但仍慢于 Anthropic"
       },
       "value": "premium"
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "anthropic_caplight_implied_usd_b": 1200,
+        "anthropic_yoy_pct": 550,
+        "anthropic_hiive_share_usd": 900,
+        "anthropic_hiive_3mo_pct": 211,
+        "anthropic_last_primary_usd_b": 965,
+        "openai_caplight_implied_usd_b": 908,
+        "openai_hiive_share_usd": 608,
+        "openai_hiive_3mo_pct": 8.5,
+        "flow": "Anthropic 反超 OpenAI、几无卖方；OpenAI 由 933 微降至 908 但 GPT-5.6 后买兴趣回暖"
+      },
+      "value": "premium"
     }
   ],
   "arr_2nd_deriv": [
@@ -774,6 +971,18 @@
         "openai_arr_july_usd_b": 41.3,
         "openai_arr_may_usd_b": 33,
         "note": "Anthropic 增速回落、二阶导转负 → 由 accelerating 降 flat/yellow"
+      },
+      "value": "flattening"
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "anthropic_arr_july_usd_b": 74.1,
+        "anthropic_arr_june_usd_b": 69.6,
+        "monthly_increment_now_usd_b": 4.5,
+        "monthly_increment_prev_usd_b": 17,
+        "openai_arr_july_usd_b": 41.3,
+        "note": "无 8 月新披露，沿用 7 月台账；Anthropic 减速确认、OpenAI 仍加速"
       },
       "value": "flattening"
     }
@@ -851,6 +1060,24 @@
         "note": "对上期无实质放缓"
       },
       "value": "accelerating"
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "releases_90d": [
+          "Claude Opus 5 (7/24)",
+          "GPT-5.6 Sol",
+          "Grok 4.5 (7/8)"
+        ],
+        "hle_sota_pct": 53.3,
+        "hle_sota_model": "Claude Fable 5",
+        "swebench_pro_sota_pct": 80.3,
+        "gpqa_sota_pct": 94.6,
+        "metr_doubling_months": 4,
+        "metr_50pct_horizon_hours": 12,
+        "note": "倍增时间由约7月缩至约4月=更快；新旗舰密集"
+      },
+      "value": "accelerating"
     }
   ],
   "enterprise_deploy": [
@@ -867,6 +1094,16 @@
       "raw": {
         "mckinsey_q1_production_pct": 72,
         "note": "季度调查，沿用 Q1，Q2 待发布"
+      },
+      "value": 72
+    },
+    {
+      "date": "2026-08-02",
+      "raw": {
+        "mckinsey_q1_production_pct": 72,
+        "q2_agents_in_prod_pct": 31,
+        "scaled_pct": 28,
+        "note": "季度调查，无新 Q2 整体生产化读数，沿用 Q1"
       },
       "value": 72
     }
