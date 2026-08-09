@@ -1,0 +1,46 @@
+{
+  "msg_type": "post",
+  "content": {
+    "post": {
+      "zh_cn": {
+        "title": "📊 AI 泡沫监测 · Issue #019 · 2026-08-09",
+        "content": [
+          [{"tag":"text","text":"🔴 风险温度（红灯比例）24.0% （阈值 60%）"}],
+          [{"tag":"text","text":"📊 加权风险分 40.0%"}],
+          [{"tag":"text","text":"🔴 6 红 / 🟠 8 黄 / 🟢 11 绿"}],
+          [{"tag":"text","text":"🧭 两轴: 泡沫成熟度 60.0（亢奋 Euphoria）· 破裂临近度 26.7（零星火花 Sparks）"}],
+          [{"tag":"text","text":"🕰 历史相似度: 最像 2000-02 互联网泡沫顶前 1 个月（76%）"}],
+          [{"tag":"text","text":"📈 本周边际: 0 恶化 / 0 好转（净 0）"}],
+          [{"tag":"text","text":"⚠ 疑似静态: AI 龙头内部人卖买比 连续 4 期 = ≈25x（买盘归零），openinsider 连续 4 周受限、拿不到 12 家聚合美元比，请人工核查"}],
+          [{"tag":"text","text":"💰 本周新增 AI 债务 deal: Oracle/Vantage $38B 数据中心债务包（德州 $23.25B + 威州 $14.75B，JPM/MUFG，供 OpenAI 托管）——迄今最大单笔 AI 基建债 · 28 天完整对账后 YTD 全口径锚定约 $570B、比值维持约 55%"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"📌 判读: 高风险预警"}],
+          [{"tag":"text","text":"头条连续第 3 期钉在 24% 红灯、无一指标变色，但平静里藏着一次『滞胀预演』：油价破 $100 令 9 月加息定价一度飙至 55-82%、道指跌逾 450 点，随后疲软 7 月非农（-2.3 万 vs 预期 +8.3 万）浇灭加息预期，市场趁势 melt-up、S&P 周五收 7757 创历史新高（全周 +3.6%）。真正在积累的不是红灯数量，而是估值再拉伸（CAPE 约 42、逼近 2000 峰值 44.2）、Fed 曲线转鹰（10 月加息约 55%、12 月约 75%）、循环融资/信用审视升级（Nvidia 拟为 OpenAI 提供 $250B 融资担保、Oracle $38B 债包、CoreWeave CDS 仍约 855bps）。基础档位 24.0% 本落观察期，因估值 2 红 + 资金面 3 红双类共振强制升级，维持高风险预警。与 2000-02 主要差异（顶前夜要盯）：NVDA 远期 PE 仍便宜（约 23x）、广度仍绿（但转 choppy）、宽口径 HY 仍紧（272bps）、IPO 未成洪流、Fed 为维持而非明确加息。"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"▲ 本周变化"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  📈 全口径债务/Capex: Oracle/Vantage $38B 数据中心债务包（迄今最大 AI 基建单笔债）本周市场推进；28 天完整对账维持约 55%（黄）"}],
+          [{"tag":"text","text":"  📉 S&P 50 日均线上方比例: 广度转 choppy——周中 8/7 因油价一度回落至约 58.3%，周五随记录新高修复，全周 58-72%、估约 62%，环比软化约 -13% 但守绿"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔴 当前红灯指标"}],
+          [{"tag":"text","text":"────────────────"}],
+          [{"tag":"text","text":"  • CAPE 周期调整 PE: ≈42.0"}],
+          [{"tag":"text","text":"    续升创本轮新高、逼近 2000 峰值 44.2（仅差约 5%），为 150 年次高"}],
+          [{"tag":"text","text":"  • 前 5 大权重占比: ≈28%"}],
+          [{"tag":"text","text":"    NVDA≈7.6% / MSFT≈6.9% / AAPL≈6.4%，record-high 周使集中度续处纪录"}],
+          [{"tag":"text","text":"  • Mag4 自由现金流变化: ≈-90%"}],
+          [{"tag":"text","text":"    Meta Q2 FCF -91%、Amazon TTM 转负、仅 MSFT 仍正，多数转向外部融资"}],
+          [{"tag":"text","text":"  • AI 占 VC 投资比重: ≈70%"}],
+          [{"tag":"text","text":"    占全球创投超 70%、美国 H1 86%，OpenAI+Anthropic 两家占 43%"}],
+          [{"tag":"text","text":"  • NVDA 客户投资/收入比: ≈43%"}],
+          [{"tag":"text","text":"    二阶再扩张：Nvidia 拟为 OpenAI 俄亥俄 $500B 项目提供 $250B 融资担保 + $350B 芯片融资，financing web 再膨胀"}],
+          [{"tag":"text","text":"  • AI 龙头内部人卖买比: ≈25x（买盘归零）"}],
+          [{"tag":"text","text":"    15 名 NVDA 内部人 18 月零买入、累计卖出约 $3.3B；openinsider 连续 4 周受限，疑似静态"}],
+          [{"tag":"text","text":""}],
+          [{"tag":"text","text":"🔗 中文 Dashboard: https://aibubble-cn.github.io"}],
+          [{"tag":"text","text":"🔗 English: https://bubblewatch.github.io"}]
+        ]
+      }
+    }
+  }
+}
