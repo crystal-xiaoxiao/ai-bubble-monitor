@@ -78,6 +78,18 @@
         "asof": "2026-08-01"
       },
       "value": 42.0
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "gurufocus": 42.18,
+        "macroradar": 41.18,
+        "thetrading_tools": 41.2,
+        "in2013dollars": 41.37,
+        "marketcrash": 42.19,
+        "asof": "2026-08"
+      },
+      "value": 41.5
     }
   ],
   "top5_weight": [
@@ -173,6 +185,21 @@
         "note": "slickcharts egress 受限；SPY 二手读+FinancialContent 记录集中度 34% (IT sector)；record-high 周使集中度续处纪录，取中值约 28%"
       },
       "value": 28.0
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "nvda": 7.74,
+        "aapl": 7.04,
+        "msft": 6.87,
+        "amzn": 3.9,
+        "googl_a": 2.3,
+        "top5_single_class_est": 27.85,
+        "top10_pct": 37.65,
+        "asof": "2026-08-11",
+        "note": "slickcharts egress 受限，SPY 二手读；NVDA 史上最大 S&P 单一权重"
+      },
+      "value": 28.0
     }
   ],
   "nvda_fpe": [
@@ -259,6 +286,17 @@
         "asof": "2026-08-07"
       },
       "value": 23.0
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "gurufocus": 25.17,
+        "gurufocus_asof": "2026-08-15",
+        "valueinvesting": 22.59,
+        "financecharts": 24.04,
+        "analyst_based": 25.1
+      },
+      "value": 24.0
     }
   ],
   "hyperscaler_capex_yoy": [
@@ -327,6 +365,18 @@
         "note": "Q2 财报季已结束、无新指引；沿用 8/2 台账（MSFT FY27 $255-260B / Meta $130-145B / Amazon $220B / Google $195-205B），Nvidia 8 月下旬财报为下一催化"
       },
       "value": 80
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "big4_2026e_usd_b": [
+          740,
+          770
+        ],
+        "yoy_pct": 80,
+        "note": "Q2 季后无新指引；Nvidia 8/27 财报为下一催化"
+      },
+      "value": 80
     }
   ],
   "mag4_fcf_yoy": [
@@ -373,6 +423,17 @@
         "msft_q4_fcf_usd_b": 19.6,
         "alphabet_q2_fcf_usd_b": -5.855,
         "note": "Q2 已全部落地、无新披露；沿用 8/2 台账，Mag4 多数吞现金转向外部融资"
+      },
+      "value": -90
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "meta_q2_fcf_usd_m": 784,
+        "amzn_ttm_fcf_usd_b": -7.6,
+        "msft_q4_fcf_usd_b": 19.6,
+        "alphabet_q2_fcf_usd_b": -5.855,
+        "note": "无新披露，沿用 Q2 台账"
       },
       "value": -90
     }
@@ -445,6 +506,17 @@
         "note": "PitchBook/Crunchbase H1 2026 仍为最新硬数据，无新 Q3 披露；沿用"
       },
       "value": 70
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "ai_share_global_h1_pct": 70,
+        "ai_share_us_h1_pct": 86,
+        "h1_global_vc_usd_b": 510,
+        "openai_anthropic_h1_usd_b": 217,
+        "note": "H1 2026 仍为最新硬数据，无新 Q3 披露"
+      },
+      "value": 70
     }
   ],
   "nvda_invest_revenue": [
@@ -487,6 +559,17 @@
         "nvidia_openai_chip_financing_usd_b": 350,
         "sk_group_project_usd_b": 500,
         "note": "二阶转再扩张：WSJ 7/27 披露 Nvidia 拟为 OpenAI 俄亥俄 $500B 项目提供 $250B 融资担保 + 约 $350B 芯片采购融资，从直接股权转向贷款背书；+$500B SK Group 项目。直接股权仍约 $40B，但 financing web 再度扩张"
+      },
+      "value": 43
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "equity_commitments_usd_b": 40,
+        "openai_direct_usd_b": 30,
+        "ltm_revenue_usd_b": 300,
+        "nvidia_wallstreet_funding_commitment_usd_b": 500,
+        "note": "Fortune 8/11：Nvidia 向华尔街寻求约 $500B 融资承诺（含 OpenAI $250B 背书 + $350B 芯片融资 + SK $500B）；直接股权仍约 $40B/OpenAI $30B，financing web 续扩"
       },
       "value": 43
     }
@@ -570,6 +653,18 @@
         "note": "周中 8/7 因油价冲击回落至 58.3%，周五 8/8 随 S&P 记录新高（+3.6% 周）修复；全周区间约 58-72%，取约 62% 估 end-of-week，守绿但转 choppy"
       },
       "value": 62.0
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "s5fi_aug7": 65.6,
+        "spx_week_close": 7785.76,
+        "spx_week_pct": 1.15,
+        "vix": 14.85,
+        "est_eow": 66,
+        "note": "Aug7 现值 65.6%；市场 melt-up 至记录新高（S&P 7785.76、连三周涨）、VIX 约 14.85 多月低位；周五 8/14 UMich 情绪走弱小幅回落，估 end-of-week 约 66%（barchart/investing 实时源仍受限）"
+      },
+      "value": 66.0
     }
   ],
   "insider_sell_buy": [
@@ -661,6 +756,20 @@
         "stevens_dec25_mar26_usd_m": 100,
         "buys": "near-zero",
         "note": "openinsider 连续第 4 周 egress 受限；12 家 30 日聚合卖/买美元总额仍无法精确获取，买盘仍归零（15 名内部人 18 月零买入），沿用约 25x 方向性估算（连续第 4 期同值）→ suspect_static"
+      },
+      "value": 25,
+      "suspect_static": true
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "nvda_90d_sales_usd_m": 767.2,
+        "nvda_90d_txns": 13,
+        "huang_aug6_usd_m": 13.38,
+        "huang_aug8_usd_m": 13.68,
+        "insiders_with_buys_18mo": 0,
+        "buys": "near-zero",
+        "note": "openinsider 连续第 5 周 egress 受限；12 家 30 日聚合卖/买美元总额仍无法精确获取（NVDA 90 日 13 笔全为卖出约 $767M、买盘归零），沿用约 25x 方向性估算（连续第 5 期同值）→ suspect_static"
       },
       "value": 25,
       "suspect_static": true
@@ -762,6 +871,16 @@
         "note": "FRED 主源 egress 受限，取 Convex/TradingEconomics 镜像；环比 -13bps 收窄，宽口径 HY 续处最紧十分位"
       },
       "value": 271
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "convex_bps": 271,
+        "convex_asof": "2026-08-12",
+        "tradingeconomics_bps": 272,
+        "note": "FRED 主源 egress 受限，取 Convex/TradingEconomics 镜像；环比基本持平，续处最紧十分位"
+      },
+      "value": 271
     }
   ],
   "debt_capex_ratio": [
@@ -856,6 +975,21 @@
         "note": "28 天完整对账（上次 7/6）：MS 全口径 2026E 新增债务 $570B ÷ 全口径 capex $1.04T ≈ 55%（50-60%）。本周焦点 Oracle $38B Vantage 债务包（迄今最大 AI 基建单笔债），属锚定内明细不重复加总"
       },
       "value": 55
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "numerator_usd_b": 570,
+        "denominator_usd_b": 1040,
+        "new_deals_this_week_gte_10b": 0,
+        "jane_street_dc_green_bond_usd_b": 2.25,
+        "jane_street_yield_pct": 9,
+        "sec_securitization_easing": true,
+        "theme": "AI debt indigestion / SEC 证券化松绑",
+        "days_since_full_recon": 7,
+        "note": "周度增量：+$2.25B Jane Street 绿色 DC 债（约 9% 5yr）；SEC 8/10 豁免 DC 证券化关键披露规则（供给端利好）；无新 ≥$10B deal；last_full_recon 仍 8/9，未到 28 天"
+      },
+      "value": 55
     }
   ],
   "token_volume_mom": [
@@ -929,6 +1063,16 @@
         "openrouter_annual_runrate_quadrillion": 1.5,
         "openrouter_users_m": 8,
         "note": "本周未获全新独立月度绝对量读数（openrouter/rankings 仍 403，25T/周 与 1.5Q/年 为 5-7 月口径），沿用约 125T/月量级。行业绝对用量续处高位、无收缩迹象；无 fresh read 故环比按持平估，green"
+      },
+      "value": 5
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "openrouter_weekly_tokens_t": 25,
+        "openrouter_monthly_tokens_t": "100-125",
+        "openrouter_annual_runrate_quadrillion": 1.5,
+        "note": "openrouter/rankings 仍无 fresh read（25T/周、1.5Q/年 为 5-7 月口径）；OpenAI 7 月 MoM +20%、Anthropic 增长交叉印证行业无收缩；环比按持平估，freshness 告警加深（绝对量数据已约 10-12 周旧）"
       },
       "value": 5
     }
@@ -1029,6 +1173,25 @@
         "note": "较上期边际转松反转回firm——on-demand 回升逼近 $3、需求强、无过剩；供需温度计维持偏紧"
       },
       "value": "tight"
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "h100_ondemand_usd_hr": [
+          2.19,
+          2.69
+        ],
+        "h100_spot_usd_hr": [
+          1.0,
+          2.0
+        ],
+        "h200_ondemand_usd_hr": 3.99,
+        "h200_spot_usd_hr": 1.99,
+        "median_ondemand_usd_hr": 4.47,
+        "median_ondemand_yoy_pct": 28,
+        "note": "H100 on-demand 约 $2.19-2.69（Jarvis $2.69）、median $4.47（YoY +28%）；无广泛过剩，供需仍偏紧"
+      },
+      "value": "tight"
     }
   ],
   "private_secondary_marks": [
@@ -1110,6 +1273,18 @@
         "note": "旗舰均无折价、Anthropic 溢价扩大，一级市场无退潮信号；沿用绿灯"
       },
       "value": "premium"
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "anthropic_caplight_implied_usd_b": 1200,
+        "anthropic_last_primary_usd_b": 965,
+        "openai_caplight_implied_usd_b": 908,
+        "openai_forge_implied_usd_b": 880,
+        "openai_last_primary_usd_b": 852,
+        "note": "Anthropic 续为二级最抢手、几无卖方；OpenAI Forge 仅较一级 +3%；旗舰均无折价，green"
+      },
+      "value": "premium"
     }
   ],
   "arr_2nd_deriv": [
@@ -1173,10 +1348,26 @@
         "anthropic_arr_june_usd_b": 69.6,
         "monthly_increment_now_usd_b": 4.5,
         "monthly_increment_prev_usd_b": 17,
-        "openai_arr_gross_usd_b": [33, 41],
+        "openai_arr_gross_usd_b": [
+          33,
+          41
+        ],
         "openai_confirmed_monthly_usd_b": 2,
         "openai_net_annualized_usd_b": 24,
         "note": "无 8 月新披露，沿用 7 月台账；Anthropic 已反超 OpenAI（run-rate + 估值），Anthropic 月增量 +$4.5B（前 +$17B）二阶导仍负；OpenAI 确认约 $2B/月（净约 $24B、gross-leaning 约 $33-41B）。两家二阶导混合 → flat/yellow"
+      },
+      "value": "flattening"
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "openai_runrate_usd_b": 40,
+        "openai_july_mom_pct": 20,
+        "openai_2025_close_runrate_usd_b": 20,
+        "anthropic_arr_usd_b": 74.1,
+        "anthropic_monthly_increment_usd_b": 4.5,
+        "anthropic_monthly_increment_prev_usd_b": 17,
+        "note": "Bloomberg 8/13-14：OpenAI run rate 破 $40B（较 2025 底 $20B 翻倍）、Brockman 称 7 月 MoM +20%（再加速）；Anthropic $74.1B 但月增量回落至 +$4.5B（前 +$17B）二阶导仍负 → 两家混合，维持 flat/yellow"
       },
       "value": "flattening"
     }
@@ -1278,11 +1469,37 @@
       "raw": {
         "hle_sota_pct": 53.3,
         "hle_yoy_gain_pp": 30,
-        "gpqa_leaders": {"gemini_3_1_pro": 94.3, "claude_fable_5": 94.1, "claude_opus_4_8": 93.6},
+        "gpqa_leaders": {
+          "gemini_3_1_pro": 94.3,
+          "claude_fable_5": 94.1,
+          "claude_opus_4_8": 93.6
+        },
         "swebench_pro_sota_pct": 80.3,
-        "releases_recent": ["Claude Opus 5 (7/24)", "GPT-5.6 Sol", "Grok 4.5 (7/8)", "Claude Mythos"],
+        "releases_recent": [
+          "Claude Opus 5 (7/24)",
+          "GPT-5.6 Sol",
+          "Grok 4.5 (7/8)",
+          "Claude Mythos"
+        ],
         "metr_doubling_months": 4,
         "note": "HLE 一年内 +30pp、困难基准数月内饱和=进展仍快；METR 倍增约 4 月轨道未放缓；旗舰密集，无代际停滞。对台账上期无实质放缓，维持加速/绿"
+      },
+      "value": "accelerating"
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "hle_sota_pct": 53.3,
+        "swebench_pro_sota_pct": 80.3,
+        "metr_doubling_months": 4,
+        "releases_recent": [
+          "GLM-5.3 (8/14)",
+          "Qwen3.8-27B (8/14)",
+          "Claude Opus 5 (7/24)",
+          "GPT-5.6 Sol",
+          "Grok 4.5 (7/8)"
+        ],
+        "note": "近两周新发多为中国开源前沿（GLM-5.3/Qwen3.8）；西方旗舰无新代际 SOTA 跳升但亦无 2 季停滞，METR 约 4 月倍增未放缓；对台账上期无实质放缓，维持加速/绿"
       },
       "value": "accelerating"
     }
@@ -1319,6 +1536,14 @@
       "raw": {
         "mckinsey_q1_production_pct": 72,
         "note": "季度调查，无新 Q2/Q3 整体生产化读数，沿用 Q1；头部部署率高位维持绿"
+      },
+      "value": 72
+    },
+    {
+      "date": "2026-08-16",
+      "raw": {
+        "mckinsey_q1_production_pct": 72,
+        "note": "季度调查，无新 Q2/Q3 整体生产化读数，沿用 Q1"
       },
       "value": 72
     }
