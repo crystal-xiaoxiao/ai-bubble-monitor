@@ -1,0 +1,118 @@
+{
+  "_meta": {
+    "purpose": "GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
+    "schema_version": 1,
+    "fetched_at": "2026-08-17T08:07:34.230Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/32008835612"
+  },
+  "sources": {
+    "insider_sell_buy": {
+      "status": "ok",
+      "as_of": "2026-08-17",
+      "window": {
+        "start": "2026-07-18",
+        "end": "2026-08-17"
+      },
+      "summary": "12 家 30 日（2026-07-18~2026-08-17）：卖出 $411.5M / 买入 $0.9M，比值 442.8x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 92 份）",
+      "data": {
+        "sell_usd": 411451596,
+        "buy_usd": 929279,
+        "ratio": 442.8,
+        "zero_buy": true,
+        "form4_count": 92,
+        "skipped_no_price": 0,
+        "skipped_amendments": 0,
+        "skipped_ad_mismatch": 0,
+        "skipped_non_xml": 0,
+        "by_ticker": {
+          "NVDA": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 2
+          },
+          "AVGO": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 2
+          },
+          "AMD": {
+            "sell_usd": 67889,
+            "buy_usd": 0,
+            "form4_count": 10
+          },
+          "MSFT": {
+            "sell_usd": 7267174,
+            "buy_usd": 0,
+            "form4_count": 3
+          },
+          "GOOGL": {
+            "sell_usd": 9627518,
+            "buy_usd": 0,
+            "form4_count": 15
+          },
+          "META": {
+            "sell_usd": 3638196,
+            "buy_usd": 0,
+            "form4_count": 8
+          },
+          "AMZN": {
+            "sell_usd": 346731904,
+            "buy_usd": 0,
+            "form4_count": 3
+          },
+          "ORCL": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "TSM": {
+            "sell_usd": 0,
+            "buy_usd": 929279,
+            "form4_count": 38
+          },
+          "MU": {
+            "sell_usd": 38169091,
+            "buy_usd": 0,
+            "form4_count": 4
+          },
+          "ARM": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "PLTR": {
+            "sell_usd": 5949824,
+            "buy_usd": 0,
+            "form4_count": 5
+          }
+        }
+      },
+      "source": "SEC EDGAR (data.sec.gov submissions + Form 4 XML)",
+      "error": null
+    },
+    "token_volume": {
+      "status": "error",
+      "as_of": null,
+      "summary": "抓取失败：OPENROUTER_API_KEY 未设置",
+      "data": null,
+      "source": null,
+      "error": "OPENROUTER_API_KEY 未设置"
+    },
+    "top5_weight": {
+      "status": "error",
+      "as_of": null,
+      "summary": "抓取失败：curl: curl: (22) The requested URL returned error: 403",
+      "data": null,
+      "source": null,
+      "error": "curl: curl: (22) The requested URL returned error: 403"
+    },
+    "hy_oas": {
+      "status": "error",
+      "as_of": null,
+      "summary": "抓取失败：FRED_API_KEY 未设置",
+      "data": null,
+      "source": null,
+      "error": "FRED_API_KEY 未设置"
+    }
+  }
+}
