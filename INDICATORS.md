@@ -19,11 +19,12 @@
 
 ## 数据抓取纪律（反锚定自检）
 
-抓数最常见的失败模式是**锚定上期值**：搜到相似文章后复读上期数字，`as_of` 每周更新、value 却常年不动（历史上 insider_sell_buy 曾连续 5 期 ~8x、token_volume_mom 连续 5 期 +35%）。为杜绝静默沿用：
+抓数最常见的失败模式是**锚定上期值**：搜到相似文章后复读上期数字，`as_of` 每周更新、value 却常年不动（历史上 insider_sell_buy 曾连续 5 期 ~8x、token_volume_mom 连续 5 期 +35%）。**2026-08 教训**：openinsider/openrouter 被 egress 403 后，insider 连续 5 期估算值、token 底层绝对量停更 10-12 周，但 as_of 每周照写新日期、同值预警只数派生 value（MoM% 变了计数就重置）——两个失效都没被发现。为杜绝静默沿用：
 
-1. **原始数据点强制**：数据源为活源（日更/周更，如 openinsider、OpenRouter、FRED、barchart）的数值型指标，note 里**必须写出本期实际抓到的原始数据点**——例如 `insider_sell_buy` 要写「30 日卖出 $X.XB / 买入 $XM」、`token_volume_mom` 要写本期 token 绝对量。给不出原始数据点 = 本期没抓到数 = 沿用上期并标 `stale: true`，不允许"as_of 更新了、值是抄的"。
-2. **原始值台账**：每次运行把各数值型指标的本期原始输入追加进 `docs/data/raw_history.json`（结构：`{"indicator_id": [{"date": "YYYY-MM-DD", "raw": {...自由字段...}, "value": N}]}`，每指标保留最近 26 期）。**环比/增速/比值一律用台账里的上期原始值计算**，不允许直接 web_search 搜"环比增速"抄结论。
-3. **同值预警**：活源数值型指标连续 3 期 value 完全相同 → 该指标输出 `suspect_static: true`（可选字段，前端可忽略），并在飞书推送里单列一行「⚠ 疑似静态：{指标} 连续 {N} 期 = {value}，请人工核查」。**判断方法：数 raw_history.json（含本期）该指标最近 3 期的 value**。即使本期 note 里给了部分原始数据点，只要核心 value 是沿用/估算而非从新原始值算出的，同值仍然计数——例如 `insider_sell_buy` 若连续 ≥3 期 =8x 且始终拿不到 12 家聚合卖/买美元总额，必须标 `suspect_static: true`。周期性/低频指标不适用本条（debt_capex_ratio 的对账节奏、enterprise_deploy 等季度调查类）。
+1. **prefetch 优先**：`docs/data/prefetch/latest.json` 是 GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个 egress 受限源）。凡该文件中 `_meta.fetched_at` 距今 <3 天且对应源 `status=="ok"` 的指标，**必须以 prefetch 的 data/summary 为本期原始数据点**（note 引用其数字，`as_of` 取该源的 `as_of` 字段），不再自行 WebFetch；prefetch 不可用才走该指标定义里的备源链。
+2. **原始数据点强制**：数据源为活源（日更/周更，如 SEC EDGAR、OpenRouter API、FRED、barchart）的数值型指标，note 里**必须写出本期实际抓到的原始数据点**——例如 `insider_sell_buy` 要写「30 日卖出 $X.XB / 买入 $XM」、`token_volume_mom` 要写本期 30 日 token 绝对量。给不出原始数据点 = 本期没抓到数 = 沿用上期并标 `stale: true`，不允许"as_of 更新了、值是抄的"。
+3. **原始值台账**：每次运行把各数值型指标的本期原始输入追加进 `docs/data/raw_history.json`（结构：`{"indicator_id": [{"date": "YYYY-MM-DD", "raw": {...自由字段...}, "value": N}]}`，每指标保留最近 26 期）。**环比/增速/比值一律用台账里的上期原始值计算**，不允许直接 web_search 搜"环比增速"抄结论。
+4. **同值预警（数原始绝对值，不数派生值）**：活源数值型指标的**核心原始绝对值**（`insider_sell_buy` 的 sell_usd/buy_usd、`token_volume_mom` 的 30 日 token 总量、`hy_oas` 的 bps 等，即 raw 里的锚定字段）连续 3 期不变**或连续 3 期缺失（拿不到新读数）** → 该指标输出 `suspect_static: true` 和 `static_weeks: N`（连续期数），并在飞书推送里单列一行「⚠ 疑似静态：{指标} 连续 {N} 期原始值未变/未获取 = {value_display}，请人工核查」。**判断方法：数 raw_history.json（含本期）该指标 raw 里核心原始值的连续情况**——派生值（MoM%、比值）在变不能重置计数，历史上 token 的 MoM 从 35→25→5 变来变去、底层绝对量却 10 周没动，就是只数派生值漏报的。前端会渲染 suspect_static 角标（「N 期未变」），不可省略。周期性/低频指标不适用本条（debt_capex_ratio 的对账节奏、enterprise_deploy 等季度调查类）。
 
 ## 聚合判读
 
@@ -110,7 +111,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `top5_weight` — S&P 500 前 5 大权重占比 (%)
 - **Axis**: stage
-- **Source**: https://www.slickcharts.com/sp500（取前 5 行权重相加）
+- **Source**: prefetch `top5_weight`（GitHub Actions 抓 slickcharts，`data.top5_single_class_pct` 为口径基准）。备源：WebFetch https://www.slickcharts.com/sp500（取前 5 行权重相加）→ SPY 持仓二手读
 - **Direction**: high_bad
 - **Thresholds**: red=25, yellow=18
 - **Anchor**: 2000 峰值约 18%；当前约 28% 是 50 年新高
@@ -171,13 +172,15 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 - **Direction**: low_bad
 - **Thresholds**: red=40, yellow=60
 - **Anchor**: 指数新高时 <40% = 头部独自上涨，历史上是顶部信号
+- **注**：暂无 prefetch 支持（免费机器源缺失）；估算值必须在 note 写明估算依据，连续 3 期估算触发 suspect_static
 
 ### `insider_sell_buy` — AI 内幕交易 30 日 卖/买 美元比 (倍数)
 - **Axis**: trigger
-- **Source**: http://openinsider.com/screener?s=NVDA / AVGO / AMD / MSFT / GOOGL / META / AMZN / ORCL / TSM / MU / ARM / PLTR；聚合卖出美元 / 买入美元。备源：secform4.com → SEC EDGAR full-text search（efts.sec.gov, forms=4）→ web_search 新闻层
+- **Source**: prefetch `insider_sell_buy`（GitHub Actions 从 SEC EDGAR Form 4 直接聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 12 家 30 日公开市场卖(S)/买(P)美元额——这是本指标的定义口径）。备源：SEC EDGAR full-text search（efts.sec.gov, forms=4）→ web_search 新闻层。~~openinsider~~ 已弃用（2026-08 站点失效）
 - **Direction**: high_bad
 - **Thresholds**: red=20, yellow=5
-- **Anchor**: 2000 峰值 23x
+- **Anchor**: 2000 峰值 23x（openinsider 时代口径）
+- **口径注记**：① ARM/TSM 为外国私发行人，Form 4 申报有限（实测 TSM 内部人有申报、ARM 基本没有），篮子实际以 10 家美国发行人为主；② 买盘常态近零（prefetch `data.zero_buy=true`），此时比值无界且对分母极敏感——value 取 `min(ratio, 99)`，value_display 写明「买盘近零」，status 按 red 处理（sell/buy ≥20 显然成立）；note 必须同时给出卖出绝对额，避免"比值极端但绝对卖压其实不大"被误读；③ EDGAR 直聚口径自 2026-08 起启用，与此前 openinsider/估算口径的数值不可直接跨期比较，首 4 期观察后再校订阈值与校准表
 
 ### `ai_ipo_pipeline` — AI IPO/SPAC 管道状态
 - **Axis**: stage
@@ -191,7 +194,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `hy_oas` — 高收益债期权调整利差 (bps)
 - **Axis**: trigger
-- **Source**: https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2 （取最新一行）
+- **Source**: prefetch `hy_oas`（GitHub Actions 走 FRED 官方 API，BAMLH0A0HYM2，`data.oas_bps` 已换算成 bps）。备源：Convex/TradingEconomics 镜像读数。~~fredgraph.csv~~ 已弃用（2026-08 确认超时不可达）
 - **Direction**: high_bad
 - **Thresholds**: red=500, yellow=350
 - **Anchor**: 2000/2008/2020 风险事件 >500bps
@@ -232,7 +235,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `token_volume_mom` — 行业 Token 量月度环比 (%)
 - **Axis**: trigger
-- **Source**: OpenRouter 公开吞吐数据（https://openrouter.ai/rankings，记录绝对 token 量入 raw_history，环比从台账上期算）+ web_search OpenAI/Anthropic 披露交叉核对
+- **Source**: prefetch `token_volume`（GitHub Actions 走 OpenRouter 官方 datasets API rankings-daily，2025-01 起日度全量；`data.mom_pct` = 滚动 30 日总量 vs 前 30 日，自包含口径，不依赖台账上期值）。raw_history 记 `last30_tokens_t` 绝对量。web_search OpenAI/Anthropic 披露仅作交叉印证。~~openrouter.ai/rankings 页面~~ 已弃用（CSR 页抓不到 + egress 403）
 - **Direction**: low_bad
 - **Thresholds**: 由 LLM 直接返回 status（收缩=red / 减速=yellow / 加速=green）
 
@@ -339,6 +342,8 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 判定依据速记：1999-06 = Fed 开始加息、IPO 洪流、估值极端，但信用/广度/流量全部健康（红灯比例约 25%——与 2026-07 惊人相似）；2000-02 = 内部人 23x 减持、breadth 崩、vendor financing 24%、电信债利差走阔，红灯约 55%+；2007-10 = 信用型顶部，估值/科技侧指标多不适用；2021-11 = 估值+发行+内部人极端但信用面干净，Fed 转鹰是引线。frontier_progress 行几乎全绿：历轮顶部时底层技术进展均未停滞（顶来自融资/信用/政策），该指标是本轮 AI 周期的增量维度——它转黄/红没有历史先例可比，权重上应视为独立的强 trigger。
 
+> **insider_sell_buy 口径切换提示（2026-08）**：本表 2000 峰值 23x 为 openinsider 时代口径；EDGAR 直聚口径下买盘常态近零，比值量级可能显著不同（首期实测 ~440x），且首次实测发现此前"黄仁勋 8 月卖出 $13M×2"等具名细节在 EDGAR 中不存在（系被封期间从旧新闻错误锚定）。相似度比对沿用颜色向量不受影响；比值阈值观察 4 期后再校订。
+
 ---
 
 ## 输出 JSON Schema（双语）
@@ -419,5 +424,5 @@ JSON 喂给两个 dashboard：中文版（aibubble-cn.github.io）和英文版�
   - 中度警戒 → Moderate Caution
   - 观察期 → Observation
 - `threshold_text_en`：用 `red / yellow / green` 替代 `红 / 黄 / 绿`，其它结构保持一致
-- `suspect_static`（indicator 级可选字段）：仅当「数据抓取纪律」第 3 条触发时输出 `true`，其余情况省略该字段。前端可忽略。
+- `suspect_static`（indicator 级可选字段）：仅当「数据抓取纪律」第 4 条触发时输出 `true`，并同时输出 `static_weeks`（int，连续未变/未获取的期数），其余情况两个字段都省略。**前端渲染角标**（中文「N 期未变」/ 英文「UNCHANGED xN」），不再是可忽略字段。
 - `axis` / `stage_score` / `trigger_score` / `momentum` / `category_scores` / `similarity`：2026-07-06 起新增；前端对缺失做了兼容，但 routine 每期都应完整输出。

@@ -6,13 +6,17 @@
 
 ---
 
-## ⚠ 必须同步（2026-07-12 周日 run 之前）
+## ⚠ 必须同步（2026-08-23 周日 run 之前）
 
-2026-07-06/07 框架升级 + 新增第 25 个指标 `frontier_progress`。**指标总数已从 24 变 25，线上 prompt 里硬编码的 24（步骤 2/4/6 的计数与长度校验）会与 INDICATORS.md 冲突，必须在下次 run 前同步**，否则可能报校验不一致或漏指标。
+2026-08-17 修复数据源停更（openinsider/openrouter 等被沙箱 egress 403，值静默冻结数周）。本次改动：
+1. **prefetch 优先**：GitHub Actions（`prefetch.yml`，周日 21:00 UTC）机械抓 4 个受限源写 `docs/data/prefetch/latest.json`，routine 对 insider_sell_buy / token_volume_mom / top5_weight / hy_oas 一律先读它；
+2. **兜底诚实化**：沿用上期值时必须保留上期真实 `as_of` 并标 `stale=true`（此前写当期日期+false，导致停更不可见）；
+3. **同值预警改口径**：数 raw 原始绝对值（不数派生 value），输出 `static_weeks`；
+4. **insider 换 SEC EDGAR 直聚口径**：首期比值量级会大变（~440x vs 旧估算 25x），wow_changes 的 note 必须解释是口径切换而非市场突变。
 
 **操作只需一次复制粘贴**（约 1 分钟）：
 1. 打开 https://claude.ai/code/routines → 找到 "AI Bubble Monitor Weekly" → 编辑 prompt
-2. 全选删除旧内容，把下方「## 线上 prompt」代码块**整段**复制粘贴进去（该段已按新框架重写、与 INDICATORS.md 完全一致、去 N 化——以后加减指标不用再改 prompt）
+2. 全选删除旧内容，把下方「## 线上 prompt」代码块**整段**复制粘贴进去
 3. 保存。（也可以在有 /schedule 技能的 Claude Code 会话里说"把 ROUTINE_PROMPT.md 的线上 prompt 同步到 routine"，让 Claude 用 RemoteTrigger 代劳。）
 
 同步完成后删掉本节。
@@ -118,6 +122,7 @@
 - `docs/data/latest.json` → 上期快照，用于 WoW 对比、降档滞回判断和 fallback
 - `docs/data/debt_ledger.json` → 债务交易台账（debt_capex_ratio 的周度数据源）
 - `docs/data/raw_history.json` → 原始值台账（所有环比/增速/比值从这里的上期原始值计算）
+- `docs/data/prefetch/latest.json` → GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个 egress 受限源）。**读法：先查 `_meta.fetched_at` 距今 <3 天，再查对应 `sources.*.status=="ok"`，两者都满足才可用**；partial/error 或文件过期 → 该指标走 INDICATORS.md 的备源链
 
 新一期 issue_number = 上期 + 1
 新一期 as_of_date = 今天日期 (YYYY-MM-DD)
@@ -125,11 +130,12 @@
 ### 2. 抓全部指标当前值（尽量并行）
 
 按 INDICATORS.md 里每个指标的 source：
-- 稳定 URL（multpl, slickcharts, FRED CSV, openinsider）→ WebFetch；主源失败走 INDICATORS.md 里写明的备源链
-- 定性指标（capex 指引、CEO 表态、IPO pipeline、ARR、token 量、GPU 租价、私募二级标价等）→ WebSearch
+- **prefetch 覆盖的指标（insider_sell_buy / token_volume_mom / top5_weight / hy_oas）一律先读 `docs/data/prefetch/latest.json`**（读法见第 1 步）：该源的 `data` 就是本期原始数据点，note 引用其 `summary` 里的数字，`as_of` 取该源的 `as_of` 字段（是数据自身日期，**不要改写成运行日期**）；prefetch 不可用才走 INDICATORS.md 里写明的备源链
+- 稳定 URL（multpl 等）→ WebFetch；主源失败走 INDICATORS.md 里写明的备源链
+- 定性指标（capex 指引、CEO 表态、IPO pipeline、ARR、GPU 租价、私募二级标价等）→ WebSearch（token 量已由 prefetch 覆盖，web_search 只作交叉印证）
 - `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天才做完整自下而上拆解并修正台账
 - `frontier_progress` → 按 INDICATORS.md 三层量化：METR time horizon（主锚）+ 困难基准 90 天 SOTA 位移（HLE/FrontierMath/ARC-AGI 等）+ 发布密度与叙事；判定必须与 raw_history 上期数值对比
-- **反锚定纪律（全局，见 INDICATORS.md「数据抓取纪律」）**：活源数值型指标的 note 必须写出本期实际抓到的原始数据点（如 insider 卖/买总金额、token 绝对量），给不出=没抓到=按 stale 处理；本期各数值型指标的原始输入**追加写入 raw_history.json**（每指标保留 26 期）；活源指标连续 3 期 value 相同 → 输出 `suspect_static: true` 并准备飞书提醒行
+- **反锚定纪律（全局，见 INDICATORS.md「数据抓取纪律」）**：活源数值型指标的 note 必须写出本期实际抓到的原始数据点（如 insider 卖/买总金额、token 30 日绝对量），给不出=没抓到=按 stale 处理；本期各数值型指标的原始输入**追加写入 raw_history.json**（每指标保留 26 期）；**同值预警数 raw 里的核心原始绝对值**（不数派生 value——MoM%/比值在变不能重置计数）：原始值连续 3 期不变或连续 3 期缺失 → 输出 `suspect_static: true` + `static_weeks: N` 并准备飞书提醒行
 
 每个指标产出（**注意双语**）：
 {
@@ -140,11 +146,12 @@
   threshold_text_en (英文版, 例如 ">35 red / 25-35 yellow / <25 green"),
   note (中文 1-2 句解读),
   note_en (英文 1-2 句解读，自然像英文新闻不要逐字对译),
-  stale: false
+  stale: false（仅当本期真正拿到新原始数据点时才是 false）
 }
 
-抓不到时：
-- 沿用 latest.json 上周值（包括 _en 字段），stale=true，note 改为"沿用上周值（数据源暂不可用）"，note_en 改为 "Using last week's value (source unavailable)"
+抓不到时（prefetch 与备源链全部失败）：
+- 沿用 latest.json 上周值（包括 _en 字段），stale=true；**`as_of` 必须保留上期的真实 as_of，绝对禁止写成本期日期**；note 改为"沿用 {上期 as_of} 值（数据源暂不可用）"，note_en 改为 "Carrying value as of {上期 as_of} (source unavailable)"
+- **红线：`as_of`=本期日期 ⟺ note 里给得出本期新抓的原始数据点，两者必须同真同假**——历史教训：被封期间 as_of 每周照写新日期、stale 照写 false，导致停更 5 周在看板上完全不可见
 - stale 累计 > 5 个 → 中止，跳到第 7 步发错误提醒
 
 ### 3. 评分
@@ -210,7 +217,9 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
           [{"tag":"text","text":"🕰 历史相似度: 最像 {similarity[0].period} {similarity[0].label_zh}（{similarity[0].match_pct}%）"}],
           [{"tag":"text","text":"📈 本周边际: {momentum.deteriorated} 恶化 / {momentum.improved} 好转（净 {momentum.net}）"}],
           (若有 suspect_static 指标，对每个加一行):
-          [{"tag":"text","text":"⚠ 疑似静态: {name_zh} 连续 3 期 = {value_display}，请人工核查"}],
+          [{"tag":"text","text":"⚠ 疑似静态: {name_zh} 连续 {static_weeks} 期原始值未变/未获取 = {value_display}，请人工核查"}],
+          (若 prefetch 存在 status 非 ok 的源，对每个加一行):
+          [{"tag":"text","text":"⚠ prefetch 失败: {源名} — {error 摘要}"}],
           (若 debt_ledger 本周有新 deal):
           [{"tag":"text","text":"💰 本周新增 AI 债务 deal: {borrower $XB, ...} · YTD 台账累计 ${Y}B"}],
           [{"tag":"text","text":""}],
@@ -276,7 +285,7 @@ routine 最后输出：
 - 阈值取 INDICATORS.md，不要自改
 - 指标 id 严格按 INDICATORS.md 定义的清单执行，不增不减、不要假设固定数量（加减指标只会改 INDICATORS.md，本 prompt 不用动）
 - 双语字段必须都有；中英文不要逐字对译，分别写得自然
-- multpl.com 找页面顶部数字；slickcharts 取前 5 行权重相加；FRED 用 https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2 取最后非空行；openinsider 聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 30 天美元卖买比
+- insider_sell_buy / token_volume_mom / top5_weight / hy_oas 先读 `docs/data/prefetch/latest.json`（各源含现成的 summary/data，as_of 用源的 as_of）；multpl.com 找页面顶部数字。openinsider 与 FRED CSV 均已失效，不要再抓
 ```
 
 ---
@@ -288,3 +297,4 @@ routine 最后输出：
 2. 仓库 `docs/data/latest.json` 有新 commit、`total_indicators` 与 INDICATORS.md 一致（当前 25）、summary 含 stage/trigger/momentum/similarity
 3. `debt_ledger.json` 有本周追加（或"无新 deal"note）、`raw_history.json` 各指标多一期
 4. 三个看板硬刷新后正常（两轴仪表、相似度 chips、指标卡 as_of 日期）
+5. **prefetch 生效检查**：insider_sell_buy / token_volume_mom / hy_oas / top5_weight 的 `as_of` 应等于 prefetch 各源的 `as_of`（而非机械等于运行日）；insider 的 note 应含真实卖/买美元总额、token 的 note 应含 30 日绝对量。**若这些指标 as_of 仍机械=运行日，说明线上 prompt 没同步**
