@@ -97,6 +97,7 @@
   article.indicator .meta { border-top: 1px dashed #999; padding-top: 8px; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
   article.indicator.stale::after { content: "STALE"; position: absolute; top: 8px; right: 8px; font-family: "IBM Plex Mono", monospace; font-size: 9px; padding: 2px 5px; background: #ddd; color: #555; letter-spacing: 0.1em; }
   .carry-tag { background: #E8E0D0; color: #7a5c10; padding: 1px 4px; font-weight: 600; }
+  .static-tag { background: #F0D9D9; color: #7C1D1D; padding: 1px 4px; font-weight: 600; }
 
   /* Two-axis read (stage x trigger) */
   section.axes { margin-bottom: 48px; border: 1px solid var(--ink); padding: 20px; }
@@ -318,6 +319,7 @@ function render(data) {
           <div class="indicator-grid">
             ${items.map(ind => {
               const carried = !ind.stale && ind.as_of && data.as_of_date && ind.as_of < data.as_of_date;
+              const staticTag = ind.suspect_static ? ` <span class="static-tag">${ind.static_weeks ? ind.static_weeks + '期未变' : '疑似静态'}</span>` : '';
               return `
               <article class="indicator${ind.stale ? ' stale' : ''}">
                 <div class="status-bar ${ind.status}"></div>
@@ -332,7 +334,7 @@ function render(data) {
                 <div class="note">${escapeHtml(ind.note)}</div>
                 <div class="meta">
                   <span>${escapeHtml(ind.threshold_text)}</span>
-                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${carried ? ' <span class="carry-tag">沿用</span>' : ''}</span>
+                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${carried ? ' <span class="carry-tag">沿用</span>' : ''}${staticTag}</span>
                 </div>
               </article>
             `;}).join('')}
@@ -384,7 +386,7 @@ function render(data) {
         </div>
         <div>
           <h4>数据新鲜度</h4>
-          <div>多数指标每周一刷新，卡片右下角标注各自 as_of 日期；与本期日期不一致的卡片标"沿用"。债务/Capex 比走周度增量台账 + 28 天完整对账；企业部署率等调查类按季刷新。数据源失败标 STALE。</div>
+          <div>多数指标每周一刷新，卡片右下角标注各自 as_of 日期；与本期日期不一致的卡片标"沿用"。债务/Capex 比走周度增量台账 + 28 天完整对账；企业部署率等调查类按季刷新。数据源失败标 STALE；原始值连续多期未变/未获取的卡片标"N 期未变"，提示人工核查。</div>
         </div>
         <div>
           <h4>免责</h4>
