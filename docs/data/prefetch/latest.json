@@ -2,8 +2,8 @@
   "_meta": {
     "purpose": "GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-08-17T08:07:34.230Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/32008835612"
+    "fetched_at": "2026-08-17T08:14:22.298Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/32009372494"
   },
   "sources": {
     "insider_sell_buy": {
@@ -99,12 +99,58 @@
       "error": "OPENROUTER_API_KEY 未设置"
     },
     "top5_weight": {
-      "status": "error",
-      "as_of": null,
-      "summary": "抓取失败：curl: curl: (22) The requested URL returned error: 403",
-      "data": null,
-      "source": null,
-      "error": "curl: curl: (22) The requested URL returned error: 403"
+      "status": "ok",
+      "as_of": "2026-08-17",
+      "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 27.21%（NVDA 8.13 / AAPL 6.68 / MSFT 5.5 / AMZN 3.87 / GOOGL 3.03）；含 Alphabet 双类约 29.63%；top10 37.58%",
+      "data": {
+        "top5_single_class_pct": 27.21,
+        "top5_with_dual_class_pct": 29.63,
+        "top10_pct": 37.58,
+        "constituents": [
+          {
+            "symbol": "NVDA",
+            "weight_pct": 8.13
+          },
+          {
+            "symbol": "AAPL",
+            "weight_pct": 6.68
+          },
+          {
+            "symbol": "MSFT",
+            "weight_pct": 5.5
+          },
+          {
+            "symbol": "AMZN",
+            "weight_pct": 3.87
+          },
+          {
+            "symbol": "GOOGL",
+            "weight_pct": 3.03
+          },
+          {
+            "symbol": "AVGO",
+            "weight_pct": 2.95
+          },
+          {
+            "symbol": "GOOG",
+            "weight_pct": 2.42
+          },
+          {
+            "symbol": "META",
+            "weight_pct": 1.95
+          },
+          {
+            "symbol": "MU",
+            "weight_pct": 1.6
+          },
+          {
+            "symbol": "JPM",
+            "weight_pct": 1.45
+          }
+        ]
+      },
+      "source": "SSGA SPY holdings-daily XLSX (official)",
+      "error": null
     },
     "hy_oas": {
       "status": "error",
