@@ -2,8 +2,8 @@
   "_meta": {
     "purpose": "GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-08-17T08:21:42.151Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/32009955337"
+    "fetched_at": "2026-08-17T08:32:53.492Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/32010840906"
   },
   "sources": {
     "insider_sell_buy": {
@@ -91,12 +91,50 @@
       "error": null
     },
     "token_volume": {
-      "status": "error",
-      "as_of": null,
-      "summary": "抓取失败：OPENROUTER_API_KEY 未设置",
-      "data": null,
-      "source": null,
-      "error": "OPENROUTER_API_KEY 未设置"
+      "status": "ok",
+      "as_of": "2026-08-16",
+      "summary": "OpenRouter 官方 API：近 30 日 275T tokens，前 30 日 218.5T，MoM +25.9%（全平台 top50+other 口径，数据截至 2026-08-16）",
+      "data": {
+        "last30_tokens": 275010808847559,
+        "prev30_tokens": 218509200116731,
+        "last30_tokens_t": 275,
+        "prev30_tokens_t": 218.5,
+        "mom_pct": 25.9,
+        "last_data_date": "2026-08-16",
+        "days_covered": 70,
+        "daily_tail": [
+          {
+            "date": "2026-08-10",
+            "tokens_t": 10.6
+          },
+          {
+            "date": "2026-08-11",
+            "tokens_t": 10.9
+          },
+          {
+            "date": "2026-08-12",
+            "tokens_t": 11.2
+          },
+          {
+            "date": "2026-08-13",
+            "tokens_t": 11.1
+          },
+          {
+            "date": "2026-08-14",
+            "tokens_t": 11.5
+          },
+          {
+            "date": "2026-08-15",
+            "tokens_t": 9.6
+          },
+          {
+            "date": "2026-08-16",
+            "tokens_t": 10.4
+          }
+        ]
+      },
+      "source": "https://openrouter.ai/api/v1/datasets/rankings-daily",
+      "error": null
     },
     "top5_weight": {
       "status": "ok",
@@ -153,12 +191,37 @@
       "error": null
     },
     "hy_oas": {
-      "status": "error",
-      "as_of": null,
-      "summary": "抓取失败：FRED_API_KEY 未设置",
-      "data": null,
-      "source": null,
-      "error": "FRED_API_KEY 未设置"
+      "status": "ok",
+      "as_of": "2026-08-13",
+      "summary": "FRED BAMLH0A0HYM2 = 271 bps（观测日 2026-08-13）",
+      "data": {
+        "oas_bps": 271,
+        "obs_date": "2026-08-13",
+        "recent": [
+          {
+            "date": "2026-08-13",
+            "bps": 271
+          },
+          {
+            "date": "2026-08-12",
+            "bps": 271
+          },
+          {
+            "date": "2026-08-11",
+            "bps": 272
+          },
+          {
+            "date": "2026-08-10",
+            "bps": 270
+          },
+          {
+            "date": "2026-08-07",
+            "bps": 270
+          }
+        ]
+      },
+      "source": "FRED API BAMLH0A0HYM2",
+      "error": null
     }
   }
 }
