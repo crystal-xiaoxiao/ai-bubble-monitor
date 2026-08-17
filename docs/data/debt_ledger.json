@@ -49,20 +49,20 @@
       "note": "IG 债，3-40 年期，AA- 评级，峰值需求约 $62B；为 $200B 2026 AI capex 融资；需求较前几笔现轻微疲劳、投资者更挑剔要求更高收益"
     },
     {
-      "date": "2026-07-12",
-      "borrower": "QTS (Blackstone)",
-      "instrument": "abs",
-      "amount_usd_b": 2,
-      "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
-      "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
-    },
-    {
       "date": "2026-07-10",
       "borrower": "Nebius Group",
       "instrument": "spv_jv",
       "amount_usd_b": 0.775,
       "source_url": "https://www.stocktitan.net/sec-filings/NBIS/6-k-nebius-group-n-v-current-report-foreign-issuer-c2147f361191.html",
       "note": "GPU/资产抵押 SPV 高级担保定期贷款（Senior Facility Agreement 7/10，约 7/15-17 经 6-K 披露）；单笔 <$10B"
+    },
+    {
+      "date": "2026-07-12",
+      "borrower": "QTS (Blackstone)",
+      "instrument": "abs",
+      "amount_usd_b": 2,
+      "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
+      "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
     },
     {
       "date": "2026-07-17",
@@ -95,6 +95,14 @@
       "amount_usd_b": 38,
       "source_url": "https://www.datacenterdynamics.com/en/news/oracle-set-to-receive-38bn-debt-package-for-data-center-projects-report/",
       "note": "两笔高级担保信贷：德州 $23.25B + 威州 $14.75B，Vantage 建设、Oracle 承租用于托管 OpenAI；JPM/MUFG 牵头——被称迄今最大单笔 AI 基建债务包，本周在市场推进；单笔 ≥$10B，入 wow_changes 与飞书。属 MS $570B 全口径锚定内的组成明细（不重复加总分子）"
+    },
+    {
+      "date": "2026-08-10",
+      "borrower": "Global AI",
+      "instrument": "loan",
+      "amount_usd_b": 0.441,
+      "source_url": "https://www.bloomberg.com/news/articles/2026-08-10/jpmorgan-leads-441-million-debt-deal-for-ai-infrastructure-firm",
+      "note": "JPMorgan 牵头安排的 $4.41 亿债务融资（其他银行参贷），借款人 Global AI 为成立两年的 AI 数据中心运营商；单笔 <$10B，仅记台账"
     },
     {
       "date": "2026-08-13",

@@ -8,6 +8,16 @@
         "date": "2026-08-17",
         "indicator": "token_volume_mom",
         "note": "2026-06 起因 openrouter.ai egress 403，各期 value/raw 为估算沿用；真实 30 日总量与真实 MoM 见各 entry 的 revised_* 字段（源 = OpenRouter 官方 datasets API rankings-daily，本次回填 8 期）。原字段按台账语义（记录当期实际输入）保留不动。"
+      },
+      {
+        "date": "2026-08-17",
+        "indicator": "frontier_progress",
+        "note": "METR 倍增时间口径修正：官方 Time Horizon 1.1 为 196 天（约 7 个月，2019-2025 全期），此前各期台账记的『约 4 个月』为 2024 年起子区间口径。判定仍为绿（≤7 月轨道边界）。"
+      },
+      {
+        "date": "2026-08-17",
+        "indicator": "insider_sell_buy",
+        "note": "2026-07~08 连续 5 期的『约 25x』为 openinsider 被封期间的方向性估算；本期 EDGAR 直聚实测 442.8x（卖 $411.5M / 买 $0.93M）。同时证伪 08-16 entry 中『黄仁勋 8/6、8/8 各减 7.5 万股』——EDGAR 无此 Form 4，属错误锚定。历史 entry 按台账语义保留不动。"
       }
     ]
   },
@@ -95,6 +105,17 @@
         "in2013dollars": 41.37,
         "marketcrash": 42.19,
         "asof": "2026-08"
+      },
+      "value": 41.5
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "gurufocus": 42.18,
+        "thetrading_tools": 41.2,
+        "macroradar": 41.18,
+        "multpl": null,
+        "note": "multpl 主源 egress 受限；月度序列，距上期仅 1 天未刷新"
       },
       "value": 41.5
     }
@@ -207,6 +228,22 @@
         "note": "slickcharts egress 受限，SPY 二手读；NVDA 史上最大 S&P 单一权重"
       },
       "value": 28
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "source": "SSGA SPY holdings-daily XLSX (prefetch)",
+        "top5_single_class_pct": 27.21,
+        "top5_with_dual_class_pct": 29.63,
+        "top10_pct": 37.58,
+        "nvda": 8.13,
+        "aapl": 6.68,
+        "msft": 5.5,
+        "amzn": 3.87,
+        "googl": 3.03,
+        "note": "首个官方持仓机械读，取代此前二手估算约 28%（偏高约 0.8pt）"
+      },
+      "value": 27.21
     }
   ],
   "nvda_fpe": [
@@ -304,6 +341,19 @@
         "analyst_based": 25.1
       },
       "value": 24
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "gurufocus": 25.17,
+        "gurufocus_asof": "2026-08-15",
+        "trendlyne_analyst": 25.1,
+        "financecharts": 24.04,
+        "stockanalysis": 22.59,
+        "stock_usd": 224,
+        "note": "日更源 1 天内未刷新，与上期同批读数"
+      },
+      "value": 24
     }
   ],
   "hyperscaler_capex_yoy": [
@@ -384,6 +434,20 @@
         "note": "Q2 季后无新指引；Nvidia 8/27 财报为下一催化"
       },
       "value": 80
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "big4_2026e_usd_b": [
+          740,
+          770
+        ],
+        "yoy_pct": 80,
+        "amzn_2026_usd_b": 200,
+        "amzn_2025_usd_b": 132,
+        "note": "Q2 季后无新指引；Nvidia 8/26 财报为下一催化"
+      },
+      "value": 80
     }
   ],
   "mag4_fcf_yoy": [
@@ -441,6 +505,17 @@
         "msft_q4_fcf_usd_b": 19.6,
         "alphabet_q2_fcf_usd_b": -5.855,
         "note": "无新披露，沿用 Q2 台账"
+      },
+      "value": -90
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "meta_q2_fcf_usd_m": 784,
+        "amzn_ttm_fcf_usd_b": -7.6,
+        "msft_q4_fcf_usd_b": 19.6,
+        "alphabet_q2_fcf_usd_b": -5.855,
+        "note": "季度指标无新披露，沿用 Q2 台账；Amazon 2026 capex $200B 预计超经营现金流"
       },
       "value": -90
     }
@@ -524,6 +599,19 @@
         "note": "H1 2026 仍为最新硬数据，无新 Q3 披露"
       },
       "value": 70
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "ai_share_global_h1_pct": 70,
+        "ai_share_us_h1_pct": 86,
+        "us_vc_h1_usd_b": 412.7,
+        "us_ai_h1_usd_b": 355.9,
+        "h1_global_vc_usd_b": 510,
+        "openai_anthropic_h1_usd_b": 217,
+        "note": "H1 2026 仍为最新硬数据；PitchBook Q3 专题无季度占比总量"
+      },
+      "value": 70
     }
   ],
   "nvda_invest_revenue": [
@@ -577,6 +665,17 @@
         "ltm_revenue_usd_b": 300,
         "nvidia_wallstreet_funding_commitment_usd_b": 500,
         "note": "Fortune 8/11：Nvidia 向华尔街寻求约 $500B 融资承诺（含 OpenAI $250B 背书 + $350B 芯片融资 + SK $500B）；直接股权仍约 $40B/OpenAI $30B，financing web 续扩"
+      },
+      "value": 43
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "equity_commitments_usd_b": 40,
+        "openai_direct_usd_b": 30,
+        "ltm_revenue_usd_b": 300,
+        "circular_loop_estimate_usd_b": 800,
+        "note": "本期无新增承诺；上期 Nvidia 向华尔街寻 $500B 融资承诺无更新"
       },
       "value": 43
     }
@@ -672,6 +771,18 @@
         "note": "Aug7 现值 65.6%；市场 melt-up 至记录新高（S&P 7785.76、连三周涨）、VIX 约 14.85 多月低位；周五 8/14 UMich 情绪走弱小幅回落，估 end-of-week 约 66%（barchart/investing 实时源仍受限）"
       },
       "value": 66
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "s5fi_aug13_close": 64,
+        "s5fi_intraweek_high": 70,
+        "pct_above_200d": 72,
+        "spx_pct_above_200dma": 10,
+        "spx_pct_above_50dma": 3.7,
+        "note": "Bull Bear Report 8/14 当周：8/13 收盘约 64%，周内触及 70%（1 月以来首次）；200 日线上方 72% 为 2024/12 以来最广"
+      },
+      "value": 64
     }
   ],
   "insider_sell_buy": [
@@ -780,6 +891,37 @@
       },
       "value": 25,
       "suspect_static": true
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "source": "SEC EDGAR Form 4 (prefetch)",
+        "window": "2026-07-18..2026-08-17",
+        "sell_usd": 411451596,
+        "buy_usd": 929279,
+        "ratio": 442.8,
+        "zero_buy": true,
+        "form4_count": 92,
+        "by_ticker_sell_usd": {
+          "AMZN": 346731904,
+          "MU": 38169091,
+          "GOOGL": 9627518,
+          "MSFT": 7267174,
+          "PLTR": 5949824,
+          "META": 3638196,
+          "AMD": 67889,
+          "NVDA": 0,
+          "AVGO": 0,
+          "ORCL": 0,
+          "TSM": 0,
+          "ARM": 0
+        },
+        "buy_usd_by_ticker": {
+          "TSM": 929279
+        },
+        "note": "首个 EDGAR 直聚真值，终结连续 5 期估算；value 按口径取 min(ratio,99)。证伪上期「黄仁勋 8/6、8/8 各减 7.5 万股」——EDGAR 无此申报。suspect_static 解除"
+      },
+      "value": 99
     }
   ],
   "hy_oas": [
@@ -888,6 +1030,24 @@
         "note": "FRED 主源 egress 受限，取 Convex/TradingEconomics 镜像；环比基本持平，续处最紧十分位"
       },
       "value": 271
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "source": "FRED API BAMLH0A0HYM2 (prefetch)",
+        "oas_bps": 271,
+        "obs_date": "2026-08-13",
+        "recent_bps": [
+          271,
+          271,
+          272,
+          270,
+          270
+        ],
+        "note": "源头由镜像升级为 FRED 官方 API；271 已连续 3 期入账 → suspect_static（真实平坦，非沿用）"
+      },
+      "value": 271,
+      "suspect_static": true
     }
   ],
   "debt_capex_ratio": [
@@ -997,6 +1157,22 @@
         "note": "周度增量：+$2.25B Jane Street 绿色 DC 债（约 9% 5yr）；SEC 8/10 豁免 DC 证券化关键披露规则（供给端利好）；无新 ≥$10B deal；last_full_recon 仍 8/9，未到 28 天"
       },
       "value": 55
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "numerator_usd_b": 570,
+        "denominator_usd_b": 1040,
+        "new_deals_this_week_gte_10b": 0,
+        "global_ai_loan_usd_b": 0.441,
+        "ledger_ytd_usd_b": 128.99,
+        "days_since_full_recon": 8,
+        "ai_bond_issuance_ytd_usd_b": 250,
+        "hyperscaler_coverage_ratio_feb": 5,
+        "hyperscaler_coverage_ratio_jul": 2,
+        "note": "周度增量：+$0.441B Global AI（JPM 牵头 8/10），无 ≥$10B deal；Morningstar 报 AI 债发行破 $250B、认购覆盖 5x→<2x，边际转向私募信用"
+      },
+      "value": 55
     }
   ],
   "token_volume_mom": [
@@ -1098,6 +1274,30 @@
       "value": 5,
       "revised_openrouter_30d_tokens_t": 275,
       "revised_mom_pct": 25.9
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "source": "OpenRouter datasets API rankings-daily (prefetch)",
+        "last30_tokens": 275010808847559,
+        "prev30_tokens": 218509200116731,
+        "last30_tokens_t": 275,
+        "prev30_tokens_t": 218.5,
+        "mom_pct": 25.9,
+        "last_data_date": "2026-08-16",
+        "days_covered": 70,
+        "daily_tail_t": [
+          10.6,
+          10.9,
+          11.2,
+          11.1,
+          11.5,
+          9.6,
+          10.4
+        ],
+        "note": "停更约 10-12 周后恢复真值；真实量级为此前挂牌估算（100-125T/月）的两倍以上。suspect_static 解除"
+      },
+      "value": 25.9
     }
   ],
   "gpu_rental_price": [
@@ -1215,6 +1415,31 @@
         "note": "H100 on-demand 约 $2.19-2.69（Jarvis $2.69）、median $4.47（YoY +28%）；无广泛过剩，供需仍偏紧"
       },
       "value": "tight"
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "h100_ondemand_usd_hr_range": [
+          1.49,
+          6.98
+        ],
+        "h100_jarvis_usd_hr": 2.69,
+        "h100_spot_usd_hr": [
+          1.03,
+          2.0
+        ],
+        "h200_ondemand_usd_hr": 3.99,
+        "h200_ondemand_range_usd_hr": [
+          3.82,
+          10.6
+        ],
+        "h200_spot_usd_hr": [
+          3.5,
+          4.4
+        ],
+        "note": "较上期无环比下跌、无普遍过剩；Blackwell 放量已使 8 月底 H200 租价预期分歧（预测市场密集于 $4-6/hr）"
+      },
+      "value": "tight"
     }
   ],
   "private_secondary_marks": [
@@ -1308,6 +1533,18 @@
         "note": "Anthropic 续为二级最抢手、几无卖方；OpenAI Forge 仅较一级 +3%；旗舰均无折价，green"
       },
       "value": "premium"
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "anthropic_caplight_implied_usd_b": 1200,
+        "anthropic_last_primary_usd_b": 965,
+        "openai_caplight_implied_usd_b": 908,
+        "openai_forge_implied_usd_b": 880,
+        "openai_last_primary_usd_b": 852,
+        "note": "复核无变化；Anthropic 溢价约 24%、几无卖方，OpenAI 仅较一级 +3% 为最薄一层"
+      },
+      "value": "premium"
     }
   ],
   "arr_2nd_deriv": [
@@ -1391,6 +1628,19 @@
         "anthropic_monthly_increment_usd_b": 4.5,
         "anthropic_monthly_increment_prev_usd_b": 17,
         "note": "Bloomberg 8/13-14：OpenAI run rate 破 $40B（较 2025 底 $20B 翻倍）、Brockman 称 7 月 MoM +20%（再加速）；Anthropic $74.1B 但月增量回落至 +$4.5B（前 +$17B）二阶导仍负 → 两家混合，维持 flat/yellow"
+      },
+      "value": "flattening"
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "openai_runrate_usd_b": 40,
+        "openai_july_mom_pct": 20,
+        "anthropic_arr_usd_b": 74.1,
+        "anthropic_monthly_increment_usd_b": 4.5,
+        "anthropic_monthly_increment_prev_usd_b": 17,
+        "gross_vs_net_gap_usd_b": 8,
+        "note": "本期无新披露，沿用上期台账；新增口径提醒：Anthropic 按 gross 记、OpenAI 近 net，OpenAI 称对比高估约 $8B"
       },
       "value": "flattening"
     }
@@ -1525,6 +1775,33 @@
         "note": "近两周新发多为中国开源前沿（GLM-5.3/Qwen3.8）；西方旗舰无新代际 SOTA 跳升但亦无 2 季停滞，METR 约 4 月倍增未放缓；对台账上期无实质放缓，维持加速/绿"
       },
       "value": "accelerating"
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "metr_doubling_days_official": 196,
+        "metr_doubling_months_official": 7,
+        "metr_ledger_prev_months": 4,
+        "arc_agi2_sota_pct": 85,
+        "arc_agi2_sota_model": "GPT-5.5",
+        "arc_agi2_runners": {
+          "GPT-5.4 Pro": 83,
+          "Gemini 3.1 Pro": 77
+        },
+        "frontiermath_t1_3_pct": 51.7,
+        "frontiermath_t4_pct": 35.4,
+        "hle_sota_pct": 53.3,
+        "swebench_pro_sota_pct": 80.3,
+        "releases_recent": [
+          "GLM-5.3 (8/14)",
+          "Qwen3.8 (8/14)",
+          "Claude Opus 5 (7/24)",
+          "GPT-5.6 Sol",
+          "Grok 4.5 (7/8)"
+        ],
+        "note": "台账修正：METR 官方 Time Horizon 1.1 倍增 196 天（约 7 月），此前记的 4 月为 2024 起子区间。ARC-AGI-2 逼近饱和，下期起轮换 ARC-AGI-3"
+      },
+      "value": "on-trend"
     }
   ],
   "enterprise_deploy": [
@@ -1569,6 +1846,33 @@
         "note": "季度调查，无新 Q2/Q3 整体生产化读数，沿用 Q1"
       },
       "value": 72
+    },
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "mckinsey_q1_production_pct": 72,
+        "agents_in_prod_pct": 31,
+        "agents_banking_insurance_pct": 47,
+        "agents_healthcare_pct": 18,
+        "agents_government_pct": 14,
+        "gartner_apps_embedding_agents_2026_pct": 40,
+        "note": "季度调查无新 Q2/Q3 整体读数，沿用 Q1；agent 口径生产化仅 31%"
+      },
+      "value": 72
+    }
+  ],
+  "fed_policy": [
+    {
+      "date": "2026-08-17",
+      "raw": {
+        "sept16_hold_prob_pct": 67.6,
+        "sept16_hike_prob_pct": 32,
+        "prev_period_hold_prob_pct": 50,
+        "target_range": "3.50-3.75%",
+        "july_vote": "9-3 hold",
+        "note": "维持概率由约 50% 回到 67.6%，边际转缓；模态仍是维持，非隐含加息"
+      },
+      "value": "hold"
     }
   ]
 }
