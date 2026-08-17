@@ -1,0 +1,60 @@
+name: Prefetch Data
+
+# 每周日 21:00 UTC 机械抓取 egress 受限的数据源，写 docs/data/prefetch/latest.json，
+# 供 23:00 UTC 的周报 routine 优先取用（routine 沙箱 clone 时自带该文件）。
+on:
+  schedule:
+    - cron: '0 21 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prefetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run prefetch
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: node scripts/prefetch.js
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/prefetch/latest.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "prefetch: $(date -u +%F) data snapshot"
+          # Retry-on-race: 与 routine/relay 的 push 竞争时 rebase 重试（同 feishu-relay.yml）
+          for attempt in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then
+              echo "✓ Push succeeded on attempt $attempt"
+              break
+            fi
+            echo "Push attempt $attempt failed, retrying in 3s..."
+            sleep 3
+            if [ $attempt -eq 5 ]; then
+              echo "✗ Push failed after 5 attempts"
+              exit 1
+            fi
+          done
+
+      # 数据已落盘再检查状态：任一源非 ok 时红叉，只作邮件提醒，不影响已提交的数据
+      - name: Check source statuses
+        run: |
+          jq -r '.sources | to_entries[] | "\(.key): \(.value.status)"' docs/data/prefetch/latest.json
+          jq -e '[.sources[].status] | all(. == "ok")' docs/data/prefetch/latest.json > /dev/null \
+            || { echo "::warning::部分数据源非 ok，详见上方列表与 latest.json 的 error 字段"; exit 1; }

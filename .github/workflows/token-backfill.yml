@@ -1,0 +1,48 @@
+name: Token History Backfill (one-shot)
+
+# 一次性：用 OpenRouter 官方 API 给 raw_history.json 的 token 台账追加 revised 真值注记。
+# 需要 OPENROUTER_API_KEY secret 已设置。手动 dispatch，跑完可留档不删。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run backfill
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: node scripts/backfill_token_history.js
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/raw_history.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "backfill: token_volume_mom revised 真值注记（OpenRouter 官方 API）"
+          for attempt in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then
+              echo "✓ Push succeeded on attempt $attempt"
+              break
+            fi
+            echo "Push attempt $attempt failed, retrying in 3s..."
+            sleep 3
+            if [ $attempt -eq 5 ]; then
+              echo "✗ Push failed after 5 attempts"
+              exit 1
+            fi
+          done
