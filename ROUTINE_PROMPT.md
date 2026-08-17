@@ -6,23 +6,6 @@
 
 ---
 
-## ⚠ 必须同步（2026-08-23 周日 run 之前）
-
-2026-08-17 修复数据源停更（openinsider/openrouter 等被沙箱 egress 403，值静默冻结数周）。本次改动：
-1. **prefetch 优先**：GitHub Actions（`prefetch.yml`，周日 21:00 UTC）机械抓 4 个受限源写 `docs/data/prefetch/latest.json`，routine 对 insider_sell_buy / token_volume_mom / top5_weight / hy_oas 一律先读它；
-2. **兜底诚实化**：沿用上期值时必须保留上期真实 `as_of` 并标 `stale=true`（此前写当期日期+false，导致停更不可见）；
-3. **同值预警改口径**：数 raw 原始绝对值（不数派生 value），输出 `static_weeks`；
-4. **insider 换 SEC EDGAR 直聚口径**：首期比值量级会大变（~440x vs 旧估算 25x），wow_changes 的 note 必须解释是口径切换而非市场突变。
-
-**操作只需一次复制粘贴**（约 1 分钟）：
-1. 打开 https://claude.ai/code/routines → 找到 "AI Bubble Monitor Weekly" → 编辑 prompt
-2. 全选删除旧内容，把下方「## 线上 prompt」代码块**整段**复制粘贴进去
-3. 保存。（也可以在有 /schedule 技能的 Claude Code 会话里说"把 ROUTINE_PROMPT.md 的线上 prompt 同步到 routine"，让 Claude 用 RemoteTrigger 代劳。）
-
-同步完成后删掉本节。
-
----
-
 ## 当前 routine 身份
 
 | 项 | 值 |
