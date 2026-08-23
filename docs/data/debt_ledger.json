@@ -10,8 +10,8 @@
     "numerator_usd_b": 570,
     "as_of": "2026-08-09",
     "source": "Morgan Stanley 2026E all-in AI debt issuance ~$570B（公开债+私募信用+ABS+JV/SPV）；YTD through May ~$236B（~4x 上年同期）。2026-08-09 完整对账复核：S&P Global 口径 hyperscaler+Nvidia 债券 YTD 约 $225B（仅公开债），31 家 AI/DC 发行人在外债券 $576B+ 存量；MS 私募信用 DC 机会 2028 前约 $800B（可覆盖 $1.5T 建设的一半以上）。三块交叉核对后维持全口径流量 $570B 锚定不变",
-    "offbs_spv_usd_b": 120,
-    "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 Vantage $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺、Nvidia-OpenAI $250B 融资担保（WSJ 7/27，俄亥俄 $500B 项目）——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
+    "offbs_spv_usd_b": 105,
+    "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 Vantage $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺、**Nvidia-OpenAI 俄亥俄融资担保「最多 $105B」（2026-08-17 SEC 文件；由此前传闻的 $250B 正式下修，初期 4.25GW + 3.75GW 选择权，SB Energy 建设、OpenAI 20 年租约、2028 年起分期上线）**——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
   },
   "capex_denominator_usd_b": 1040,
   "denominator_note": "2026E 全口径 compute capex：Big4 $725B + Oracle $50B + Apple $13B + neoclouds $60B + 中国 $80B + 主权 $60B + 其他 $48B（首个万亿美元 compute capex 年）",
@@ -111,6 +111,23 @@
       "amount_usd_b": 2.25,
       "source_url": "https://www.bloomberg.com/news/articles/2026-08-13/jane-street-lease-backs-2-25-billion-of-green-data-center-bonds",
       "note": "$2.25B 绿色数据中心债，5 年期定价近 9% 收益率，为 Jane Street 承租的中俄克拉何马数据中心+变电站融资；merchant/greenfield 属性使收益率偏高（AI 债 indigestion 环境下更挑剔）。单笔 <$10B，仅记台账；同期 SEC 8/10 豁免部分 DC 证券化披露规则"
+    },
+    {
+      "date": "2026-08-18",
+      "borrower": "5C (AI data center developer)",
+      "instrument": "private_credit",
+      "amount_usd_b": 0.5,
+      "source_url": "https://www.datacenterdynamics.com/en/news/ai-data-center-developer-5c-secures-half-a-billion-dollars-in-new-financing/"
+    },
+    {
+      "date": "2026-08-20",
+      "borrower": "Broadcom (AI chip financing for Anthropic/OpenAI)",
+      "instrument": "private_credit",
+      "amount_usd_b": 70,
+      "status": "in_market_unpriced",
+      "note": "向贷款人寻求 $60-80B（CNBC 8/21 称上看 $70B）；结构约优先 $45B + 次级 $35B，总额或达 $100B；Blackstone、Apollo 参与洽谈；系 6 月 $35B Anthropic 算力合作的延续。按 $70B 计入，未定价故标注 in_market",
+      "source_url": "https://www.cnbc.com/2026/08/21/broadcom-debt-deal-expected-to-reach-upwards-of-70-billion-sources.html"
     }
-  ]
+  ],
+  "ledger_note": "截至 2026-08-23：台账可追溯流水 $199.49B（含在市未定价的 Broadcom $70B）/ $129.49B（仅已落地）。折年约 $310B，较 ms_anchor 的 $570B 偏离 >15% —— 周度检索只能抓到头条级 deal、系统性漏记私募信用与表外分笔，台账应读作**下限**而非全量；比值定档仍以 ms_anchor 为准，两者并呈。"
 }
