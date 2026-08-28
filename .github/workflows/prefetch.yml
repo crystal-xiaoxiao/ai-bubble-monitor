@@ -33,6 +33,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/prefetch/latest.json
+          # credit spread 趋势图数据（FRED 全序列失败时脚本不落盘，此处允许文件缺失）
+          if [ -f docs/data/credit_spread_history.json ]; then
+            git add docs/data/credit_spread_history.json
+          fi
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
@@ -55,6 +59,11 @@ jobs:
       # 数据已落盘再检查状态：任一源非 ok 时红叉，只作邮件提醒，不影响已提交的数据
       - name: Check source statuses
         run: |
+          if [ -f docs/data/credit_spread_history.json ]; then
+            jq -r '._meta | "credit_history: fetched_at=\(.fetched_at)"' docs/data/credit_spread_history.json
+          else
+            echo "::warning::credit_spread_history.json 不存在（FRED 序列抓取失败，前端趋势图区块会自动隐藏）"
+          fi
           jq -r '.sources | to_entries[] | "\(.key): \(.value.status)"' docs/data/prefetch/latest.json
           jq -e '[.sources[].status] | all(. == "ok")' docs/data/prefetch/latest.json > /dev/null \
             || { echo "::warning::部分数据源非 ok，详见上方列表与 latest.json 的 error 字段"; exit 1; }

@@ -195,6 +195,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 ### `hy_oas` — 高收益债期权调整利差 (bps)
 - **Axis**: trigger
 - **Source**: prefetch `hy_oas`（GitHub Actions 走 FRED 官方 API，BAMLH0A0HYM2，`data.oas_bps` 已换算成 bps）。备源：Convex/TradingEconomics 镜像读数。~~fredgraph.csv~~ 已弃用（2026-08 确认超时不可达）
+- **趋势图数据**：prefetch 每周同时全量重写 `docs/data/credit_spread_history.json`（HY=BAMLH0A0HYM2 / CCC=BAMLH0A3HYC / IG=BAMLC0A0CM 三序列、1 年日度、FRED 直拉），仅供三站前端「AI 基建信用利差」小倍数趋势图展示，**不参与红黄绿判读**，routine 不消费该文件
 - **Direction**: high_bad
 - **Thresholds**: red=500, yellow=350
 - **Anchor**: 2000/2008/2020 风险事件 >500bps
