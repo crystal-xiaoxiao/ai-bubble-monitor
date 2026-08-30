@@ -33,6 +33,11 @@
         "date": "2026-08-23",
         "indicator": "frontier_progress",
         "note": "按 INDICATORS.md「基准饱和即轮换」规则，辅锚由 ARC-AGI-2（SOTA 85%、逼近饱和）轮换至 ARC-AGI-3（SOTA 7.8%，GPT-5.6 Sol，首个通过验证击败该基准游戏的前沿模型）"
+      },
+      {
+        "date": "2026-08-30",
+        "indicator": "breadth_50d",
+        "note": "2026-08-23 期记入的 33%（8/21 收盘，标普 50 日线上方比例）经本期复核确认为误读：该读数当时仅由单一二手源支撑、四个实时源全部 egress 受限，并已在当期 note 中标注须优先复核。本期多源确认 8/24-8/28 当周实际约 54%（8 月中约 70%），200 日线上方逾 70%。原 entry 按台账语义（记录当期实际输入）保留不动，本条为更正说明；相似度、动量与 verdict 以本期 54% 为准。"
       }
     ]
   },
@@ -145,6 +150,18 @@
         "note": "multpl 主源续 egress 受限；ChartRow 8/20 为本期唯一带明确近日日期的读数，取中值约 41.2"
       },
       "value": 41.2
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "gurufocus": 41.59,
+        "thetrading_tools": 41.2,
+        "marketcrash": 42.17,
+        "percentile_since_1881": 98.9,
+        "multpl": null,
+        "note": "multpl 主源续 egress 受限；取三源中值约 41.5（上期 41.2）"
+      },
+      "value": 41.5
     }
   ],
   "top5_weight": [
@@ -287,6 +304,23 @@
         "note": "较上期 27.21 几乎持平；内部换手：NVDA 8.13→7.98、MSFT 5.50→5.43，AAPL 6.68→6.95 补位"
       },
       "value": 27.26
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "source": "SSGA SPY holdings-daily XLSX (prefetch)",
+        "top5_single_class_pct": 27.63,
+        "top5_with_dual_class_pct": 30.03,
+        "top10_pct": 37.63,
+        "nvda": 8.29,
+        "aapl": 6.94,
+        "msft": 5.63,
+        "amzn": 3.77,
+        "googl": 3.0,
+        "prev_top5_single_class_pct": 27.26,
+        "note": "NVDA 财报后由 7.98 回到 8.29，贡献了本期全部增量；8/30 的 prefetch 重抓与 8/28 逐位一致（SSGA 周末不更新持仓文件），故 as_of 保留数据自身日期 2026-08-28"
+      },
+      "value": 27.63
     }
   ],
   "nvda_fpe": [
@@ -409,6 +443,24 @@
         "note": "半导体周内 -5% 但远期倍数几乎未动（分子跌、FY27 一致预期同步上修）；8/26 财报指引约 $91B"
       },
       "value": 24.0
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "stockanalysis": 18.04,
+        "stockanalysis_asof": "2026-08-30",
+        "financecharts": 25.64,
+        "financecharts_asof": "2026-08-28",
+        "gurufocus": 24.5,
+        "gurufocus_asof": "2026-08-19",
+        "trendlyne_analyst": 23.8,
+        "q2fy27_revenue_usd_b": 96.22,
+        "q3fy27_guide_usd_b": 108,
+        "fy28_growth_guide_pct": 70,
+        "stock_move_aug27_pct": 8.7,
+        "note": "财报后分子分母同向上修、分母更快，取中枢约 23x（区间 18.0-25.6）"
+      },
+      "value": 23.0
     }
   ],
   "hyperscaler_capex_yoy": [
@@ -525,6 +577,23 @@
         "note": "口径上修而非新指引：大五合计由 $740-770B 抬至 $775-800B；无一家下调"
       },
       "value": 80
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "big5_2026e_usd_b": [
+          775,
+          800
+        ],
+        "yoy_pct": 80,
+        "nvda_cfo_top5_2026e_usd_b": 800,
+        "nvda_cfo_top5_2027e_usd_b": 1300,
+        "top5_2027e_yoy_pct": 62.5,
+        "nvda_backlog_usd_t": 2.0,
+        "aws_gpu_units_m": 2.0,
+        "note": "8/26 Nvidia 电话会新读点：CFO Kress 把前五 hyperscaler capex 由 2026 $800B 指向 2027 $1.3T"
+      },
+      "value": 80
     }
   ],
   "mag4_fcf_yoy": [
@@ -606,6 +675,18 @@
         "alphabet_h1_debt_usd_b": 98,
         "alphabet_h1_debt_growth_pct": 111,
         "note": "Q2 数字不变；新佐证：Alphabet 上半年有息负债 +111% 至 $98B、Q2 为其史上首次经营现金流转负"
+      },
+      "value": -90
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "meta_q2_fcf_usd_m": 784,
+        "amzn_ttm_fcf_usd_b": -7.6,
+        "msft_q4_fcf_usd_b": 19.6,
+        "alphabet_q2_fcf_usd_b": -5.855,
+        "alphabet_h1_debt_usd_b": 98,
+        "note": "季度指标无新披露，沿用 Q2 台账；下一读点 10 月下旬 Q3 财报"
       },
       "value": -90
     }
@@ -716,6 +797,25 @@
         "note": "本期复核确认 Q3 完整占比未发布（PitchBook/Crunchbase 均待 10 月初）；H1 2026 续为最新硬数据"
       },
       "value": 70
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "ai_share_global_h1_pct": 70,
+        "ai_share_us_h1_pct": 86,
+        "h1_global_vc_usd_b": 510,
+        "openai_anthropic_h1_usd_b": 217,
+        "q1_global_vc_usd_b": [
+          297,
+          331
+        ],
+        "q1_ai_share_pct": [
+          80,
+          81
+        ],
+        "note": "复核确认 Q3 完整占比仍未发布（待 10 月初）；新增 Crunchbase Q1 口径 AI 占 80-81% 作交叉印证"
+      },
+      "value": 70
     }
   ],
   "nvda_invest_revenue": [
@@ -795,6 +895,24 @@
         "ohio_option_gw": 3.75,
         "equity_flat_periods": 4,
         "note": "8/17 SEC 文件把传闻的 $250B 俄亥俄背书正式定为最多 $105B —— vendor financing 首次自我设限（二阶转收敛）；直接股权承诺已连续 4 期停在 $40B，8/26 财报后 LTM 分母将更新"
+      },
+      "value": 43
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "equity_commitments_usd_b": 40,
+        "openai_direct_usd_b": 30,
+        "ltm_revenue_usd_b": 305,
+        "prev_ltm_revenue_usd_b": 300,
+        "q2fy27_revenue_usd_b": 96.22,
+        "marketable_equity_securities_usd_b": 30.2,
+        "marketable_equity_securities_prev_yr_usd_b": 12.9,
+        "bofa_equity_commitments_usd_b": 70,
+        "huggingface_acquisition_usd_b": 12.9,
+        "financing_platform_target_usd_b": 500,
+        "ohio_guarantee_cap_usd_b": 105,
+        "note": "分母按 Q2 FY27 入账更新 300→305；分子新硬数：10-Q 可交易权益证券 $30.2B（去年同期 $12.9B，+134%）、BofA 全口径股权承诺约 $70B；二阶由上期收敛转回扩张（$500B 融资平台落地 + HF $12.9B 待交割）"
       },
       "value": 43
     }
@@ -926,6 +1044,22 @@
         "note": "绿→红两级；债市抛售驱动，指数仅 -1.4% 而中位数个股跌穿均线 = 头部独撑"
       },
       "value": 33.0
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "pct_above_50dma": 54,
+        "pct_above_200dma": 70,
+        "prev_ledger_value": 33,
+        "mid_august_pct": 70,
+        "pct_advancing_week": 42,
+        "sectors_up": 3,
+        "sectors_total": 11,
+        "spx_week_pct": 0.49,
+        "correction": true,
+        "note": "上期 33% 证实为误读（单一二手源），本期修正为约 54%；方向（广度退潮）成立、量级不成立"
+      },
+      "value": 54.0
     }
   ],
   "insider_sell_buy": [
@@ -1098,6 +1232,33 @@
         "note": "卖出绝对额环比 +14%、申报 92→122 份；买盘再腰斩，比值翻倍主要由分母塌缩驱动。NVDA 2 份申报但公开市场成交额为零（8/26 财报前静默期）。value 取 min(ratio,99)"
       },
       "value": 99
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "source": "SEC EDGAR Form 4 (prefetch)",
+        "window": "2026-07-31..2026-08-30",
+        "sell_usd": 582223181,
+        "buy_usd": 365992,
+        "ratio": 1590.8,
+        "zero_buy": true,
+        "form4_count": 132,
+        "prev_sell_usd": 469835071,
+        "prev_buy_usd": 439812,
+        "sell_mom_pct": 23.9,
+        "by_ticker_sell_usd": {
+          "AMZN": 364527673,
+          "PLTR": 95372894,
+          "MU": 52770512,
+          "AMD": 48704851,
+          "META": 13580078,
+          "MSFT": 7267174,
+          "GOOGL": 0,
+          "NVDA": 0
+        },
+        "note": "绝对卖压 +23.9%；AMZN 一家占 63%；NVDA 本窗口零卖出（3 份 Form 4）；唯一买盘 $366K 来自 TSM；GOOGL 的 $177K 已滚出 30 日窗口"
+      },
+      "value": 99
     }
   ],
   "hy_oas": [
@@ -1242,6 +1403,24 @@
         "note": "271→275（+4bps），上期 suspect_static 解除；方向与本周债市抛售一致但在 500bps 红线前微不足道"
       },
       "value": 275
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "source": "FRED API BAMLH0A0HYM2 (prefetch)",
+        "oas_bps": 263,
+        "obs_date": "2026-08-27",
+        "recent_bps": [
+          263,
+          267,
+          270,
+          269,
+          270
+        ],
+        "prev_bps": 275,
+        "note": "275→263（-12bps）；FRED 有一日发布时滞，当日 prefetch 也只到 8/27 观测，仍在 8/28 Warsh 讲话之前，本期未对鹰派转向定价"
+      },
+      "value": 263
     }
   ],
   "debt_capex_ratio": [
@@ -1391,6 +1570,27 @@
         "days_since_full_recon": 14,
         "hyperscaler_bond_issuance_2026_usd_b": 220,
         "note": "本监测记录以来最大单周边际 +$70.5B（Broadcom $70B 在市未定价 + 5C $0.5B）；Nvidia-OpenAI 俄亥俄担保由 $250B 修正为 $105B"
+      },
+      "value": 55
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "numerator_usd_b": 570,
+        "denominator_usd_b": 1040,
+        "new_deals_this_week": 0,
+        "new_deals_this_week_gte_10b": 0,
+        "week_total_usd_b": 0.0,
+        "ledger_ytd_usd_b": 199.5,
+        "ledger_deals": 14,
+        "days_since_full_recon": 21,
+        "broadcom_range_update_usd_b": [
+          70,
+          80
+        ],
+        "broadcom_status": "in_market_unpriced",
+        "excluded_equity_deal": "Volato/Alignment Engine $0.5B (股权反向合并，非债务)",
+        "note": "本周无新确认债务 deal（上周 $70.5B 后的显著回落）；Broadcom 细节更新但金额不上调；距完整对账 21 天，9/6 起可做"
       },
       "value": 55
     }
@@ -1545,6 +1745,32 @@
         "note": "绝对量与增速双双上台阶；8/22 单日 14.1T 创序列新高。本期最强反向证据"
       },
       "value": 32.1
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "source": "OpenRouter datasets API rankings-daily (prefetch)",
+        "last30_tokens": 360042885008364,
+        "prev30_tokens": 240096029019620,
+        "last30_tokens_t": 360.0,
+        "prev30_tokens_t": 240.1,
+        "mom_pct": 50.0,
+        "last_data_date": "2026-08-29",
+        "days_covered": 70,
+        "prev_period_last30_t": 302.9,
+        "prev_period_mom_pct": 32.1,
+        "daily_tail_t": [
+          15.1,
+          18.4,
+          18.8,
+          18.4,
+          15.8,
+          15.1,
+          13.2
+        ],
+        "note": "绝对量与增速连续三期同向加速；日频新高 18.8T（8/25）；8/28-8/29 回落至 15.1/13.2T 属周末常态"
+      },
+      "value": 50.0
     }
   ],
   "gpu_rental_price": [
@@ -1710,6 +1936,29 @@
         "note": "主力价位逐点持平、无环比下跌；软信号首次被卖方明说——Blackwell 放量+更便宜 H100+新增 B200 层级正抵消训练需求并限制价格反弹（由上行转顶部盘整）"
       },
       "value": "tight"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "h100_ondemand_range_usd_hr": [
+          1.49,
+          6.98
+        ],
+        "h100_cohort_median_usd_hr": 3.38,
+        "h100_vastai_usd_hr": 1.49,
+        "h100_runpod_usd_hr": 1.99,
+        "h100_lambda_usd_hr": 3.99,
+        "h100_coreweave_usd_hr": 4.25,
+        "spot_floor_usd_hr": 0.61,
+        "prev_spot_floor_usd_hr": 1.03,
+        "h200_premium_to_h100_pct": [
+          20,
+          40
+        ],
+        "nvidia_2026_h100_rental_increase_pct": 20,
+        "note": "主力价位区间与上期重叠、无 >15% 普遍下跌；spot 底价 $1.03→$0.61 但取自不同提供商集合（含 Vast.ai 竞价市场），只作离散度扩大的软信号，下期须同集合复核"
+      },
+      "value": "紧俏"
     }
   ],
   "private_secondary_marks": [
@@ -1829,6 +2078,22 @@
         "note": "两个核心标价连续 4 期逐位不变、且均可追溯到同一批 4-7 月 Caplight 报道而非本期新成交 → suspect_static；下期须换源核实（Anthropic 公开 S-1 定价将取代二级标价）"
       },
       "value": "premium"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "forge_openai_price_usd": 721.85,
+        "forge_asof": "2026-08-30",
+        "anthropic_caplight_implied_usd_b": 1200,
+        "anthropic_last_primary_usd_b": 965,
+        "openai_caplight_implied_usd_b": 908,
+        "openai_last_primary_usd_b": 852,
+        "anthropic_premium_pct": 24,
+        "openai_premium_pct": 7,
+        "static_weeks": 5,
+        "note": "首次拿到带当日日期的 Forge 单价 $721.85（8/30）入账，下期可算真实环比；两个 Caplight 隐含估值锚连续 5 期未变 → 续标 suspect_static"
+      },
+      "value": "溢价"
     }
   ],
   "arr_2nd_deriv": [
@@ -1945,6 +2210,23 @@
         "note": "二阶导重算：Anthropic 5 月 $47B→7 月 $65B，月均 +$9B（此前 +$17B），仍负但降幅较原记的 +$4.5B/月温和；OpenAI 明确再加速。一加一减对冲不变"
       },
       "value": "flattening"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "anthropic_runrate_july_usd_b": 65,
+        "anthropic_runrate_may_usd_b": 47,
+        "anthropic_runrate_april_usd_b": 30,
+        "anthropic_monthly_increment_usd_b": 9,
+        "anthropic_monthly_increment_earlier_usd_b": 17,
+        "openai_runrate_usd_b": 40,
+        "openai_monthly_usd_b": 3.3,
+        "openai_july_mom_pct": 20,
+        "openai_static_weeks": 4,
+        "anthropic_static_weeks": 2,
+        "note": "本期无新披露；OpenAI $40B 连续 4 期未更新、Anthropic $65B 连续 2 期 → 标 suspect_static；Anthropic 9 月公开 S-1 将以经审计口径一次性替代二手估算"
+      },
+      "value": "平稳"
     }
   ],
   "frontier_progress": [
@@ -2127,6 +2409,26 @@
         "note": "上期标记「全表最需复核」的两处松动本期均向好解决：HLE 一季度相对 +21% 远超绿灯门槛；ARC-AGI-3 首次被前沿模型击败一局"
       },
       "value": "accelerating"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "hle_sota_pct_benchlm": 64.7,
+        "hle_sota_model_benchlm": "Claude Opus 5",
+        "hle_sota_pct_pricepertoken": 55.5,
+        "hle_sota_model_pricepertoken": "Claude Fable 5",
+        "hle_asof": "2026-08-27",
+        "hle_prev_ledger_pct": 64.7,
+        "hle_ledger_90d_ago_pct": 53.3,
+        "hle_relative_gain_90d_pct": 21,
+        "arc_agi3_sota_pct": 7.8,
+        "arc_agi3_sota_model": "GPT-5.6 Sol",
+        "metr_doubling_days_official": 196,
+        "metr_doubling_months_official": 6.4,
+        "hle_static_periods": 2,
+        "note": "本期无新 SOTA，64.7% 为第 2 期入账（第 3 期不变将触发同值预警）；新增口径警告：同为 8/27，PricePerToken 榜首 55.5%、BenchLM 64.7%，差 9pp（工具增强 vs 闭卷协议混用），自本期起并记两套口径"
+      },
+      "value": "加速"
     }
   ],
   "enterprise_deploy": [
@@ -2197,6 +2499,18 @@
         "note": "季度调查无新整体读数，沿用 Q1 72%；分层证据加深「部署广、价值捕获窄」裂口"
       },
       "value": 72
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "mckinsey_q1_production_pct": 72,
+        "agents_in_prod_pct": 31,
+        "mckinsey_scaling_agents_max_pct": 10,
+        "gartner_agentic_cancel_by_2027_pct": 40,
+        "apps_embedding_agents_q1_pct": 80,
+        "note": "季度调查无新整体读数，沿用 Q1 72%；下一读点为 Q3 调查发布"
+      },
+      "value": 72
     }
   ],
   "fed_policy": [
@@ -2224,6 +2538,34 @@
         "note": "模态读数基本持平；本期真正的收紧来自长端（债市抛售、8/19 财政部压低收益率方案落空）而非政策路径——本指标定义看不见期限溢价"
       },
       "value": "hold"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "sept16_hike_prob_pct": [
+          57,
+          60
+        ],
+        "sept16_hold_prob_pct": [
+          40,
+          43
+        ],
+        "pre_speech_hike_prob_pct": 35,
+        "prev_period_hold_prob_pct": 68.4,
+        "prev_period_hike_prob_pct": 31.6,
+        "target_range": "3.50-3.75%",
+        "implied_new_range": "3.75-4.00%",
+        "us2y_yield_pct": 4.356,
+        "us2y_move_bp": 12,
+        "us10y_yield_pct": 4.726,
+        "us10y_move_bp": 5,
+        "dxy": 99.66,
+        "dxy_move_pct": 0.6,
+        "asof": "2026-08-28",
+        "event": "Warsh Jackson Hole keynote",
+        "note": "模态结果由「维持」翻成「加息」→ 转红；上一次红灯为 6 月底至 7 月中"
+      },
+      "value": "隐含加息"
     }
   ],
   "cloud_rpo_growth": [
@@ -2242,6 +2584,23 @@
         "note": "季度指标无新披露，Q2 复核确认；新质量细节：MSFT 久期仅 2.3 年且近 12 月转化部分本身 +37% YoY —— 积压非靠拉长年限堆出"
       },
       "value": "strong"
+    },
+    {
+      "date": "2026-08-30",
+      "raw": {
+        "msft_rpo_usd_b": 678,
+        "msft_rpo_yoy_pct": 84,
+        "msft_duration_years": 2.3,
+        "msft_next12m_yoy_pct": 37,
+        "aws_rpo_usd_b": 496,
+        "google_backlog_usd_b": 514,
+        "oracle_rpo_usd_b": 638,
+        "big3_total_usd_t": 1.1,
+        "nvda_backlog_usd_t": 2.0,
+        "aws_gpu_commitment_units_m": 2.0,
+        "note": "季度指标无新披露，Q2 复核确认；新增 Nvidia 在手订单 $2T 与 AWS 200 万颗 GPU 承诺作同向佐证"
+      },
+      "value": "强劲"
     }
   ]
 }
