@@ -2,24 +2,24 @@
   "_meta": {
     "purpose": "GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-08-28T10:54:08.871Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/33165070883"
+    "fetched_at": "2026-08-30T23:17:40.721Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/33341400864"
   },
   "sources": {
     "insider_sell_buy": {
       "status": "ok",
-      "as_of": "2026-08-28",
+      "as_of": "2026-08-30",
       "window": {
-        "start": "2026-07-29",
-        "end": "2026-08-28"
+        "start": "2026-07-31",
+        "end": "2026-08-30"
       },
-      "summary": "12 家 30 日（2026-07-29~2026-08-28）：卖出 $582.4M / 买入 $0.4M，比值 1591.3x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 135 份）",
+      "summary": "12 家 30 日（2026-07-31~2026-08-30）：卖出 $582.2M / 买入 $0.4M，比值 1590.8x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 132 份）",
       "data": {
-        "sell_usd": 582400126,
+        "sell_usd": 582223181,
         "buy_usd": 365992,
-        "ratio": 1591.3,
+        "ratio": 1590.8,
         "zero_buy": true,
-        "form4_count": 135,
+        "form4_count": 132,
         "skipped_no_price": 0,
         "skipped_amendments": 0,
         "skipped_ad_mismatch": 0,
@@ -46,14 +46,14 @@
             "form4_count": 3
           },
           "GOOGL": {
-            "sell_usd": 176945,
+            "sell_usd": 0,
             "buy_usd": 0,
-            "form4_count": 19
+            "form4_count": 18
           },
           "META": {
             "sell_usd": 13580078,
             "buy_usd": 0,
-            "form4_count": 22
+            "form4_count": 21
           },
           "AMZN": {
             "sell_usd": 364527673,
@@ -68,12 +68,12 @@
           "TSM": {
             "sell_usd": 0,
             "buy_usd": 365992,
-            "form4_count": 37
+            "form4_count": 35
           },
           "MU": {
             "sell_usd": 52770512,
             "buy_usd": 0,
-            "form4_count": 5
+            "form4_count": 6
           },
           "ARM": {
             "sell_usd": 0,
@@ -92,25 +92,17 @@
     },
     "token_volume": {
       "status": "ok",
-      "as_of": "2026-08-27",
-      "summary": "OpenRouter 官方 API：近 30 日 348.2T tokens，前 30 日 237.8T，MoM +46.4%（全平台 top50+other 口径，数据截至 2026-08-27）",
+      "as_of": "2026-08-29",
+      "summary": "OpenRouter 官方 API：近 30 日 360T tokens，前 30 日 240.1T，MoM +50%（全平台 top50+other 口径，数据截至 2026-08-29）",
       "data": {
-        "last30_tokens": 348240585898718,
-        "prev30_tokens": 237829593047300,
-        "last30_tokens_t": 348.2,
-        "prev30_tokens_t": 237.8,
-        "mom_pct": 46.4,
-        "last_data_date": "2026-08-27",
+        "last30_tokens": 360042885008364,
+        "prev30_tokens": 240096029019620,
+        "last30_tokens_t": 360,
+        "prev30_tokens_t": 240.1,
+        "mom_pct": 50,
+        "last_data_date": "2026-08-29",
         "days_covered": 70,
         "daily_tail": [
-          {
-            "date": "2026-08-21",
-            "tokens_t": 13.9
-          },
-          {
-            "date": "2026-08-22",
-            "tokens_t": 14.1
-          },
           {
             "date": "2026-08-23",
             "tokens_t": 15.1
@@ -130,6 +122,14 @@
           {
             "date": "2026-08-27",
             "tokens_t": 15.8
+          },
+          {
+            "date": "2026-08-28",
+            "tokens_t": 15.1
+          },
+          {
+            "date": "2026-08-29",
+            "tokens_t": 13.2
           }
         ]
       },
@@ -138,7 +138,7 @@
     },
     "top5_weight": {
       "status": "ok",
-      "as_of": "2026-08-28",
+      "as_of": "2026-08-30",
       "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 27.63%（NVDA 8.29 / AAPL 6.94 / MSFT 5.63 / AMZN 3.77 / GOOGL 3）；含 Alphabet 双类约 30.03%；top10 37.63%",
       "data": {
         "top5_single_class_pct": 27.63,
@@ -192,12 +192,16 @@
     },
     "hy_oas": {
       "status": "ok",
-      "as_of": "2026-08-26",
-      "summary": "FRED BAMLH0A0HYM2 = 267 bps（观测日 2026-08-26）",
+      "as_of": "2026-08-27",
+      "summary": "FRED BAMLH0A0HYM2 = 263 bps（观测日 2026-08-27）",
       "data": {
-        "oas_bps": 267,
-        "obs_date": "2026-08-26",
+        "oas_bps": 263,
+        "obs_date": "2026-08-27",
         "recent": [
+          {
+            "date": "2026-08-27",
+            "bps": 263
+          },
           {
             "date": "2026-08-26",
             "bps": 267
@@ -213,10 +217,6 @@
           {
             "date": "2026-08-21",
             "bps": 270
-          },
-          {
-            "date": "2026-08-20",
-            "bps": 275
           }
         ]
       },
