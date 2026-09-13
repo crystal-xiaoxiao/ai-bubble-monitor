@@ -147,6 +147,14 @@
       "amount_usd_b": 0.375,
       "source_url": "https://asreport.americanbanker.com/news/newly-redeveloped-elk-grove-data-center-anchors-375-million-cmbs-deal",
       "note": "单一借款人 CMBS，抵押 174k sq ft / 30MW 超大规模数据中心，9 月初在市、预定 9/24 交割；单笔 <$10B"
+    },
+    {
+      "date": "2026-09-11",
+      "borrower": "QTS Data Centers (Blackstone)",
+      "instrument": "abs",
+      "amount_usd_b": 1.47,
+      "source_url": "https://www.globalcapital.com/securitization/article/2gjesb8eq6leue42qud4w/people-and-markets/gc-view/rapid-qts-data-center-deal-both-a-warning-and-a-sign-of-success",
+      "note": "$1.47B 数据中心证券化，抵押已进入稳定现金流的资产，9 月第二周广泛分销；其中 $280M 的 Fitch/S&P 双 BBB- 档提前约两周向小范围投资人预推销、按 5/7/10 年三档征求定价反馈，GlobalCapital 称此超长预热『不寻常』——一级未关门但执行摩擦初现。单笔 <$10B，仅记台账"
     }
   ],
   "ledger_note": "截至 2026-09-06：台账可追溯流水 $200.30B / 16 笔（含在市未定价的 Broadcom $70B）/ $130.30B（仅已落地）。折年约 $300B，较 ms_anchor 区间下沿 $570B 偏离 >15% —— 周度检索只能抓到头条级 deal、系统性漏记私募信用与表外分笔，台账应读作**下限**而非全量；比值定档以 ms_anchor 区间为准，两者并呈。本期排除 Kingspan €0.8B 绿色债（发行人为保温材料商，非 AI/DC 借款人）。"
