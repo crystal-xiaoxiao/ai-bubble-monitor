@@ -1,161 +1,177 @@
 {
-  "_meta": {
-    "purpose": "AI 债务交易台账：debt_capex_ratio 的周度增量数据源。routine 每周把新公告的 AI/数据中心债务 deal 去重后追加进 deals，每 28 天做一次完整对账修正 ms_anchor 与分母。",
-    "created": "2026-07-06",
-    "dedupe_rule": "borrower + amount 近似 + 公告日 ±7 天视为同一 deal，多篇报道只记一次",
-    "coverage_note": "deals 为 2026 年内可公开追溯的大额 deal 流水（非完备清单，完备口径以 ms_anchor 为准）；单笔 ≥$10B 的新 deal 需同时写入 wow_changes 与飞书推送"
-  },
-  "last_full_recon": "2026-09-06",
-  "ms_anchor": {
-    "numerator_usd_b": 600,
-    "numerator_range_usd_b": [
-      570,
-      650
-    ],
-    "as_of": "2026-09-06",
-    "source": "Morgan Stanley 2026E all-in AI debt issuance ~$570B（公开债+私募信用+ABS+JV/SPV，6 月口径未修订）。2026-09-06 完整对账交叉：Goldman 9/4 将 2026 美元 IG 总发行预测由 $2.1T 上调至 $2.3T、AI 相关发行人约占 24%（≈$550B，仅公开 IG 层）、AI 相关债务 YTD 约 $500B；JPMorgan 9/1 六家 hyperscaler 美元债存量 >$360B、利差 50→80bp；Morningstar 7 月底 AI 债发行 >$250B。三块交叉后分子改为区间 $570-650B、中心 $600B（MS 锚仍为下沿）",
-    "offbs_spv_usd_b": 105,
-    "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 Vantage $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺、**Nvidia-OpenAI 俄亥俄融资担保「最多 $105B」（2026-08-17 SEC 文件；由此前传闻的 $250B 正式下修，初期 4.25GW + 3.75GW 选择权，SB Energy 建设、OpenAI 20 年租约、2028 年起分期上线）**——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
-  },
-  "capex_denominator_usd_b": 1080,
-  "denominator_note": "2026E 全口径 compute capex（2026-09-06 对账）：Big5 含 Oracle $775-800B（取 $790B）+ Apple $13B + neoclouds $60B + 中国 $80B + 主权 $60B + 其他 $77B ≈ $1,080B；S&P Global 六家 hyperscaler 口径 $870B 作交叉（2027E $1.3T）",
-  "deals": [
-    {
-      "date": "2026-04-15",
-      "borrower": "QTS (Blackstone)",
-      "instrument": "abs",
-      "amount_usd_b": 4.6,
-      "source_url": "https://www.forbes.com/sites/daraabasiita/2026/06/18/ai-data-center-bonds-are-being-priced-as-project-finance-at-last/",
-      "note": "5.700% senior secured notes due 2036，Fayetteville GA 园区（租户 Microsoft）；4 月定价，具体日为近似"
-    },
-    {
-      "date": "2026-06-10",
-      "borrower": "Amazon",
-      "instrument": "loan",
-      "amount_usd_b": 17.5,
-      "source_url": "https://startupfortune.com/citi-says-ai-data-center-bonds-are-finally-being-priced-as-the-project-finance-deals-they-actually-are/",
-      "note": "delayed-draw term loan，Citi 牵头，表内直接负债"
-    },
-    {
-      "date": "2026-06-15",
-      "borrower": "NVIDIA",
-      "instrument": "bond",
-      "amount_usd_b": 25,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-06-15/nvidia-kicks-off-first-high-grade-bond-offering-since-2021",
-      "note": "IG 债 7 tranches（2-30 年），$85B 认购，2021 以来首发；30 年期利差 65bps"
-    },
-    {
-      "date": "2026-07-07",
-      "borrower": "Amazon",
-      "instrument": "bond",
-      "amount_usd_b": 25,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-07-07/amazon-returns-to-us-bond-market-to-fund-ai-infrastructure-build",
-      "note": "IG 债，3-40 年期，AA- 评级，峰值需求约 $62B；为 $200B 2026 AI capex 融资；需求较前几笔现轻微疲劳、投资者更挑剔要求更高收益"
-    },
-    {
-      "date": "2026-07-10",
-      "borrower": "Nebius Group",
-      "instrument": "spv_jv",
-      "amount_usd_b": 0.775,
-      "source_url": "https://www.stocktitan.net/sec-filings/NBIS/6-k-nebius-group-n-v-current-report-foreign-issuer-c2147f361191.html",
-      "note": "GPU/资产抵押 SPV 高级担保定期贷款（Senior Facility Agreement 7/10，约 7/15-17 经 6-K 披露）；单笔 <$10B"
-    },
-    {
-      "date": "2026-07-12",
-      "borrower": "QTS (Blackstone)",
-      "instrument": "abs",
-      "amount_usd_b": 2,
-      "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
-      "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
-    },
-    {
-      "date": "2026-07-17",
-      "borrower": "General Compute",
-      "instrument": "private_credit",
-      "amount_usd_b": 0.4,
-      "source_url": "https://techcrunch.com/2026/07/17/why-the-first-gpu-financiers-are-turning-to-inference-chips-in-a-400-million-deal/",
-      "note": "Upper90 私募信用贷款，以 SambaNova SN50 推理 ASIC 为抵押——首笔以推理芯片作抵押的债务融资；单笔 <$10B"
-    },
-    {
-      "date": "2026-07-27",
-      "borrower": "Meta / BlackRock (Sopaipilla JV)",
-      "instrument": "spv_jv",
-      "amount_usd_b": 12.5,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-07-27/meta-blackrock-price-12-5-billion-data-center-bond",
-      "note": "Sopaipilla Investor JV（80% BlackRock / 20% Meta，德州数据中心）IG 债 7/27 定价，收益率约 7.53%——为本轮 binge 蓝筹 DC 债最高收益之一，认购覆盖率由 2 月约 5x 降至 <2x；单笔 ≥$10B，入 wow_changes 与飞书"
-    },
-    {
-      "date": "2026-07-29",
-      "borrower": "Cloud Capital",
-      "instrument": "abs",
-      "amount_usd_b": 0.52,
-      "source_url": "https://www.prnewswire.com/news-releases/cloud-capital-closes-520m-data-center-abs-2026.html",
-      "note": "$520M 数据中心 ABS（single A-2-I tranche，Fitch/DBRS/KBRA 三家 AAA），7/29 完成——首笔三 AAA DC ABS，管理层称利差为中东冲突以来 DC ABS 最紧；单笔 <$10B"
-    },
-    {
-      "date": "2026-08-06",
-      "borrower": "Oracle / Vantage Data Centers",
-      "instrument": "loan",
-      "amount_usd_b": 38,
-      "source_url": "https://www.datacenterdynamics.com/en/news/oracle-set-to-receive-38bn-debt-package-for-data-center-projects-report/",
-      "note": "两笔高级担保信贷：德州 $23.25B + 威州 $14.75B，Vantage 建设、Oracle 承租用于托管 OpenAI；JPM/MUFG 牵头——被称迄今最大单笔 AI 基建债务包，本周在市场推进；单笔 ≥$10B，入 wow_changes 与飞书。属 MS $570B 全口径锚定内的组成明细（不重复加总分子）"
-    },
-    {
-      "date": "2026-08-10",
-      "borrower": "Global AI",
-      "instrument": "loan",
-      "amount_usd_b": 0.441,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-08-10/jpmorgan-leads-441-million-debt-deal-for-ai-infrastructure-firm",
-      "note": "JPMorgan 牵头安排的 $4.41 亿债务融资（其他银行参贷），借款人 Global AI 为成立两年的 AI 数据中心运营商；单笔 <$10B，仅记台账"
-    },
-    {
-      "date": "2026-08-13",
-      "borrower": "Jane Street-linked DC (Central Oklahoma)",
-      "instrument": "bond",
-      "amount_usd_b": 2.25,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-08-13/jane-street-lease-backs-2-25-billion-of-green-data-center-bonds",
-      "note": "$2.25B 绿色数据中心债，5 年期定价近 9% 收益率，为 Jane Street 承租的中俄克拉何马数据中心+变电站融资；merchant/greenfield 属性使收益率偏高（AI 债 indigestion 环境下更挑剔）。单笔 <$10B，仅记台账；同期 SEC 8/10 豁免部分 DC 证券化披露规则"
-    },
-    {
-      "date": "2026-08-18",
-      "borrower": "5C (AI data center developer)",
-      "instrument": "private_credit",
-      "amount_usd_b": 0.5,
-      "source_url": "https://www.datacenterdynamics.com/en/news/ai-data-center-developer-5c-secures-half-a-billion-dollars-in-new-financing/"
-    },
-    {
-      "date": "2026-08-20",
-      "borrower": "Broadcom (AI chip financing for Anthropic/OpenAI)",
-      "instrument": "private_credit",
-      "amount_usd_b": 70,
-      "status": "in_market_unpriced",
-      "note": "向贷款人寻求 $60-80B（CNBC 8/21 称上看 $70B）；结构约优先 $45B + 次级 $35B，总额或达 $100B；Blackstone、Apollo 参与洽谈；系 6 月 $35B Anthropic 算力合作的延续。按 $70B 计入，未定价故标注 in_market",
-      "source_url": "https://www.cnbc.com/2026/08/21/broadcom-debt-deal-expected-to-reach-upwards-of-70-billion-sources.html"
-    },
-    {
-      "date": "2026-09-02",
-      "borrower": "GMI Cloud (Nvidia partner, Asia)",
-      "instrument": "loan",
-      "amount_usd_b": 0.44,
-      "source_url": "https://www.bloomberg.com/news/articles/2026-09-02/nvidia-partner-gets-strong-demand-for-rare-gpu-tied-loan-in-asia",
-      "note": "以 GPU 算力/电力为抵押的台湾银团贷款，需求 NT$139 亿（约 $4.4 亿）、12 家银行报价 NT$300 亿（约 $9.5 亿）、超额认购 >2x；按需求额记 $0.44B，若最终上规模再修正；单笔 <$10B"
-    },
-    {
-      "date": "2026-09-03",
-      "borrower": "DATA 2026-800D Mortgage Trust (TechCore/GI Partners, Elk Grove IL)",
-      "instrument": "abs",
-      "amount_usd_b": 0.375,
-      "source_url": "https://asreport.americanbanker.com/news/newly-redeveloped-elk-grove-data-center-anchors-375-million-cmbs-deal",
-      "note": "单一借款人 CMBS，抵押 174k sq ft / 30MW 超大规模数据中心，9 月初在市、预定 9/24 交割；单笔 <$10B"
-    },
-    {
-      "date": "2026-09-11",
-      "borrower": "QTS Data Centers (Blackstone)",
-      "instrument": "abs",
-      "amount_usd_b": 1.47,
-      "source_url": "https://www.globalcapital.com/securitization/article/2gjesb8eq6leue42qud4w/people-and-markets/gc-view/rapid-qts-data-center-deal-both-a-warning-and-a-sign-of-success",
-      "note": "$1.47B 数据中心证券化，抵押已进入稳定现金流的资产，9 月第二周广泛分销；其中 $280M 的 Fitch/S&P 双 BBB- 档提前约两周向小范围投资人预推销、按 5/7/10 年三档征求定价反馈，GlobalCapital 称此超长预热『不寻常』——一级未关门但执行摩擦初现。单笔 <$10B，仅记台账"
-    }
+ "_meta": {
+  "purpose": "AI 债务交易台账：debt_capex_ratio 的周度增量数据源。routine 每周把新公告的 AI/数据中心债务 deal 去重后追加进 deals，每 28 天做一次完整对账修正 ms_anchor 与分母。",
+  "created": "2026-07-06",
+  "dedupe_rule": "borrower + amount 近似 + 公告日 ±7 天视为同一 deal，多篇报道只记一次",
+  "coverage_note": "deals 为 2026 年内可公开追溯的大额 deal 流水（非完备清单，完备口径以 ms_anchor 为准）；单笔 ≥$10B 的新 deal 需同时写入 wow_changes 与飞书推送"
+ },
+ "last_full_recon": "2026-09-06",
+ "ms_anchor": {
+  "numerator_usd_b": 600,
+  "numerator_range_usd_b": [
+   570,
+   650
   ],
-  "ledger_note": "截至 2026-09-06：台账可追溯流水 $200.30B / 16 笔（含在市未定价的 Broadcom $70B）/ $130.30B（仅已落地）。折年约 $300B，较 ms_anchor 区间下沿 $570B 偏离 >15% —— 周度检索只能抓到头条级 deal、系统性漏记私募信用与表外分笔，台账应读作**下限**而非全量；比值定档以 ms_anchor 区间为准，两者并呈。本期排除 Kingspan €0.8B 绿色债（发行人为保温材料商，非 AI/DC 借款人）。"
+  "as_of": "2026-09-06",
+  "source": "Morgan Stanley 2026E all-in AI debt issuance ~$570B（公开债+私募信用+ABS+JV/SPV，6 月口径未修订）。2026-09-06 完整对账交叉：Goldman 9/4 将 2026 美元 IG 总发行预测由 $2.1T 上调至 $2.3T、AI 相关发行人约占 24%（≈$550B，仅公开 IG 层）、AI 相关债务 YTD 约 $500B；JPMorgan 9/1 六家 hyperscaler 美元债存量 >$360B、利差 50→80bp；Morningstar 7 月底 AI 债发行 >$250B。三块交叉后分子改为区间 $570-650B、中心 $600B（MS 锚仍为下沿）",
+  "offbs_spv_usd_b": 105,
+  "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 Vantage $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺、**Nvidia-OpenAI 俄亥俄融资担保「最多 $105B」（2026-08-17 SEC 文件；由此前传闻的 $250B 正式下修，初期 4.25GW + 3.75GW 选择权，SB Energy 建设、OpenAI 20 年租约、2028 年起分期上线）**——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
+ },
+ "capex_denominator_usd_b": 1080,
+ "denominator_note": "2026E 全口径 compute capex（2026-09-06 对账）：Big5 含 Oracle $775-800B（取 $790B）+ Apple $13B + neoclouds $60B + 中国 $80B + 主权 $60B + 其他 $77B ≈ $1,080B；S&P Global 六家 hyperscaler 口径 $870B 作交叉（2027E $1.3T）",
+ "deals": [
+  {
+   "date": "2026-04-15",
+   "borrower": "QTS (Blackstone)",
+   "instrument": "abs",
+   "amount_usd_b": 4.6,
+   "source_url": "https://www.forbes.com/sites/daraabasiita/2026/06/18/ai-data-center-bonds-are-being-priced-as-project-finance-at-last/",
+   "note": "5.700% senior secured notes due 2036，Fayetteville GA 园区（租户 Microsoft）；4 月定价，具体日为近似"
+  },
+  {
+   "date": "2026-04-30",
+   "borrower": "Hut 8 (River Bend, Louisiana)",
+   "instrument": "bond",
+   "amount_usd_b": 3.25,
+   "source_url": "https://www.hut8.com/news-insights/press-releases/hut-8-closes-usd3-25-billion-of-investment-grade-senior-secured-notes-in-landmark-financing",
+   "note": "回补历史漏记（2026-09-20 周度检索发现）：$3.25B 投资级优先担保票据，票息 6.192%、2042-11-15 到期，4/30 交割，为 River Bend AI 数据中心项目融资。同一发行人的 Beacon Point $4.25B（Nueces County, TX，J.P. Morgan 左牵头、100% 预租 15 年三净租约给高投资级承租人）因交割日未核实，留待 10/4 完整对账时入账。单笔 <$10B，仅记台账"
+  },
+  {
+   "date": "2026-06-10",
+   "borrower": "Amazon",
+   "instrument": "loan",
+   "amount_usd_b": 17.5,
+   "source_url": "https://startupfortune.com/citi-says-ai-data-center-bonds-are-finally-being-priced-as-the-project-finance-deals-they-actually-are/",
+   "note": "delayed-draw term loan，Citi 牵头，表内直接负债"
+  },
+  {
+   "date": "2026-06-15",
+   "borrower": "NVIDIA",
+   "instrument": "bond",
+   "amount_usd_b": 25,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-06-15/nvidia-kicks-off-first-high-grade-bond-offering-since-2021",
+   "note": "IG 债 7 tranches（2-30 年），$85B 认购，2021 以来首发；30 年期利差 65bps"
+  },
+  {
+   "date": "2026-07-07",
+   "borrower": "Amazon",
+   "instrument": "bond",
+   "amount_usd_b": 25,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-07-07/amazon-returns-to-us-bond-market-to-fund-ai-infrastructure-build",
+   "note": "IG 债，3-40 年期，AA- 评级，峰值需求约 $62B；为 $200B 2026 AI capex 融资；需求较前几笔现轻微疲劳、投资者更挑剔要求更高收益"
+  },
+  {
+   "date": "2026-07-10",
+   "borrower": "Nebius Group",
+   "instrument": "spv_jv",
+   "amount_usd_b": 0.775,
+   "source_url": "https://www.stocktitan.net/sec-filings/NBIS/6-k-nebius-group-n-v-current-report-foreign-issuer-c2147f361191.html",
+   "note": "GPU/资产抵押 SPV 高级担保定期贷款（Senior Facility Agreement 7/10，约 7/15-17 经 6-K 披露）；单笔 <$10B"
+  },
+  {
+   "date": "2026-07-12",
+   "borrower": "QTS (Blackstone)",
+   "instrument": "abs",
+   "amount_usd_b": 2,
+   "source_url": "https://finance.yahoo.com/technology/ai/articles/bond-issuance-backing-ai-investment-135635215.html",
+   "note": "约 $2B 债+贷本月中定价；单笔 <$10B，仅记台账不入 wow_changes"
+  },
+  {
+   "date": "2026-07-17",
+   "borrower": "General Compute",
+   "instrument": "private_credit",
+   "amount_usd_b": 0.4,
+   "source_url": "https://techcrunch.com/2026/07/17/why-the-first-gpu-financiers-are-turning-to-inference-chips-in-a-400-million-deal/",
+   "note": "Upper90 私募信用贷款，以 SambaNova SN50 推理 ASIC 为抵押——首笔以推理芯片作抵押的债务融资；单笔 <$10B"
+  },
+  {
+   "date": "2026-07-27",
+   "borrower": "Meta / BlackRock (Sopaipilla JV)",
+   "instrument": "spv_jv",
+   "amount_usd_b": 12.5,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-07-27/meta-blackrock-price-12-5-billion-data-center-bond",
+   "note": "Sopaipilla Investor JV（80% BlackRock / 20% Meta，德州数据中心）IG 债 7/27 定价，收益率约 7.53%——为本轮 binge 蓝筹 DC 债最高收益之一，认购覆盖率由 2 月约 5x 降至 <2x；单笔 ≥$10B，入 wow_changes 与飞书"
+  },
+  {
+   "date": "2026-07-29",
+   "borrower": "Cloud Capital",
+   "instrument": "abs",
+   "amount_usd_b": 0.52,
+   "source_url": "https://www.prnewswire.com/news-releases/cloud-capital-closes-520m-data-center-abs-2026.html",
+   "note": "$520M 数据中心 ABS（single A-2-I tranche，Fitch/DBRS/KBRA 三家 AAA），7/29 完成——首笔三 AAA DC ABS，管理层称利差为中东冲突以来 DC ABS 最紧；单笔 <$10B"
+  },
+  {
+   "date": "2026-08-06",
+   "borrower": "Oracle / Vantage Data Centers",
+   "instrument": "loan",
+   "amount_usd_b": 38,
+   "source_url": "https://www.datacenterdynamics.com/en/news/oracle-set-to-receive-38bn-debt-package-for-data-center-projects-report/",
+   "note": "两笔高级担保信贷：德州 $23.25B + 威州 $14.75B，Vantage 建设、Oracle 承租用于托管 OpenAI；JPM/MUFG 牵头——被称迄今最大单笔 AI 基建债务包，本周在市场推进；单笔 ≥$10B，入 wow_changes 与飞书。属 MS $570B 全口径锚定内的组成明细（不重复加总分子）"
+  },
+  {
+   "date": "2026-08-10",
+   "borrower": "Global AI",
+   "instrument": "loan",
+   "amount_usd_b": 0.441,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-08-10/jpmorgan-leads-441-million-debt-deal-for-ai-infrastructure-firm",
+   "note": "JPMorgan 牵头安排的 $4.41 亿债务融资（其他银行参贷），借款人 Global AI 为成立两年的 AI 数据中心运营商；单笔 <$10B，仅记台账"
+  },
+  {
+   "date": "2026-08-13",
+   "borrower": "Jane Street-linked DC (Central Oklahoma)",
+   "instrument": "bond",
+   "amount_usd_b": 2.25,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-08-13/jane-street-lease-backs-2-25-billion-of-green-data-center-bonds",
+   "note": "$2.25B 绿色数据中心债，5 年期定价近 9% 收益率，为 Jane Street 承租的中俄克拉何马数据中心+变电站融资；merchant/greenfield 属性使收益率偏高（AI 债 indigestion 环境下更挑剔）。单笔 <$10B，仅记台账；同期 SEC 8/10 豁免部分 DC 证券化披露规则"
+  },
+  {
+   "date": "2026-08-18",
+   "borrower": "5C (AI data center developer)",
+   "instrument": "private_credit",
+   "amount_usd_b": 0.5,
+   "source_url": "https://www.datacenterdynamics.com/en/news/ai-data-center-developer-5c-secures-half-a-billion-dollars-in-new-financing/"
+  },
+  {
+   "date": "2026-08-20",
+   "borrower": "Broadcom (AI chip financing for Anthropic/OpenAI)",
+   "instrument": "private_credit",
+   "amount_usd_b": 70,
+   "status": "in_market_unpriced",
+   "note": "向贷款人寻求 $60-80B（CNBC 8/21 称上看 $70B）；结构约优先 $45B + 次级 $35B，总额或达 $100B；Blackstone、Apollo 参与洽谈；系 6 月 $35B Anthropic 算力合作的延续。按 $70B 计入，未定价故标注 in_market",
+   "source_url": "https://www.cnbc.com/2026/08/21/broadcom-debt-deal-expected-to-reach-upwards-of-70-billion-sources.html"
+  },
+  {
+   "date": "2026-09-02",
+   "borrower": "GMI Cloud (Nvidia partner, Asia)",
+   "instrument": "loan",
+   "amount_usd_b": 0.44,
+   "source_url": "https://www.bloomberg.com/news/articles/2026-09-02/nvidia-partner-gets-strong-demand-for-rare-gpu-tied-loan-in-asia",
+   "note": "以 GPU 算力/电力为抵押的台湾银团贷款，需求 NT$139 亿（约 $4.4 亿）、12 家银行报价 NT$300 亿（约 $9.5 亿）、超额认购 >2x；按需求额记 $0.44B，若最终上规模再修正；单笔 <$10B"
+  },
+  {
+   "date": "2026-09-03",
+   "borrower": "DATA 2026-800D Mortgage Trust (TechCore/GI Partners, Elk Grove IL)",
+   "instrument": "abs",
+   "amount_usd_b": 0.375,
+   "source_url": "https://asreport.americanbanker.com/news/newly-redeveloped-elk-grove-data-center-anchors-375-million-cmbs-deal",
+   "note": "单一借款人 CMBS，抵押 174k sq ft / 30MW 超大规模数据中心，9 月初在市、预定 9/24 交割；单笔 <$10B"
+  },
+  {
+   "date": "2026-09-11",
+   "borrower": "QTS Data Centers (Blackstone)",
+   "instrument": "abs",
+   "amount_usd_b": 1.47,
+   "source_url": "https://www.globalcapital.com/securitization/article/2gjesb8eq6leue42qud4w/people-and-markets/gc-view/rapid-qts-data-center-deal-both-a-warning-and-a-sign-of-success",
+   "note": "$1.47B 数据中心证券化，抵押已进入稳定现金流的资产，9 月第二周广泛分销；其中 $280M 的 Fitch/S&P 双 BBB- 档提前约两周向小范围投资人预推销、按 5/7/10 年三档征求定价反馈，GlobalCapital 称此超长预热『不寻常』——一级未关门但执行摩擦初现。单笔 <$10B，仅记台账"
+  },
+  {
+   "date": "2026-09-17",
+   "borrower": "CoreWeave",
+   "instrument": "bond",
+   "amount_usd_b": 3.7,
+   "source_url": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Prices-Upsized-3-7-Billion-Convertible-Senior-Notes-Offering/default.aspx",
+   "note": "9/17 宣布拟发 $3.0B 可转优先票据（另 $0.5B 超额配售），定价时上调至 $3.7B，票息 2.875%、2033-04-01 到期、初始转股价 $97.85（较 9/17 收盘 $79.88 溢价 22.5%），Rule 144A 私募、9/22 交割。公告日 CRWV 跌 4-5% 跌破 $80、盘中一度 -8%。单笔 <$10B，仅记台账"
+  }
+ ],
+ "ledger_note": "截至 2026-09-20：台账可追溯流水 $208.721B / 19 笔（含在市未定价的 Broadcom $70B）。折年仍显著低于 ms_anchor 区间下沿 $570B —— 周度检索只能抓到头条级 deal、系统性漏记私募信用与表外分笔，台账应读作**下限**而非全量；比值定档以 ms_anchor 区间为准，两者并呈。本期新增 CoreWeave $3.7B 可转债（9/17 定价），并回补 Hut 8 River Bend $3.25B（4/30 交割）；Hut 8 Beacon Point $4.25B 待 10/4 完整对账核实交割日后入账。本期交叉印证：Sona Asset Management 把全行业 AI 相关融资绘为 $3.6T、176 笔、202 个主体（其中约 120 笔高度循环）—— 该数为**存量**口径，不可与本指标的年度流量分子混用，但印证台账与 MS 锚之间的缺口主要来自私募信用与表外 SPV。"
 }
