@@ -2,76 +2,76 @@
   "_meta": {
     "purpose": "GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-09-13T22:59:35.647Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/34788338734"
+    "fetched_at": "2026-09-20T23:04:15.499Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/35543490194"
   },
   "sources": {
     "insider_sell_buy": {
       "status": "ok",
-      "as_of": "2026-09-13",
+      "as_of": "2026-09-20",
       "window": {
-        "start": "2026-08-14",
-        "end": "2026-09-13"
+        "start": "2026-08-21",
+        "end": "2026-09-20"
       },
-      "summary": "12 家 30 日（2026-08-14~2026-09-13）：卖出 $938.3M / 买入 $0.3M，比值 3171.4x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 203 份）",
+      "summary": "12 家 30 日（2026-08-21~2026-09-20）：卖出 $892.8M / 买入 $0.1M，比值 7327.4x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 195 份）",
       "data": {
-        "sell_usd": 938303770,
-        "buy_usd": 295867,
-        "ratio": 3171.4,
+        "sell_usd": 892802669,
+        "buy_usd": 121844,
+        "ratio": 7327.4,
         "zero_buy": true,
-        "form4_count": 203,
+        "form4_count": 195,
         "skipped_no_price": 0,
         "skipped_amendments": 0,
         "skipped_ad_mismatch": 0,
         "skipped_non_xml": 0,
         "by_ticker": {
           "NVDA": {
-            "sell_usd": 653017053,
+            "sell_usd": 660665685,
             "buy_usd": 0,
-            "form4_count": 8
+            "form4_count": 11
           },
           "AVGO": {
             "sell_usd": 0,
             "buy_usd": 0,
-            "form4_count": 0
+            "form4_count": 2
           },
           "AMD": {
-            "sell_usd": 48636961,
+            "sell_usd": 71879141,
             "buy_usd": 0,
-            "form4_count": 25
+            "form4_count": 18
           },
           "MSFT": {
-            "sell_usd": 43388532,
+            "sell_usd": 64153377,
             "buy_usd": 0,
-            "form4_count": 32
+            "form4_count": 40
           },
           "GOOGL": {
             "sell_usd": 27692,
             "buy_usd": 0,
-            "form4_count": 10
+            "form4_count": 22
           },
           "META": {
-            "sell_usd": 30089064,
+            "sell_usd": 32849738,
             "buy_usd": 0,
-            "form4_count": 19
+            "form4_count": 20
           },
           "AMZN": {
-            "sell_usd": 18050539,
+            "sell_usd": 17067545,
             "buy_usd": 0,
-            "form4_count": 12
+            "form4_count": 11
           },
           "ORCL": {
-            "sell_usd": 0,
+            "sell_usd": 1522827,
             "buy_usd": 0,
-            "form4_count": 0
+            "form4_count": 6
           },
           "TSM": {
             "sell_usd": 0,
-            "buy_usd": 295867,
-            "form4_count": 83
+            "buy_usd": 121844,
+            "form4_count": 53
           },
           "MU": {
-            "sell_usd": 52770512,
+            "sell_usd": 38756162,
             "buy_usd": 0,
             "form4_count": 3
           },
@@ -81,9 +81,9 @@
             "form4_count": 4
           },
           "PLTR": {
-            "sell_usd": 89667985,
+            "sell_usd": 3225069,
             "buy_usd": 0,
-            "form4_count": 7
+            "form4_count": 5
           }
         }
       },
@@ -92,44 +92,44 @@
     },
     "token_volume": {
       "status": "ok",
-      "as_of": "2026-09-12",
-      "summary": "OpenRouter 官方 API：近 30 日 463.3T tokens，前 30 日 272.3T，MoM +70.1%（全平台 top50+other 口径，数据截至 2026-09-12）",
+      "as_of": "2026-09-19",
+      "summary": "OpenRouter 官方 API：近 30 日 509.9T tokens，前 30 日 292.7T，MoM +74.2%（全平台 top50+other 口径，数据截至 2026-09-19）",
       "data": {
-        "last30_tokens": 463296079982481,
-        "prev30_tokens": 272306311432464,
-        "last30_tokens_t": 463.3,
-        "prev30_tokens_t": 272.3,
-        "mom_pct": 70.1,
-        "last_data_date": "2026-09-12",
+        "last30_tokens": 509898989767534,
+        "prev30_tokens": 292669836290680,
+        "last30_tokens_t": 509.9,
+        "prev30_tokens_t": 292.7,
+        "mom_pct": 74.2,
+        "last_data_date": "2026-09-19",
         "days_covered": 70,
         "daily_tail": [
           {
-            "date": "2026-09-06",
-            "tokens_t": 14.3
+            "date": "2026-09-13",
+            "tokens_t": 16.7
           },
           {
-            "date": "2026-09-07",
-            "tokens_t": 19.1
+            "date": "2026-09-14",
+            "tokens_t": 18.1
           },
           {
-            "date": "2026-09-08",
-            "tokens_t": 19
-          },
-          {
-            "date": "2026-09-09",
-            "tokens_t": 17.9
-          },
-          {
-            "date": "2026-09-10",
-            "tokens_t": 19.2
-          },
-          {
-            "date": "2026-09-11",
+            "date": "2026-09-15",
             "tokens_t": 17.8
           },
           {
-            "date": "2026-09-12",
-            "tokens_t": 17.1
+            "date": "2026-09-16",
+            "tokens_t": 18.4
+          },
+          {
+            "date": "2026-09-17",
+            "tokens_t": 20
+          },
+          {
+            "date": "2026-09-18",
+            "tokens_t": 19.5
+          },
+          {
+            "date": "2026-09-19",
+            "tokens_t": 17.8
           }
         ]
       },
@@ -138,52 +138,52 @@
     },
     "top5_weight": {
       "status": "ok",
-      "as_of": "2026-09-13",
-      "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 27.75%（NVDA 8.08 / AAPL 7.33 / MSFT 5.59 / AMZN 3.77 / GOOGL 2.98）；含 Alphabet 双类约 30.14%；top10 38.15%",
+      "as_of": "2026-09-20",
+      "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 28.01%（NVDA 8.07 / AAPL 7.51 / MSFT 5.61 / AMZN 3.73 / GOOGL 3.09）；含 Alphabet 双类约 30.48%；top10 38.49%",
       "data": {
-        "top5_single_class_pct": 27.75,
-        "top5_with_dual_class_pct": 30.14,
-        "top10_pct": 38.15,
+        "top5_single_class_pct": 28.01,
+        "top5_with_dual_class_pct": 30.48,
+        "top10_pct": 38.49,
         "constituents": [
           {
             "symbol": "NVDA",
-            "weight_pct": 8.08
+            "weight_pct": 8.07
           },
           {
             "symbol": "AAPL",
-            "weight_pct": 7.33
+            "weight_pct": 7.51
           },
           {
             "symbol": "MSFT",
-            "weight_pct": 5.59
+            "weight_pct": 5.61
           },
           {
             "symbol": "AMZN",
-            "weight_pct": 3.77
+            "weight_pct": 3.73
           },
           {
             "symbol": "GOOGL",
-            "weight_pct": 2.98
+            "weight_pct": 3.09
           },
           {
             "symbol": "AVGO",
-            "weight_pct": 2.61
+            "weight_pct": 2.5
           },
           {
             "symbol": "GOOG",
-            "weight_pct": 2.39
+            "weight_pct": 2.47
           },
           {
             "symbol": "META",
-            "weight_pct": 2.16
+            "weight_pct": 2.27
           },
           {
             "symbol": "MU",
-            "weight_pct": 1.68
+            "weight_pct": 1.67
           },
           {
             "symbol": "TSLA",
-            "weight_pct": 1.56
+            "weight_pct": 1.57
           }
         ]
       },
@@ -192,31 +192,31 @@
     },
     "hy_oas": {
       "status": "ok",
-      "as_of": "2026-09-10",
-      "summary": "FRED BAMLH0A0HYM2 = 270 bps（观测日 2026-09-10）",
+      "as_of": "2026-09-17",
+      "summary": "FRED BAMLH0A0HYM2 = 270 bps（观测日 2026-09-17）",
       "data": {
         "oas_bps": 270,
-        "obs_date": "2026-09-10",
+        "obs_date": "2026-09-17",
         "recent": [
           {
-            "date": "2026-09-10",
+            "date": "2026-09-17",
             "bps": 270
           },
           {
-            "date": "2026-09-09",
+            "date": "2026-09-16",
+            "bps": 270
+          },
+          {
+            "date": "2026-09-15",
+            "bps": 276
+          },
+          {
+            "date": "2026-09-14",
             "bps": 271
           },
           {
-            "date": "2026-09-08",
-            "bps": 267
-          },
-          {
-            "date": "2026-09-07",
-            "bps": 268
-          },
-          {
-            "date": "2026-09-04",
-            "bps": 268
+            "date": "2026-09-11",
+            "bps": 265
           }
         ]
       },
