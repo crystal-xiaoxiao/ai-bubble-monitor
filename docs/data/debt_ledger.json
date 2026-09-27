@@ -168,9 +168,17 @@
    "date": "2026-09-17",
    "borrower": "CoreWeave",
    "instrument": "bond",
-   "amount_usd_b": 3.7,
-   "source_url": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Prices-Upsized-3-7-Billion-Convertible-Senior-Notes-Offering/default.aspx",
-   "note": "9/17 宣布拟发 $3.0B 可转优先票据（另 $0.5B 超额配售），定价时上调至 $3.7B，票息 2.875%、2033-04-01 到期、初始转股价 $97.85（较 9/17 收盘 $79.88 溢价 22.5%），Rule 144A 私募、9/22 交割。公告日 CRWV 跌 4-5% 跌破 $80、盘中一度 -8%。单笔 <$10B，仅记台账"
+   "amount_usd_b": 4.2,
+   "source_url": "https://www.tipranks.com/news/company-announcements/coreweave-upsizes-4-2-billion-2033-convertible-notes-offering",
+   "note": "9/17 宣布拟发 $3.0B 可转优先票据（另 $0.5B 超额配售），定价时上调至 $3.7B，最终于 9/22 交割前再上调至 $4.2B（较最初计划高 40%），票息 2.875%、2033-04-01 到期、转股价 $97.85（较 9/17 收盘 $79.88 溢价 22.5%），Rule 144A 私募。公告日 CRWV 跌 4-5% 跌破 $80、盘中一度 -8%。单笔 <$10B，仅记台账"
+  },
+  {
+   "date": "2026-09-22",
+   "borrower": "Lambda",
+   "instrument": "loan",
+   "amount_usd_b": 0.926,
+   "source_url": "https://www.storagenewsletter.com/2026/09/22/lambda-closes-926-million-senior-secured-term-loan-b-facility-backing-gpu-deployment-for-an-investment-grade-customer/",
+   "note": "$926M 优先担保 Term Loan B，9/22 交割，为一家投资级客户的 GPU 部署提供资金；单笔 <$10B"
   }
  ],
  "ledger_note": "截至 2026-09-20：台账可追溯流水 $208.721B / 19 笔（含在市未定价的 Broadcom $70B）。折年仍显著低于 ms_anchor 区间下沿 $570B —— 周度检索只能抓到头条级 deal、系统性漏记私募信用与表外分笔，台账应读作**下限**而非全量；比值定档以 ms_anchor 区间为准，两者并呈。本期新增 CoreWeave $3.7B 可转债（9/17 定价），并回补 Hut 8 River Bend $3.25B（4/30 交割）；Hut 8 Beacon Point $4.25B 待 10/4 完整对账核实交割日后入账。本期交叉印证：Sona Asset Management 把全行业 AI 相关融资绘为 $3.6T、176 笔、202 个主体（其中约 120 笔高度循环）—— 该数为**存量**口径，不可与本指标的年度流量分子混用，但印证台账与 MS 锚之间的缺口主要来自私募信用与表外 SPV。"
