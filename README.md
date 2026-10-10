@@ -1,84 +1,43 @@
-# AI Bubble Monitor
+# AI Bubble Watch / AI Bubble Monitor
 
-监测美股 AI 泡沫风险的一组领先指标（当前 25 个，以 INDICATORS.md 为准），两轴判读（泡沫成熟度 × 破裂临近度），每周一早 7 点（北京时间）自动飞书推送。
+监测美股 AI 泡沫风险，按 `INDICATORS.md` 定义的指标、两轴判读和历史向量生成双语周报，并更新网页。
 
 **Dashboard**: https://crystal-xiaoxiao.github.io/ai-bubble-monitor/
 
-## 工作原理
+## 当前执行方式
 
-```
-                ┌─────────────────────────────────────┐
-                │  Claude Scheduled Routine            │
-                │  (每周一 北京 07:00 / Sun 23:00 UTC) │
-                └──────────────────┬──────────────────┘
-                                   │
-        ┌──────────────────────────┴──────────────────────────┐
-        │                                                       │
-        ▼                                                       ▼
-  读 INDICATORS.md                                       读上周 snapshot
-  + web_search/WebFetch 抓                              （用于 WoW 对比）
-  24 个指标当前值
-        │                                                       │
-        └──────────────────────────┬──────────────────────────┘
-                                   ▼
-                          ┌──────────────────┐
-                          │ 评分 + 生成 JSON │
-                          └────────┬─────────┘
-                                   │
-              ┌────────────────────┼────────────────────┐
-              ▼                    ▼                    ▼
-       飞书推送（周报）   commit 到 docs/data/   GH Pages 自动重建
-```
+ChatGPT Work 每周一北京时间 07:00（周日 23:00 UTC）在云端直接研究和运行仓库脚本。GitHub 保存代码、台账与运行记录；原有 Actions 负责 prefetch、飞书转发和 Pages。无需个人电脑开机或自建服务器。
 
-**关键设计**：
-- 没有服务器、没有 Anthropic API key；唯一的 GitHub Actions 是 `feishu-relay.yml`（把 routine 写入 `feishu_outbox/` 的 payload 转发到飞书 webhook 后删除——routine 沙箱 egress 直连飞书会被拦）
-- Claude routine 在订阅内运行，零额外费用
-- 这个仓库当文件柜 + 数据台账：存指标定义、历史快照、债务台账、原始值台账，托管 dashboard
-
-## 文件结构
-
-```
-ai-bubble-monitor/
-├── README.md                  # 这个文件
-├── INDICATORS.md              # 全部指标的定义/阈值/聚合规则/历史校准表（routine 读这个，总数以此为准）
-├── ROUTINE_PROMPT.md          # 线上 routine prompt 的版本化副本 + 运维说明
-├── .github/workflows/
-│   └── feishu-relay.yml       # 飞书转发 relay（监听 feishu_outbox/ push）
-├── feishu_outbox/             # routine 写、relay 发完即删（平时为空）
-└── docs/                      # GitHub Pages 源目录
-    ├── index.html             # Dashboard
-    └── data/
-        ├── latest.json        # 最新一期（三个 dashboard 都读这个）
-        ├── debt_ledger.json   # AI 债务交易台账（debt_capex_ratio 周度增量源）
-        ├── raw_history.json   # 原始值台账（反锚定：环比一律从这里算）
-        └── snapshots/
-            └── YYYY-MM-DD.json  # 历史快照
-```
-
-## 改指标怎么办
-
-直接改 `INDICATORS.md`，下次 routine 跑就生效。**指标 ID 不要改**（会破坏历史比对）。
-阈值改了的话在 commit message 里写明原因。
-
-## 改样式怎么办
-
-直接改 `docs/index.html` 里的 CSS。GH Pages 几分钟内重建。
-
-## 看历史
-
-每周的 snapshot 都在 `docs/data/snapshots/`。直接打开 JSON 看，或者改 dashboard 加个时间选择器。
-
-## 阈值校准来源
-
-| 阈值 | 历史锚点 |
+| 组件 | 作用 |
 |---|---|
-| 内部人卖买比 23x = 红 | 2000 dot-com 顶部前一个月 |
-| NVDA 客户投资/收入 24% = 末期 | Lucent 1999 vendor financing 24% |
-| CAPE > 35 = 红 | 1999-2000 峰值 44.19 |
-| 前 5 大权重 > 25% = 红 | 2000 峰值 ~18% |
-| HY OAS > 500 bps = 红 | 2000/2008/2020 风险事件阈值 |
-| 50 日均线上方比例 < 40% 红 | 指数新高时背离的经典阈值 |
+| `INDICATORS.md` | 指标定义、阈值、研究纪律、历史校准、双语输出要求 |
+| `ROUTINE_PROMPT.md` | 与模型无关的研究和写作规范 |
+| `automation/task.json` | 周期、数据闸门与运行配置；不绑定研究模型 |
+| `automation/research-bundle.schema.json` | 可替换模型的统一交付接口 |
+| `scripts/pipeline.py` | prepare / score / build / check / check-site |
+| `RUNBOOK.md` | Work 执行、发布与失败恢复；将来迁 Actions 的边界 |
+| `automation/WORK_PROMPT.md` | Work 定时任务的启动指令副本 |
+| `docs/data/` | 当前网页数据、不可覆盖的历史快照、债务及原始值台账 |
+| `runs/<cycle>.json` | 每周期证据、输入哈希、attempt 与发布包状态 |
+| `feishu_outbox/` | 已入库待转发的消息；relay 发送后删除 |
+| `.github/workflows/` | 现有 prefetch、feishu-relay、token-backfill |
 
-## Issue 历史
+## 数据质量与恢复
 
-完整历史见 `docs/data/snapshots/`（最早 #4 · 2026-05-10）。2026-07-06 起框架升级为两轴判读（stage/trigger）+ 历史相似度 + 周度债务台账，详见 INDICATORS.md。
+有效 prefetch 优先；过期或 partial/error 走备源。抓取失败保留旧值和真实日期并标 stale，超过 5 项则只产生失败通知，保留上期网页。评分、两轴、相似度、滞回、同值预警与发布文件由脚本统一处理；定性研究和原始来源真实性仍需研究者核验。
+
+同一周期按 runs/已发布快照去重，发布前校验基准 SHA，一次提交所有相关文件。研究校验、GitHub 提交、网页发布和飞书送达分别验收，不能凭新 commit 或 outbox 入库宣称整轮成功。
+
+## 运维
+
+运行测试：`python3 -m unittest discover -s tests -v`
+
+检查当前网页与仓库数据一致：`python3 scripts/pipeline.py check-site`
+
+迁移详情、正式执行和失败重试见 [RUNBOOK.md](RUNBOOK.md)。修改模型只更换研究适配层；改为 GitHub Actions 调度时保留仓库契约/脚本/台账，另行验证新的模型认证与额度。
+
+指标 ID 保持稳定；阈值变化须说明原因。指标数、axis、direction、数值阈值、历史颜色从 INDICATORS 读取；修改聚合公式时同步 pipeline 与测试。样式在 `docs/index.html`，本次迁移未改网页设计或历史研究内容。
+
+## 迁移时的真实状态
+
+2026-10-10 迁移时，最新已发布数据为 **Issue #27 · 2026-09-27**。10 月 8 日标为 Issue #28 的提交只包含数据不足的失败通知，未更新网页。本次只迁移执行架构，不补造一期研究。首次 Work 无人值守运行的研究、网页、通知结果需届时观察。

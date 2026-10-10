@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "task_key": "ai-bubble-watch",
+  "repository": "crystal-xiaoxiao/ai-bubble-monitor",
+  "branch": "main",
+  "schedule": {"cron_utc": "0 23 * * 0", "timezone": "Asia/Shanghai", "description": "每周一 07:00 北京时间"},
+  "runtime": "ChatGPT Work direct execution",
+  "research_contract": "INDICATORS.md",
+  "research_instructions": "ROUTINE_PROMPT.md",
+  "runner_instructions": "RUNBOOK.md",
+  "entrypoint": "python3 scripts/pipeline.py",
+  "model": null,
+  "max_stale": 5,
+  "prefetch_max_age_hours": 72,
+  "raw_history_limit": 26,
+  "history_seed_limit": 10,
+  "dashboard": "https://crystal-xiaoxiao.github.io/ai-bubble-monitor/",
+  "data_url": "https://crystal-xiaoxiao.github.io/ai-bubble-monitor/data/latest.json",
+  "notification": "Existing GitHub Actions feishu-relay.yml consumes committed feishu_outbox payloads",
+  "prefetch": {
+    "insider_sell_buy": {"source": "insider_sell_buy", "value_key": "ratio"},
+    "token_volume_mom": {"source": "token_volume", "value_key": "mom_pct"},
+    "top5_weight": {"source": "top5_weight", "value_key": "top5_single_class_pct"},
+    "hy_oas": {"source": "hy_oas", "value_key": "oas_bps"}
+  },
+  "static_core_keys": {
+    "cape": [["multpl", "cape"]],
+    "top5_weight": [["top5_single_class_pct"]],
+    "nvda_fpe": [["forward_pe", "fpe", "stockanalysis_forward_pe"]],
+    "breadth_50d": [["s5fi_close", "pct_above_50d"]],
+    "insider_sell_buy": [["sell_usd"], ["buy_usd"]],
+    "hy_oas": [["oas_bps"]],
+    "token_volume_mom": [["last30_tokens"]],
+    "gpu_rental_price": [["h100_median_on_demand_usd_hr", "h100_usd_hr"]]
+  },
+  "migration": {
+    "date": "2026-10-10",
+    "visible_legacy_task_id": "6ac5f88cedb88191922f84f4fdbee729",
+    "visible_legacy_task_enabled_at_inspection": false,
+    "other_cloud_task_status": "Not identifiable in the exposed task inventory; do not claim paused",
+    "last_published_issue_at_migration": 27,
+    "last_published_date_at_migration": "2026-09-27"
+  }
+}

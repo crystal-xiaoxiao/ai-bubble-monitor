@@ -10,12 +10,18 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: feishu-relay
+  cancel-in-progress: false
+
 jobs:
   send:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: main
 
       - name: Send pending payloads to Feishu
         env:
@@ -29,11 +35,11 @@ jobs:
           sent=()
           for f in feishu_outbox/*.json; do
             echo "→ Sending $f"
-            resp=$(curl -sS -X POST "$FEISHU_WEBHOOK_URL" \
+            resp=$(curl -sS --fail-with-body --connect-timeout 10 --max-time 60 -X POST "$FEISHU_WEBHOOK_URL" \
               -H "Content-Type: application/json" \
               --data-binary "@$f")
             echo "Response: $resp"
-            if echo "$resp" | grep -q '"code":0'; then
+            if printf '%s' "$resp" | python3 -c 'import json,sys; sys.exit(0 if json.load(sys.stdin).get("code") == 0 else 1)'; then
               echo "✓ OK: $f"
               sent+=("$f")
             else

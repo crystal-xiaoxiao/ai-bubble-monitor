@@ -4,3 +4,6 @@
 .env
 .env.local
 node_modules/
+.run/
+__pycache__/
+*.pyc

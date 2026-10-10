@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Bubble Watch model-neutral research bundle",
+  "type": "object",
+  "required": ["schema_version", "cycle", "indicators", "evidence"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "cycle": {"type": "string", "format": "date"},
+    "indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name_en", "name_zh", "value", "unit", "value_display", "status", "threshold_text", "threshold_text_en", "note", "note_en", "source_name", "source_url", "as_of", "stale"],
+        "properties": {
+          "id": {"type": "string"},
+          "value": {"type": ["number", "string"]},
+          "status": {"enum": ["red", "yellow", "green"]},
+          "stale": {"type": "boolean"},
+          "as_of": {"type": "string", "format": "date"}
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "checked_at", "raw", "rationale"],
+        "properties": {
+          "kind": {"enum": ["prefetch", "web", "carry"]},
+          "checked_at": {"type": "string", "format": "date-time"},
+          "raw": {"type": "object"},
+          "rationale": {"type": "string", "minLength": 1},
+          "urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
+          "attempted_urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
+          "calculation": {
+            "type": "object",
+            "required": ["operator", "current", "previous"],
+            "properties": {"operator": {"enum": ["change_pct", "ratio_pct", "ratio"]}, "current": {"type": "number"}, "previous": {"type": "number"}}
+          }
+        }
+      }
+    },
+    "verdict_desc": {"type": "string", "description": "Required for a successful release; 4–6 headed Chinese paragraphs"},
+    "verdict_desc_en": {"type": "string", "description": "Required for a successful release; matching English structure"},
+    "wow_changes": {"type": "array", "maxItems": 5, "items": {"type": "object", "required": ["indicator_id", "type", "from", "to", "note", "note_en"]}},
+    "debt_ledger": {"type": "object", "description": "Required for a successful release; preserve existing schema and corrections"},
+    "debt_review": {
+      "type": "object",
+      "properties": {
+        "searched_urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
+        "weekly_search_note": {"type": "string"},
+        "full_reconciliation": {"type": "boolean"},
+        "reconciliation_note": {"type": "string"},
+        "corrections": {"type": "array", "items": {"type": "object", "required": ["borrower", "date", "reason", "source_url"]}}
+      }
+    }
+  },
+  "$comment": "pipeline.py enforces dynamic indicator IDs, dates, freshness, scoring and cross-file rules. Successful releases additionally require narratives, wow_changes, debt_ledger and debt_review. Failed-data releases need only indicator/evidence fields. Schema validation alone is insufficient."
+}
