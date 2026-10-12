@@ -26,9 +26,9 @@
         "type": "object",
         "required": ["kind", "checked_at", "raw", "rationale"],
         "properties": {
-          "kind": {"enum": ["prefetch", "web", "carry"]},
+          "kind": {"enum": ["prefetch", "web", "current", "carry"]},
           "checked_at": {"type": "string", "format": "date-time"},
-          "raw": {"type": "object"},
+          "raw": {"type": "object", "description": "current: latest_release_date and genuine next_expected disclosure metadata; scan: window {start,end}, queries, sources_checked (opened URL strings or {url,status:ok}), events [{date,what,url}], including an empty events list. Dynamic cadence/date rules are enforced by pipeline.py."},
           "rationale": {"type": "string", "minLength": 1},
           "urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
           "attempted_urls": {"type": "array", "items": {"type": "string", "format": "uri"}},

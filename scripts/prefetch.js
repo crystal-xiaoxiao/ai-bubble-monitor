@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// prefetch：GitHub Actions 每周日 21:00 UTC 机械抓取 4 个 egress 受限数据源，
+// prefetch：GitHub Actions 每周六 13:23、周日 15:23 UTC 机械抓取数据源，
 // 写 docs/data/prefetch/latest.json 供周日 23:00 UTC 的 routine 优先取用。
 // 用法：node scripts/prefetch.js [--dry-run]
 // env：SEC_USER_AGENT / OPENROUTER_API_KEY / FRED_API_KEY
@@ -11,6 +11,7 @@ const { fetchInsiderSellBuy } = require('./lib/sec_form4');
 const { fetchTokenVolume } = require('./lib/openrouter');
 const { fetchTop5Weight } = require('./lib/slickcharts');
 const { fetchHyOas, fetchFredSeries } = require('./lib/fred');
+const { fetchFrontierEci } = require('./lib/epoch_eci');
 
 const OUT = path.join(__dirname, '..', 'docs', 'data', 'prefetch', 'latest.json');
 const CREDIT_OUT = path.join(__dirname, '..', 'docs', 'data', 'credit_spread_history.json');
@@ -63,21 +64,42 @@ async function wrap(name, fn) {
   }
 }
 
+// 失败状态仍然不可用于新观测；保留上次的真实数据、日期及获取时间，避免丢失缓存。
+// 连续失败不能用本轮 _meta.fetched_at 把保留的数据重新标成新鲜。
+function preserveFailedSourceData(entries, previous) {
+  return entries.map(([name, result]) => {
+    const old = previous?.sources?.[name];
+    if (result.status !== 'error' || !old?.data) return [name, result];
+    return [name, {
+      ...result,
+      as_of: old.as_of,
+      data: old.data,
+      source: old.source,
+      retained_data_fetched_at: old.retained_data_fetched_at || previous._meta?.fetched_at || null,
+    }];
+  });
+}
+
 async function main() {
   const dryRun = process.argv.includes('--dry-run');
-  const entries = await Promise.all([
+  let previous = null;
+  if (fs.existsSync(OUT)) previous = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+  const fetched = await Promise.all([
     wrap('insider_sell_buy', fetchInsiderSellBuy),
     wrap('token_volume', fetchTokenVolume),
     wrap('top5_weight', fetchTop5Weight),
     wrap('hy_oas', fetchHyOas),
+    // 定性 frontier_progress 读取此源作 ECI 主锚，不登记 task.json.prefetch 数值映射。
+    wrap('frontier_eci', fetchFrontierEci),
   ]);
+  const entries = preserveFailedSourceData(fetched, previous);
 
   // credit spread 历史序列：独立产物，不进 sources 契约（routine 不消费它）
   const creditResult = await writeCreditHistory(dryRun);
 
   const out = {
     _meta: {
-      purpose: 'GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据，供 routine 优先取用。' +
+      purpose: 'GitHub Actions 每周六 13:23、周日 15:23 UTC 机械抓取的原始数据，供 routine 优先取用。' +
         'routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status=="ok" 才可用；' +
         '否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。',
       schema_version: 1,
@@ -109,4 +131,5 @@ async function main() {
   // 退出码恒为 0：数据落盘优先，状态检查交给 workflow 的后续 step（commit 之后再红叉提醒）
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+if (require.main === module) main().catch((e) => { console.error(e); process.exit(1); });
+module.exports = { preserveFailedSourceData };

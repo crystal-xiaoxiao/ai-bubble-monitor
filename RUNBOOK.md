@@ -20,7 +20,7 @@
 1. 获取远端 `main` 最新完整仓库，在独立工作目录执行。确认可以运行 Python 3，并可通过当前授权方式写 GitHub。读取 AGENTS、研究规范、指标定义、上期数据、债务台账、原始台账、prefetch。
 2. `python3 scripts/pipeline.py prepare` 生成 `.run/context.json`。调度周期是最近已到达的周日 23:00 UTC 对应日期；输出日期取本轮开始的 UTC 日期，数据自身 `as_of` 保留真实日期。`ready=false` 时不再研究/发布。脚本也会阻止未处理 outbox 与历史快照覆盖。
 3. 本轮证据写 `.run/bundle.json`。禁止拿旧新闻/上期值假装本轮抓到数据。模型填指标、证据、双语分析、债务台账与 WoW，脚本负责数值阈值校验、汇总、历史相似度、滞回、同值警告、快照和 outbox 组装。
-4. `python3 scripts/pipeline.py score --bundle .run/bundle.json`。在得到确定性结果后写双语判读。定性状态、来源真实性、原始读数口径、METR/SOTA 比较和分析质量仍必须逐项人工式研究检查；程序不替代研究判断。
+4. `python3 scripts/pipeline.py score --bundle .run/bundle.json`。在得到确定性结果后写双语判读。定性状态、来源真实性、原始读数口径、ECI/SOTA 比较和分析质量仍必须逐项人工式研究检查；程序不替代研究判断。
 5. `python3 scripts/pipeline.py build --bundle .run/bundle.json` 仅生成 `.run/release/`，不直接覆盖线上数据。
 6. `python3 scripts/pipeline.py check --bundle .run/bundle.json` 重新校验并逐字节检查待发布文件。修正候选包后使用新的空 `--release .run/release-v2`，以免混入旧文件。
 7. 按下节单个提交发布 manifest 中所有文件。失败时不要把其他工作区文件混入提交。
@@ -34,14 +34,14 @@
 
 `evidence` 以每个指标 ID 为键，每个值包括：
 
-- `kind`: `prefetch` / `web` / `carry`；`checked_at`: 本轮实际检查时刻 ISO UTC；`rationale`: 原始数字、比较、定性判断或失败原因。
-- `raw`: 本期原始读数对象。prefetch 模式由脚本从缓存复制实际 data，不能以模型提供的值替换。web 模式保存实际读数、真实观测期；carry 模式保存沿用的原始读数，脚本标记 `fetch_failed`。
+- `kind`: `prefetch` / `web` / `current` / `carry`；`checked_at`: 本轮实际检查时刻 ISO UTC；`rationale`: 原始数字、比较、定性判断或失败原因。
+- `raw`: 本期原始读数对象。prefetch 模式由脚本从缓存复制实际 data，不能以模型提供的值替换。web 模式保存实际读数、真实观测期；current 模式仅用于实际核实仍为最新、未超龄的 periodic 披露，保留原始读数、latest_release_date、next_expected 和真实 as_of；carry 模式保存获取失败时沿用的原始读数，脚本标记 `fetch_failed`。
 - `urls`: 真正打开的研究来源 URL；`attempted_urls`: 获取失败时实际尝试过的主源和备源。不要把搜索结果标题当作已读取原文。
 - 派生环比/比值可填 `calculation: {operator: "change_pct"|"ratio_pct"|"ratio", current: 120, previous: 100}`，脚本校验算术。依然必须在 raw/rationale 说明分子分母的出处和观测期；多项综合指标按 INDICATORS 写完整拆解，不能把不相关数字拿来凑结果。
 
-`raw_history` 由脚本追加，保留过去 26 期及原有 `_meta`，不会让模型整文件替换。活源的稳定 raw 锚定字段见 `task.json.static_core_keys`，别名组内任选一个已定义键；这是历史数据兼容映射，不是评分阈值。数连续未变的绝对值、缺失期数和连续估算，不能因派生百分比变化重置。若更换真实数据口径，需要显式更新映射及测试，不能伪造键值凑过关。季度/低频调查不因周度未更新自动视为同值异常，但没有新数据时仍按原研究规则标 stale。
+`raw_history` 由脚本追加，保留过去 26 期及原有 `_meta`，不会让模型整文件替换。活源的稳定 raw 锚定字段见 `task.json.static_core_keys`，别名组内任选一个已定义键；这是历史数据兼容映射，不是评分阈值。数连续未变的绝对值、缺失期数和连续估算，不能因派生百分比变化重置。若更换真实数据口径，需要显式更新映射及测试，不能伪造键值凑过关。季度/低频调查不因周度未更新视为同值异常；本期实际核实同一披露且未超龄可 current。live/scan 不允许 current；全部 Cadence 和年龄界限在 INDICATORS。成功/失败包均记录 new/current/stale 数。扫描 evidence.raw 的 window/queries/sources_checked/events 按研究规范填写，空事件可以是有效扫描，不能伪造查询或成功访问。
 
-`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；到 28 天完整对账时还需 `full_reconciliation: true`、`reconciliation_note`，并更新 `last_full_recon`。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
+`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；到28天完整对账时尝试重建；实际完成才填 `full_reconciliation:true`、`reconciliation_note` 并更新 last_full_recon。未完成填原因、保留旧日期并输出逾期警告；周度扫描及可用 ms_anchor 仍须核实，对账逾期不再作为硬错误。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
 
 ## 发布适配器与竞争处理
 
@@ -67,10 +67,10 @@
 - 仓库最新成功期为 #27 · 2026-09-27。Oct 8 名为 Issue #28 的提交只包含失败 outbox，未发布新期；本迁移不改任何研究数据。
 - 可见旧 ChatGPT 任务在迁移前已经 paused，ID 见 task.json。工具列表未能识别另一个独立 Codex Cloud 任务，不能声称其已停止；若有独立任务，应取得其实际 ID/链接后停用，避免多个调度器同时写同一仓库。
 - `automation/archive/CLAUDE_ROUTINE_PROMPT.md` 仅保留更早的 Claude 配置历史；不声称已操作过该第三方调度器。
-- Work 的有效任务 prompt 与 `automation/WORK_PROMPT.md` 相同；日程保持每周一北京时间 07:00。原 prefetch 日程保持周日 21:00 UTC，延迟/失败时仍用 72 小时有效期和备源规则，不假设 Actions 总能准点。
+- Work 的有效任务 prompt 与 `automation/WORK_PROMPT.md` 相同；日程保持每周一北京时间 07:00。迁移时原 prefetch 为周日21:00 UTC；2026-10-12 取数修复后改为周六13:23、周日15:23 UTC，保留72小时有效期。prepare 显示不可用先检查 Actions；正在跑则最多等15分钟、单次≤60秒，完成后获取最新 main 并重新 prepare。insider/token 不在 Work 直连认证 API，缓存不可用则 stale。
 
 ## 维护验证
 
-`python3 -m unittest discover -s tests -v` 覆盖 stale 边界、假刷新日期、prefetch 过期/partial、原始值同值预警、基准冲突、重复周期、债务对账、数值阈值及降档滞回。测试使用临时目录合成输入，不写远端、不发送消息。
+`python3 -m unittest discover -s tests -v` 覆盖 stale 边界、假刷新日期、prefetch 过期/partial、原始值同值预警、基准冲突、重复周期、current 年龄/Cadence、空事件扫描、债务对账逾期警告、数值阈值及降档滞回。测试使用临时目录合成输入，不写远端、不发送消息。
 
 `python3 scripts/pipeline.py check-site` 比对当前库中的整份 latest 与网页 JSON。它证明当前网页和仓库一致，不证明下一轮定时研究或飞书投递一定成功。

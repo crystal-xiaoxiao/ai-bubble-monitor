@@ -15,7 +15,7 @@
 - `docs/data/latest.json` → 上期快照，用于 WoW 对比、降档滞回判断和 fallback
 - `docs/data/debt_ledger.json` → 债务交易台账（debt_capex_ratio 的周度数据源）
 - `docs/data/raw_history.json` → 原始值台账（所有环比/增速/比值从这里的上期原始值计算）
-- `docs/data/prefetch/latest.json` → GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个 egress 受限源）。**读法：先查 `_meta.fetched_at` 距今 <3 天，再查对应 `sources.*.status=="ok"`，两者都满足才可用**；partial/error 或文件过期 → 该指标走 INDICATORS.md 的备源链
+- `docs/data/prefetch/latest.json` → GitHub Actions 每周六 13:23 UTC、周日 15:23 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个映射源，以及研究辅助 frontier_eci）。**读法：先查 `_meta.fetched_at` 距今 <3 天，再查对应 `sources.*.status=="ok"`，两者都满足才可用**；partial/error 或文件过期 → 先只读查看 prefetch Actions 是否正在运行；若在跑最多等15分钟（单次等待≤60秒），完成后取最新 main 并重新 prepare。仍不可用才走定义的备源链；insider/token 没有 Work 备源，必须 stale
 
 新一期 issue_number = 上期 + 1
 新一期 as_of_date = context.as_of_date（本轮开始的 UTC 日期；各指标 as_of 仍为真实观测日）
@@ -25,9 +25,9 @@
 按 INDICATORS.md 里每个指标的 source：
 - **prefetch 覆盖的指标（insider_sell_buy / token_volume_mom / top5_weight / hy_oas）一律先读 `docs/data/prefetch/latest.json`**（读法见第 1 步）：该源的 `data` 就是本期原始数据点，note 引用其 `summary` 里的数字，`as_of` 取该源的 `as_of` 字段（是数据自身日期，**不要改写成运行日期**）；prefetch 不可用才走 INDICATORS.md 里写明的备源链
 - 稳定 URL（multpl 等）→ WebFetch；主源失败走 INDICATORS.md 里写明的备源链
-- 定性指标（capex 指引、CEO 表态、IPO pipeline、ARR、GPU 租价、私募二级标价等）→ WebSearch（token 量已由 prefetch 覆盖，web_search 只作交叉印证）
-- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天才做完整自下而上拆解并修正台账
-- `frontier_progress` → 按 INDICATORS.md 三层量化：METR time horizon（主锚）+ 困难基准 90 天 SOTA 位移（HLE/FrontierMath/ARC-AGI 等）+ 发布密度与叙事；判定必须与 raw_history 上期数值对比
+- 指标按 Cadence 和最新主源表抓取；扫描类用有记录 WebSearch + 实际来源访问，periodic 核实最新披露。**Work 不直连 OpenRouter API 或 efts.sec.gov**，insider/token 只走 prefetch，公开新闻不替代聚合读数
+- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天尝试完整自下而上拆解并修正台账；未完成则保留真实 last_full_recon、写原因和逾期天数，警告而非硬错误。不能仅因对账逾期把有周度扫描与有效 ms_anchor 的指标标 stale
+- `frontier_progress` → 按 INDICATORS.md 三层量化：Epoch ECI SOTA/90天增幅（主锚，优先有效 frontier_eci prefetch）+ 困难基准90天 SOTA 位移 + 发布密度与叙事。METR 仅有新观测时参考；按 INDICATORS 的50%季均比较与连续两个窗口停滞规则，首期写明主锚切换；判定必须与 raw_history 上期数值对比
 - **反锚定纪律（全局，见 INDICATORS.md「数据抓取纪律」）**：活源数值型指标的 note 必须写出本期实际抓到的原始数据点（如 insider 卖/买总金额、token 30 日绝对量），给不出=没抓到=按 stale 处理；本期各数值型指标的原始输入写入研究包 evidence.raw，**由 pipeline 追加写入 raw_history.json**（每指标保留 26 期）；**同值预警数 raw 里的核心原始绝对值**（不数派生 value——MoM%/比值在变不能重置计数）：原始值连续 3 期不变或连续 3 期缺失 → 输出 `suspect_static: true` + `static_weeks: N` 并准备飞书提醒行
 
 每个指标产出（**注意双语**）：
@@ -39,12 +39,25 @@
   threshold_text_en (英文版, 例如 ">35 red / 25-35 yellow / <25 green"),
   note (中文 1-2 句解读),
   note_en (英文 1-2 句解读，自然像英文新闻不要逐字对译),
-  stale: false（仅当本期真正拿到新原始数据点时才是 false）
+  stale: false（new 或经本期实际核实且未超龄的 periodic current；详见下面三态）
 }
+
+**新鲜度三态（stale 表示“没能核实”，不是“没有新数据”）**
+- **new**：本期取得新观测，as_of 保留真实观测日；有记录的本周扫描也是新观测。
+- **current（核实仍为最新）**：仅 Cadence=periodic。本期确实打开非空 urls 的来源，确认最新披露仍是上期同一份；value/status/as_of/双语显示值原样保留，stale=false、evidence.kind=current，raw 保留原始读数及 `latest_release_date`、`next_expected`。next_expected 只写已公布日期，未知写“尚未公布”，不猜。年龄按真实 as_of 至本轮 UTC 日期计算，≤120天，enterprise_deploy ≤200天；超龄不能 current。current 不计 stale 闸门，不把旧披露写成本期日期。
+- **stale**：本期主备源都无法核实（或 current 超龄），kind=carry，沿用真实旧日期并计入闸门。
+
+**扫描类证据**：本周实际完成定义窗口的扫描，kind=web，as_of=扫描日；raw 必有 `window:{start,end}`（真实日期）、非空 queries、非空 sources_checked（成功检查的 URL 字符串或 `{url,status:"ok"}`）、`events:[{date,what,url}]`。events 可为空，双语 note 写“本周扫描未见新事件”，这是尽职扫描结论，不是声称确认所有事件为零；失败 URL 放 attempted_urls，不计成功来源，搜索/来源全失败必须 stale。
+
+**复合指标**：锚定分项按 INDICATORS 的“更新锚”；锚拿到新值即 new，其他分项可沿用但各带日期，双语 note 点名沿用项。不得以无关新数据代替锚；辅助缺口会改变状态时明确依据。
+
+**台账指标**：debt_capex_ratio、NVDA承诺分子、IPO名单以上期 raw/台账为基线只找新增或变化并去重；债务28天、NVDA财报后才完整重建。不清空历史。raw.basis 写 gross/net、全球/美国、TTM/YTD 或价格来源；跨口径不算环比、二阶差分或 value_change WoW，状态按同口径分项及方向证据判断。
+
+**证据分级**：IR/SEC、官方统计、数据站，以及 Reuters/Bloomberg/CNBC/WSJ/FT/The Information/Axios 的具体报道数字可用，媒体数字标“媒体口径”。原文403/付费墙先找 Yahoo Finance/MarketScreener/Investing.com/TipRanks 转载或 PR Newswire/BusinessWire/GlobeNewswire 新闻稿并实际打开。仅搜索摘要时至少两个独立来源数字一致（同稿转载不是独立），raw.tier=snippet 并记录对应来源；snippet 不能成为红灯升级的唯一依据。
 
 抓不到时（prefetch 与备源链全部失败）：
 - 沿用 latest.json 上周值（包括 _en 字段），stale=true；**`as_of` 必须保留上期的真实 as_of，绝对禁止写成本期日期**；note 改为"沿用 {上期 as_of} 值（数据源暂不可用）"，note_en 改为 "Carrying value as of {上期 as_of} (source unavailable)"
-- **红线：`as_of`=本期日期 ⟺ note 里给得出本期新抓的原始数据点，两者必须同真同假**——历史教训：被封期间 as_of 每周照写新日期、stale 照写 false，导致停更 5 周在看板上完全不可见
+- **红线：本期日期只用于本期新数值观测或实际完成的扫描；current 永远保留真实披露日；new 数值源也保留来源自身日期（可能早于运行日）**——历史教训：被封期间 as_of 每周照写新日期、stale 照写 false，导致停更 5 周在看板上完全不可见
 - stale 累计 > 5 个 → 中止，跳到第 7 步发错误提醒
 
 ### 3. 评分
@@ -83,7 +96,7 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
 对比 latest.json 每个指标上周 status：
 - status_upgrade: green→yellow / yellow→red / green→red
 - status_downgrade: red→yellow / yellow→green / red→green
-- value_change: status 没变但数值变化 >10%（仅数值型）
+- value_change: status 没变但数值变化 >10%（仅同口径数值型；来源/basis 切换首期不计）
 
 每条变化（双语）：{ indicator_id, type, from, to, note (中文一句话), note_en (英文一句话) }
 保留最重要的 5 条（红灯转换优先）。上期快照不存在的指标（新增/换入首期）不计入。debt_ledger 本周若有单笔 ≥$10B 的新 deal，也要作为一条变化收录。
@@ -101,9 +114,9 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
 
 ## 发布与运行总结
 
-不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。阈值、主备源与反锚定纪律不得降低。
+不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。评分阈值和 stale>5 闸门不变；按最新 Cadence、来源和证据分级执行，不以达到预期 stale 数为目标牺牲事实核验。债务完整对账逾期须在成功/失败通知里单列警告。
 
-按 RUNBOOK 单次提交 manifest 文件，确认远端 SHA、Pages 整份 JSON 与 relay 状态。分别输出 Issue/日期、红黄绿/风险温度、两轴、判读中英、历史相似度 top1、WoW/静态预警/新债务/stale 数、提交链接、网页和通知状态。权限或 Safety 拒绝要如实报告，不更换通道规避。未知消息结果不得盲目重发。
+按 RUNBOOK 单次提交 manifest 文件，确认远端 SHA、Pages 整份 JSON 与 relay 状态。分别输出 Issue/日期、红黄绿/风险温度、两轴、判读中英、历史相似度 top1、WoW/静态预警/新债务及 new/current/stale 数、提交链接、网页和通知状态。权限或 Safety 拒绝要如实报告，不更换通道规避。未知消息结果不得盲目重发。
 
 ## 分析与写作风格（Crystal 偏好，2026-10-09）
 

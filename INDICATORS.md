@@ -21,10 +21,33 @@
 
 抓数最常见的失败模式是**锚定上期值**：搜到相似文章后复读上期数字，`as_of` 每周更新、value 却常年不动（历史上 insider_sell_buy 曾连续 5 期 ~8x、token_volume_mom 连续 5 期 +35%）。**2026-08 教训**：openinsider/openrouter 被 egress 403 后，insider 连续 5 期估算值、token 底层绝对量停更 10-12 周，但 as_of 每周照写新日期、同值预警只数派生 value（MoM% 变了计数就重置）——两个失效都没被发现。为杜绝静默沿用：
 
-1. **prefetch 优先**：`docs/data/prefetch/latest.json` 是 GitHub Actions 每周日 21:00 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个 egress 受限源）。凡该文件中 `_meta.fetched_at` 距今 <3 天且对应源 `status=="ok"` 的指标，**必须以 prefetch 的 data/summary 为本期原始数据点**（note 引用其数字，`as_of` 取该源的 `as_of` 字段），不再自行 WebFetch；prefetch 不可用才走该指标定义里的备源链。
-2. **原始数据点强制**：数据源为活源（日更/周更，如 SEC EDGAR、OpenRouter API、FRED、barchart）的数值型指标，note 里**必须写出本期实际抓到的原始数据点**——例如 `insider_sell_buy` 要写「30 日卖出 $X.XB / 买入 $XM」、`token_volume_mom` 要写本期 30 日 token 绝对量。给不出原始数据点 = 本期没抓到数 = 沿用上期并标 `stale: true`，不允许"as_of 更新了、值是抄的"。
-3. **原始值台账**：每次运行把各数值型指标的本期原始输入追加进 `docs/data/raw_history.json`（结构：`{"indicator_id": [{"date": "YYYY-MM-DD", "raw": {...自由字段...}, "value": N}]}`，每指标保留最近 26 期）。**环比/增速/比值一律用台账里的上期原始值计算**，不允许直接 web_search 搜"环比增速"抄结论。
+1. **prefetch 优先**：`docs/data/prefetch/latest.json` 由 GitHub Actions 每周六 13:23 UTC、周日 15:23 UTC 抓取；周六为保底，周日更新为主。凡 `_meta.fetched_at` 距今 <72 小时且对应源 `status=="ok"`，**必须以 prefetch 的 data/summary 为原始数据点**（note 引用其数字，`as_of` 保留数据自身日期）。四个映射源为 insider_sell_buy / token_volume / top5_weight / hy_oas，另有 frontier_eci 供前沿研究读取，后者不进入 task.json.prefetch 数值映射或 static_core_keys。`prefetch_usable` 有 false 时先只读查询 Actions；正在运行则最多等 15 分钟，每次等待不超过 60 秒，完成后获取最新 main 并重新 prepare。**Work 不直连 OpenRouter API 或 efts.sec.gov**；insider/token 只走 prefetch，不可用则 stale。其他源按各自备源链核实。
+2. **原始数据点强制**：数据源为活源（日更/周更，如 SEC EDGAR、OpenRouter API、FRED、investing.com）的数值型指标，note 里**必须写出本期实际抓到的原始数据点**——例如 `insider_sell_buy` 要写「30 日卖出 $X.XB / 买入 $XM」、`token_volume_mom` 要写本期 30 日 token 绝对量。给不出原始数据点 = 本期没抓到数 = 沿用上期并标 `stale: true`，不允许"as_of 更新了、值是抄的"。
+3. **原始值台账**：每次运行把各数值型指标的本期原始输入追加进 `docs/data/raw_history.json`（结构：`{"indicator_id": [{"date": "YYYY-MM-DD", "raw": {...自由字段...}, "value": N}]}`，每指标保留最近 26 期）。**环比/增速/比值一律用同口径台账原始值计算**，不允许直接 web_search 搜"环比增速"抄结论。
 4. **同值预警（数原始绝对值，不数派生值）**：活源数值型指标的**核心原始绝对值**（`insider_sell_buy` 的 sell_usd/buy_usd、`token_volume_mom` 的 30 日 token 总量、`hy_oas` 的 bps 等，即 raw 里的锚定字段）连续 3 期不变**或连续 3 期缺失（拿不到新读数）** → 该指标输出 `suspect_static: true` 和 `static_weeks: N`（连续期数），并在飞书推送里单列一行「⚠ 疑似静态：{指标} 连续 {N} 期原始值未变/未获取 = {value_display}，请人工核查」。**判断方法：数 raw_history.json（含本期）该指标 raw 里核心原始值的连续情况**——派生值（MoM%、比值）在变不能重置计数，历史上 token 的 MoM 从 35→25→5 变来变去、底层绝对量却 10 周没动，就是只数派生值漏报的。前端会渲染 suspect_static 角标（「N 期未变」），不可省略。周期性/低频指标不适用本条（debt_capex_ratio 的对账节奏、enterprise_deploy 等季度调查类）。
+
+### Cadence 与新鲜度三态
+
+每个指标的 Cadence 和 periodic 最大年龄见各定义；最大年龄按本轮 UTC 日期与指标真实 `as_of` 之差计算。
+
+| Cadence | 含义 | 允许状态 | 最大年龄 |
+|---|---|---|---|
+| live | 日更/周更数值源 | new / stale | current 不适用 |
+| periodic | 季报、季度/年度调查、不定期披露 | new / current / stale | current ≤120 天；enterprise_deploy ≤200 天 |
+| scan | 按定义窗口的事件/叙事扫描 | new / stale | 每周完成实际扫描 |
+
+- **new**：本期取得新观测（含本周完成的有记录扫描），`stale=false`、evidence.kind 为 web 或 prefetch，`as_of` 写真实观测日。扫描没有发现事件也是本期扫描观测，不代表证明所有事件为零。
+- **current（核实仍为最新）**：仅 periodic 可用。本期确实打开来源，核实最新披露仍是上期同一份，且未超过 Max age。value/status/as_of 及双语显示值与上期保持一致，`stale=false`、`evidence.kind="current"`；urls 非空，raw 必填 `latest_release_date`（实际披露日）及 `next_expected`（已公布的下次披露日期；未知时明确写“尚未公布”，不要推测日期）。raw 继续保留原始读数和 basis。current 不计入 stale 闸门，不允许仅复制上期值冒充核实。
+- **stale**：本期未能核实当前状态（主备源失败、扫描工具不可用或 current 已超龄）。evidence.kind=carry，`stale=true`，保留上期 value/status/as_of。stale>5 的失败闸门不变。
+- **扫描证据**：raw 必填 `window:{start:"YYYY-MM-DD",end:"YYYY-MM-DD"}`、非空 queries、非空 sources_checked（实际检查成功的 URL 字符串，或 `{url,status:"ok"}`）、`events:[{date,what,url}]`。events 可以为空；note 写“本周扫描未见新事件”，这是有记录的尽职扫描结论。实际访问失败写 attempted_urls，不能算成功来源；工具/来源全部失败必须 stale。窗口按具体定义取 7-10 天、60 天、90 天或未来 6 个月，扫描日写 as_of。
+- 成功与失败通知都列出 new / current / stale 数量；current 披露日保持可见，不把“核实沿用”算成新增披露。
+
+### 复合、台账与证据口径
+
+- **复合指标看锚定分项**：按各定义的“更新锚”，锚本期有新读数即 new，其他分项可沿用；raw 给出每个分项日期，双语 note 点名沿用项。未取得锚不能以无关新数字代替。缺失辅助项如会实质影响 status，必须说明依据；不伪造分项或比较。
+- **台账只做增量**：debt_capex_ratio、nvda_invest_revenue 的承诺分子、ai_ipo_pipeline 名单以上期 raw/台账为基线，每周只找新增或变化并去重。债务每28天完整对账；NVDA 承诺在其财报后完整核对。不要每周从零重建或清空旧台账。
+- **口径变化显式记录**：raw 写 basis（如 gross/net、全球/美国、TTM/YTD、价格来源），双语 note 说明切换；跨口径不计算环比、增速二阶差分或 value_change WoW，状态依据同口径分项及有效方向证据判断。原始数值不能为达成阈值而换口径。
+- **证据分级**：公司 IR/SEC 文件、官方统计与数据站可直接取数；Reuters、Bloomberg、CNBC、WSJ、FT、The Information、Axios 的具体报道数字可用，注明“媒体口径”。403/付费墙先查 Yahoo Finance、MarketScreener、Investing.com、TipRanks 的转载及 PR Newswire/BusinessWire/GlobeNewswire 新闻稿，真正打开可访问内容。只有搜索摘要时，至少两个**独立**来源数字一致（同一稿件转载不算独立），raw 写 `tier:"snippet"`、来源与对齐结果；snippet 不得作为红灯升级的唯一证据。材料不足就保留明确缺口，不从摘要补造完整数据。
 
 ## 聚合判读
 
@@ -104,6 +127,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `cape` — Shiller CAPE 周期调整 PE
 - **Axis**: stage
+- **Cadence**: live
 - **Source**: https://www.multpl.com/shiller-pe（页面顶部当前值）
 - **Direction**: high_bad
 - **Thresholds**: red=35, yellow=25
@@ -111,6 +135,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `top5_weight` — S&P 500 前 5 大权重占比 (%)
 - **Axis**: stage
+- **Cadence**: live
 - **Source**: prefetch `top5_weight`（GitHub Actions 抓 slickcharts，`data.top5_single_class_pct` 为口径基准）。备源：WebFetch https://www.slickcharts.com/sp500（取前 5 行权重相加）→ SPY 持仓二手读
 - **Direction**: high_bad
 - **Thresholds**: red=25, yellow=18
@@ -118,14 +143,17 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `nvda_fpe` — NVDA Forward P/E
 - **Axis**: stage
-- **Source**: web_search "NVDA forward PE current" / yfinance / GuruFocus
+- **Cadence**: live
+- **Source**: https://stockanalysis.com/stocks/nvda/statistics/ 的 Forward P/E；备源 yfinance / GuruFocus，记录所用一致口径
 - **Direction**: high_bad
 - **Thresholds**: red=40, yellow=30
 - **Anchor**: 1999 MSFT NTM PE 60x
 
 ### `private_secondary_marks` — AI 私募二级市场标价
 - **Axis**: trigger
-- **Source**: web_search Forge Global / Caplight / Hiive 上 OpenAI / Anthropic / xAI 的二级市场隐含估值，对比各自最近一轮 primary 估值；隐含估值绝对值记入 raw_history
+- **Cadence**: live
+- **Source**: 主序列 https://stockanalysis.com/private/anthropic/ 与 https://stockanalysis.com/private/openai/（Clarity，原 Hiive；二级价、隐含估值及最近一轮估值）。Forge 对应公司页仅交叉；弃用 Caplight 首页/Hiive 页面。raw 保存两家价、隐含估值、最近一轮估值和各自日期/basis；首期切换来源不能与 Forge 历史价算环比
+- **更新锚**: OpenAI 与 Anthropic 的 stockanalysis 二级价及隐含估值；至少锚定读数确实更新，其他标的可明示沿用。
 - **Direction**: qualitative（标价走弱=坏）
 - **Status mapping**: 任一旗舰标的二级转折价（低于最近一轮 5%+）或标价环比明显下跌 = red / 溢价收窄且卖压>买压 = yellow / 溢价稳定或扩大 = green
 - **Anchor**: 一级市场退潮最先出现在二级标价——2000-03 顶前 pre-IPO 二级溢价先萎缩。`vc_ai_share` 测的是量，本指标测的是价。
@@ -136,27 +164,39 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `hyperscaler_capex_yoy` — Mag4 资本开支 YoY (%)
 - **Axis**: stage
-- **Source**: web_search MSFT/GOOGL/AMZN/META 最新季报 capex 指引 vs 去年同期
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: 四家 IR 最新季报实际 capex 与去年同期（https://www.microsoft.com/en-us/Investor/、https://abc.xyz/investor/、https://ir.aboutamazon.com/、https://investor.atmeta.com/）；指引及卖方预测可用 Reuters/Bloomberg 等报道交叉。季报间隙实际核实最新披露仍相同则 current
+- **更新锚**: 季报实际 capex；新指引仅辅助，不将未更新的实际观测改成新日期。
 - **Direction**: extreme_bad（加速=黄、下调指引=红、稳健=绿）
 - **Thresholds**: 由 LLM 直接判断 status
 
 ### `mag4_fcf_yoy` — Mag4 自由现金流 YoY (%)
 - **Axis**: trigger
-- **Source**: web_search Barclays / Morgan Stanley / BofA 最新 Mag4 FCF 估算
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: 四家 IR 季报经营现金流减 capex，与去年同期同口径比较；Barclays / Morgan Stanley / BofA 预测的媒体报道仅交叉，不能替代实际 FCF。季报间隙可核实 current
+- **更新锚**: 季报实际 FCF（经营现金流−capex）。
 - **Direction**: low_bad
 - **Thresholds**: red=-20, yellow=0
 - **Note**: capex 烧掉 FCF 是泡沫晚期典型特征；自有燃料耗尽 = 转向外部融资 = 引线之一
 
 ### `vc_ai_share` — AI / Total VC Funding (%)
 - **Axis**: stage
-- **Source**: web_search PitchBook / CB Insights 最新数据
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: 主序列 Crunchbase News 全球季度融资报告 https://news.crunchbase.com/（AI 融资 / 同期全球全部 VC 融资）；PitchBook-NVCA Venture Monitor 新闻稿、NVCA PDF https://nvca.org/research/ 仅交叉。2026-10-12 决策：由 PitchBook 美国序列切换到 Crunchbase 全球季度；首期 raw.basis=crunchbase_global_quarterly 并在双语 note 说明，跨序列不算 WoW；阈值不变
+- **更新锚**: Crunchbase 全球季度 AI/全部融资占比。
 - **Direction**: high_bad
 - **Thresholds**: red=50, yellow=30
 - **Anchor**: 健康水位 <30%；2025 创新高 ~70%
 
 ### `nvda_invest_revenue` — NVDA 客户投资 / LTM 收入 (%)
 - **Axis**: stage
-- **Source**: web_search NVDA 对 OpenAI/CoreWeave/xAI 等的 equity+loan 承诺，分子；NVDA LTM revenue 分母
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: 分母 https://stockanalysis.com/stocks/nvda/revenue/ 的 LTM revenue；分子沿用上期 OpenAI/CoreWeave/xAI 等 equity+loan 承诺清单，加本周新闻扫描确认的新增/变化。财报后完整核对承诺清单；raw 分别注明分子、分母、日期及 basis
+- **更新锚**: 最新 LTM 收入分母 + 承诺分子增量；保存承诺清单基线。
 - **Direction**: high_bad
 - **Thresholds**: red=30, yellow=15
 - **Anchor**: Lucent 1999 vendor financing 24% 已是末期；NVDA 当前 60%+
@@ -168,7 +208,8 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `breadth_50d` — S&P 500 50 日均线上方比例 (%)
 - **Axis**: trigger
-- **Source**: web_search "% S&P 500 above 50-day moving average current" 或 https://www.barchart.com/stocks/quotes/$S5FI
+- **Cadence**: live
+- **Source**: https://www.investing.com/indices/s-p-500-stocks-above-50-day-average-historical-data，取最新实际收盘值与日期；弃用 Barchart/TradingView 作为常规来源。暂无新增 prefetch 自算源
 - **Direction**: low_bad
 - **Thresholds**: red=40, yellow=60
 - **Anchor**: 指数新高时 <40% = 头部独自上涨，历史上是顶部信号
@@ -176,7 +217,8 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `insider_sell_buy` — AI 内幕交易 30 日 卖/买 美元比 (倍数)
 - **Axis**: trigger
-- **Source**: prefetch `insider_sell_buy`（GitHub Actions 从 SEC EDGAR Form 4 直接聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 12 家 30 日公开市场卖(S)/买(P)美元额——这是本指标的定义口径）。备源：SEC EDGAR full-text search（efts.sec.gov, forms=4）→ web_search 新闻层。~~openinsider~~ 已弃用（2026-08 站点失效）
+- **Cadence**: live
+- **Source**: prefetch `insider_sell_buy`（GitHub Actions 从 SEC EDGAR Form 4 直接聚合 NVDA/AVGO/AMD/MSFT/GOOGL/META/AMZN/ORCL/TSM/MU/ARM/PLTR 12 家 30 日公开市场卖(S)/买(P)美元额——这是本指标的定义口径）。Work 无备源：不要直连 efts.sec.gov，不用新闻代替12家公司30日完整聚合；prefetch 不可用就 stale。~~openinsider~~ 已弃用（2026-08 站点失效）
 - **Direction**: high_bad
 - **Thresholds**: red=20, yellow=5
 - **Anchor**: 2000 峰值 23x（openinsider 时代口径）
@@ -184,7 +226,9 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `ai_ipo_pipeline` — AI IPO/SPAC 管道状态
 - **Axis**: stage
-- **Source**: web_search 未来 6 个月 AI IPO 公告数 + 近期 SPAC 合并
+- **Cadence**: scan
+- **Source**: https://stockanalysis.com/ipos/filings/ + https://stockanalysis.com/ipos/calendar/ 的公开递表及日历；秘密递表/SPAC 从主流媒体扫描。以上期名单做增量去重，raw 保存名单 `{name,status,date,url}`、本周 events 和扫描证据；只计定义范围的 AI 公司
+- **更新锚**: 去重后的 AI IPO/SPAC 名单及本周变动。
 - **Direction**: qualitative
 - **Status mapping**: 洪流（10+）= red / 升温（3-9）= yellow / 平静（<3）= green
 
@@ -194,6 +238,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `hy_oas` — 高收益债期权调整利差 (bps)
 - **Axis**: trigger
+- **Cadence**: live
 - **Source**: prefetch `hy_oas`（GitHub Actions 走 FRED 官方 API，BAMLH0A0HYM2，`data.oas_bps` 已换算成 bps）。备源：Convex/TradingEconomics 镜像读数。~~fredgraph.csv~~ 已弃用（2026-08 确认超时不可达）
 - **趋势图数据**：prefetch 每周同时全量重写 `docs/data/credit_spread_history.json`（HY=BAMLH0A0HYM2 / CCC=BAMLH0A3HYC / IG=BAMLC0A0CM 三序列、1 年日度、FRED 直拉），仅供三站前端「AI 基建信用利差」小倍数趋势图展示，**不参与红黄绿判读**，routine 不消费该文件
 - **Direction**: high_bad
@@ -202,18 +247,25 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `dc_abs_spread` — 数据中心 ABS 利差状态
 - **Axis**: trigger
-- **Source**: web_search KBRA / Fitch 数据中心 ABS 最新报告。备源：Finsight（finsight.com）ABS 新发行数据库按数据中心筛
+- **Cadence**: scan
+- **Source**: 新发数据中心 ABS/CMBS 定价报道及 KBRA https://www.kbra.com/ / S&P https://www.spglobal.com/ratings/ presale 报告；备源媒体转载。可用 prefetch CCC 利差、Oracle/CoreWeave 债价作代理交叉，注明代理口径，不把普通公司债价替换 ABS bps。没有新定价时按本周扫描结论维持已验证状态
+- **更新锚**: 实际定价/事件列表；无新定价的成功扫描可维持，代理不是同口径利差。
 - **Direction**: qualitative
 - **Status mapping**: 走阔 50bps+ = red / 稳定 = yellow / 收窄 = green
 
 ### `neocloud_credit` — Neocloud 90 日信用事件数
 - **Axis**: trigger
-- **Source**: web_search CoreWeave / Nebius / Nscale / Lambda / Crusoe 评级下调、违约、压力交换
+- **Cadence**: scan
+- **Source**: 按近90天窗口扫描 CoreWeave / Nebius / Nscale / Lambda / Crusoe 的穆迪 https://ratings.moodys.com/、标普 https://www.spglobal.com/ratings/、惠誉 https://www.fitchratings.com/ 新闻稿标题及 Reuters/Bloomberg 报道；公司8-K新闻转述交叉，raw 记录事件列表，尽职扫描 events=[] 时为 green
+- **更新锚**: 90天信用事件与 watch 列表。
 - **Direction**: any_bad
 - **Status mapping**: 任何已确认事件 = red / Watch 评级 = yellow / 无 = green
 
 ### `debt_capex_ratio` — 全口径债务/Capex 流量比 (%)
 - **Axis**: stage
+- **Cadence**: scan
+- **Source**: 周度新 deal 新闻扫描；完整对账取 Morgan Stanley / Goldman Sachs / JPMorgan 年度估算的可访问媒体转载，不依赖 FT 付费原文。
+- **更新锚**: 台账增量 + 全口径 ms_anchor；台账只是下限，不替换全年全口径锚。
 - **Direction**: high_bad
 - **Thresholds**: red=70, yellow=50
 - **Anchor**: 互联网/电信基建周期顶点 80-100%；当前 AI 周期（2026）自下而上估算约 55%（区间 50-60%）。测"这轮基建有多少靠借债烧"，与信用压力指标（HY 利差/ABS/neocloud 事件）互补——测信用累积而非压力
@@ -222,9 +274,9 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
     - `value` = 年化分子（ms_anchor 锚定值，用台账 YTD 累计交叉校准；若台账 run-rate 与锚定值偏离 >15%，以两者区间呈现并在 note 说明）÷ 分母 capex_denominator
     - note **必须给出周度边际**：「本周新增 $XB（列出 deal 名），YTD 台账累计 $YB，年化 run-rate 对应比值 Z%」；本周无新 deal 就写「本周无新增 deal，YTD 累计 $YB」——这本身也是边际信息
     - `as_of` 更新为本期日期；单笔 ≥$10B 的新 deal 写进 wow_changes 并上飞书
-  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），并把 `last_full_recon` 更新为今天。
+  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），并把 `last_full_recon` 更新为今天。到期但无法完成时保留旧 last_full_recon、记录原因，输出“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28）；这是警告而非 stale/发布硬错误，周度扫描及 ms_anchor 有有效依据即可。
   - `docs/data/debt_ledger.json` 结构：`{"last_full_recon": "YYYY-MM-DD", "ms_anchor": {"numerator_usd_b": N, "as_of": "YYYY-MM-DD", "source": "..."}, "capex_denominator_usd_b": N, "deals": [{"date": "YYYY-MM-DD", "borrower": "...", "instrument": "bond|loan|abs|private_credit|spv_jv", "amount_usd_b": N, "source_url": "..."}]}`。去重键 = borrower + amount 近似 + 公告日 ±7 天；同一 deal 的多篇报道只记一次。
-  - 只有当周度搜索与 ms_anchor 都拿不到任何可用数据时才标 `stale: true`（真失败）。
+  - 周度扫描成功且仍有可用 ms_anchor 时不因完整对账逾期标 stale；周度搜索与锚定数据均无法提供可核实依据才为真失败。每次扫描仍必须有查询、来源和真实日期，不将未执行的对账写成已完成。
 - **【完整拆解】流量口径 = 2026E 全口径 AI 新增债务 ÷ 2026E 全口径 AI 基建 capex**。分子分母口径必须对齐（都用"全口径/all-in"，否则比值失真）：
   - **分子（新增债务，流量）**：web_search 当年 AI 相关新发债务总额。优先抓 Morgan Stanley「AI debt issuance / AI debt monitor」年度估算（最新一期，含已发 vs 全年预测）——它是全口径（公开债 + 私募信用 + ABS + JV/SPV）。交叉核对三块：① hyperscaler + JV 发债（MSFT/META/AMZN/GOOGL/Oracle 债券、Stargate 等）；② neoclouds 全部新增债务（CoreWeave/Nebius/Crusoe/Lambda 的债券、银行贷款、GPU 抵押 ABS）；③ 表外 SPV / 经营租赁融资（Meta Hyperion、Oracle Stargate-Abilene、Blue Owl/PIMCO/Blackstone 私募信用 SPV）。
   - **分母（capex，流量）**：web_search 2026E 全口径 AI 基建 capex。基线 = 五大 hyperscaler（含 Oracle）合计，**再加** neoclouds、Apple、中国、主权及其他 → 全口径约 $1.0-1.1T。**别只用 big-4 的 ~$700B 当分母**（会漏掉 neocloud capex，与全口径分子不匹配、比值虚高）。
@@ -236,48 +288,64 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `token_volume_mom` — 行业 Token 量月度环比 (%)
 - **Axis**: trigger
+- **Cadence**: live
 - **Source**: prefetch `token_volume`（GitHub Actions 走 OpenRouter 官方 datasets API rankings-daily，2025-01 起日度全量；`data.mom_pct` = 滚动 30 日总量 vs 前 30 日，自包含口径，不依赖台账上期值）。raw_history 记 `last30_tokens_t` 绝对量。web_search OpenAI/Anthropic 披露仅作交叉印证。~~openrouter.ai/rankings 页面~~ 已弃用（CSR 页抓不到 + egress 403）
 - **Direction**: low_bad
 - **Thresholds**: 由 LLM 直接返回 status（收缩=red / 减速=yellow / 加速=green）
 
 ### `gpu_rental_price` — GPU 租赁现货价格
 - **Axis**: trigger
-- **Source**: web_search H100/H200 现货租价（SemiAnalysis H100 租价指数 / Thunder Compute 月度市场报告 / getdeploying.com 价格对比页），$/hr 绝对值记入 raw_history，环比从台账算
+- **Cadence**: live
+- **Source**: 主序列 https://getdeploying.com/reference/cloud-gpu/nvidia-h100 的 H100 单卡 on-demand 中位价，raw 使用 `h100_median_on_demand_usd_hr` 并注明 basis=getdeploying、在库筛选/单卡/中位数计算样本。备源 Thunder Compute 月报只作水平值交叉、AIMultiple 正文可读时交叉；首期由旧 AIMultiple $3.25 序列切换，不算跨来源环比
+- **更新锚**: getdeploying H100 单卡 on-demand 中位价。
 - **Direction**: qualitative（租价走弱=坏）
 - **Status mapping**: 现货/合约价环比下跌 >15% 或普遍供过于求 = red / 温和阴跌、空置率上升 = yellow / 稳定、上涨或紧俏 = green
 - **Anchor**: 2000 年暗光纤价格在电信股崩盘前先行崩塌——算力商品价格是供需最直接的温度计，租价崩 = 供给过剩确认。本体系其余指标都在看资金端与情绪端，只有它直接看算力供需的成交价。
 
 ### `arr_2nd_deriv` — AI ARR 二阶导
 - **Axis**: trigger
-- **Source**: web_search Anthropic + OpenAI 最近 3 个月 ARR；本期增速 vs 上期（原始 ARR 值记入 raw_history，从台账算二阶导）
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: The Information / Reuters / CNBC / Axios / Bloomberg 报道的 Anthropic + OpenAI 最新 run-rate，备源公司公告。raw 保存两家数值、实际日期及 gross/net 等 basis，按同口径台账算最近3个月增速与二阶导；一家的新读数可更新锚，另一家沿用并明示。不同 gross/net 口径不作二阶差分；不能用未来目标代替当前 ARR
+- **更新锚**: 两家最新 run-rate 的锚定读数；缺失分项保留真实旧日期，状态依据同口径方向证据。
 - **Direction**: low_bad
 - **Status mapping**: 减速=red / 平稳=yellow / 加速=green
 
 ### `enterprise_deploy` — 企业生产环境部署率 (%)
 - **Axis**: stage
-- **Source**: web_search Deloitte / Gartner / IDC 最新季度企业 AI 调查
+- **Cadence**: periodic
+- **Max age**: 200 days
+- **Source**: 维持企业“生产环境部署率”口径：McKinsey / Deloitte / Gartner / IDC 同类调查。没有同口径新调查但已核实最新披露时可 current（≤200天）；KPMG AI Quarterly Pulse 的在建/部署/开发 agent 比例只交叉，不进入 value。2026-10-12 决策：不换锚
+- **更新锚**: 同口径生产部署率调查。
 - **Direction**: low_bad
 - **Thresholds**: red=50, yellow=65
 
 ### `cloud_rpo_growth` — 云厂商递延收入增速状态
 - **Axis**: trigger
-- **Source**: web_search Google Cloud / Azure / AWS 最近一季报 RPO
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: Google Cloud / Microsoft / AWS 最新 IR 季报 RPO，同一统计期、定义的合计与变化；保留分项日期及公司披露边界。季报间隙核实最新披露则 current，不能把未来指引替换实际 RPO
+- **更新锚**: 季报 RPO 合计及可比公司分项。
 - **Direction**: low_bad
 - **Status mapping**: 负增长=red / 减速=yellow / 加速=green
 
 ### `frontier_progress` — 前沿模型能力进展
 - **Axis**: trigger
+- **Cadence**: scan
 - **Direction**: qualitative（进展放缓=坏）
 - **为什么在这个体系里（本轮周期特有）**：本轮 capex 可持续性的第一性依据是"模型还在变好 → 解锁新场景 → 算力需求有支撑"。前沿能力持续推高 = non-trigger；提升放缓乃至停滞 = 本轮独有的顶部触发器。历轮泡沫没有这个维度（2000 年互联网技术本身没停滞，那是融资顶）——所以历史校准表中该行几乎全绿，它提供的是纯增量信息。
+- **Source**: prefetch `frontier_eci`，数据来自 Epoch 官方 https://epoch.ai/data/benchmark_data.zip 的 `epoch_capabilities_index/eci_scores.csv`；研究 evidence.kind=web、urls 填实际检查的 Epoch 数据地址并注明本轮打开的仓库 prefetch，raw 写入真实 ECI 数字。仅使用未满72小时、status=ok 的缓存；不用 task.json.prefetch 数值映射或 static_core_keys（正常停在同一 SOTA 不应触发静态警告）。备源直接打开官方 ZIP/https://epoch.ai/eci 核实；不可读且缓存失效则 stale。
+- **更新锚**: ECI 滚动 SOTA 与90天增幅；2026-10-12 已决策从 METR 切换，首期双语 note 明示。METR 历史序列自2026年4-5月后缺少新前沿观测，不把网站更新日当成新模型日。
 - **量化方法（三层，主锚→辅锚→佐证）**：
-  1. **主锚 = METR time horizon**（https://metr.org/time-horizons/ ）：前沿模型 50% 成功率可完成任务时长 + 隐含倍增时间。这是目前最不易饱和、专为"进展速度"设计的公开度量（参考系：2019-2025 全期倍增约 7 个月；2024 起约 3 个月=加速）。抓最新一期 horizon 值与倍增时间入 raw_history。
-  2. **辅锚 = 困难基准 90 天 SOTA 位移**：HLE（epoch.ai/benchmarks/hle 或 agi.safe.ai）、FrontierMath（epoch.ai）、ARC-AGI-2/3（arcprize.org）、SWE-bench Verified。记录当前 SOTA 数值+模型名入 raw_history，与台账上期对比。**基准饱和（SOTA>85-90%）就换入下一代困难基准，追踪对象可换、方法不变**（防 MMLU 式失效）。
-  3. **佐证 = 发布密度与叙事**：过去 90 天 OpenAI/Anthropic/Google/xAI/DeepSeek 旗舰级发布数；labs 公开叙事是否从"能力"集体转向"效率/成本"（转向=放缓的软信号）。
-- **Status mapping**：
-  - green（正常/加速）：90 天内 ≥1 项困难基准 SOTA 实质刷新（相对提升 ≥10%）或 METR 倍增时间保持 ≤7 个月轨道
-  - yellow（放缓）：一个季度内困难基准 SOTA 提升有限、METR 倍增时间明显拉长（隐含 >12 个月）、旗舰发布普遍推迟、labs 叙事集体转向效率/成本
-  - red（停滞）：连续两个季度无实质 SOTA 提升，或新旗舰对上代无代际差——本轮 capex 的根基叙事动摇
-- **反锚定**：判定必须引用 raw_history 台账里的上期数值做对比，note 必须写出本期抓到的具体数（METR horizon、各基准 SOTA 与对应模型名）。
+  1. **主锚 = Epoch Capabilities Index**：按模型真实 date 的滚动最高 eci 取当前、90天前、180天前、365天前 SOTA；`gain_90d = current_sota − sota_90d`，`previous_gain_90d = sota_90d − sota_180d`，`avg_quarterly_gain_1y = (current_sota − sota_365d) / 4`。raw 保存分项数字、模型、真实日期、抓取时间、比较比值及近90天进入前沿的模型列表；当前模型发布日期不冒充扫描日。METR https://metr.org/time-horizons/ 只在有新数据时参考。
+  2. **辅锚 = 困难基准90天 SOTA 位移**：Epoch 同一 ZIP 的 FrontierMath、SWE-bench Verified 等 CSV，及 HLE、ARC-AGI-2/3（https://arcprize.org/）。记录数值、模型及观测日；基准饱和（SOTA>85-90%）换入下一代困难基准，方法不变。缺少辅助层时明示，不能冒充完整更新。
+  3. **佐证 = 发布密度与叙事**：过去90天 OpenAI/Anthropic/Google/xAI/DeepSeek 旗舰级发布数与模型清单；labs 叙事是否从能力转向效率/成本。完成查询和来源记录；不要仅凭发布日期数量否定能力提升。
+- **Status mapping**（先检验停滞，再比较主锚速度；辅助两层供判读与交叉）:
+  - red（停滞）：连续两个90天窗口 ECI SOTA 基本没有提升。数值操作定义为两个窗口增幅均 ≤0.01 ECI 点（CSV 两位小数的精度，识别未超舍入精度的零提升），保留“连续两个季度无实质 SOTA 提升”的原意；不凭发布密度单独升红。
+  - green（正常/加速）：未触发 red，且 ECI 90天增幅 ≥ 过去一年季均增幅的50%。
+  - yellow（放缓）：未触发 red，且 ECI 90天增幅低于过去一年季均增幅的50%。
+  - 年增幅非正或缺少比较点时不得除以零/编造比值；补查真实官方序列，无法核实主锚则 stale。
+- **反锚定**：note 写出实际 ECI SOTA、90天增幅与一年季均，辅层数据各带日期；用 raw_history 上期同口径数据核实边际。首期来源切换不作 METR 与 ECI 的跨指标环比。
 
 ---
 
@@ -285,25 +353,33 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ### `accounting_events` — 会计造假/round-tripping 事件
 - **Axis**: trigger
-- **Source**: web_search 重要 AI 公司的 SEC 执法、审计师担忧
+- **Cadence**: scan
+- **Source**: 按窗口扫描 SEC https://www.sec.gov/newsroom/ 新闻稿、诉讼公告及 Reuters/WSJ 报道；raw 记录已确认事件/调查列表。收入 gross/net 争议或质疑不等于已确认造假，尽职扫描未见新事件按原映射处理
+- **更新锚**: 已确认事件与调查列表。
 - **Direction**: any_bad
 - **Status mapping**: 任何已确认 = red / 调查中 = yellow / 无 = green
 
 ### `fed_policy` — Fed 政策方向
 - **Axis**: trigger
-- **Source**: web_search CME FedWatch 下次 FOMC 隐含动作
+- **Cadence**: live
+- **Source**: CME FedWatch https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html 下次 FOMC 隐含动作；备源 https://www.investing.com/central-banks/fed-rate-monitor ，保留下次会议日期、当前利率与各档概率
 - **Direction**: tighten_bad
 - **Status mapping**: 隐含加息 = red / 维持高利率(通胀压力) = yellow / 隐含降息 = green
 
 ### `capex_reaction` — 资本开支指引市场反应
 - **Axis**: trigger
-- **Source**: web_search 最近一轮 Mag7 财报中上调 capex 当日股价反应
+- **Cadence**: periodic
+- **Max age**: 120 days
+- **Source**: 最近一轮 Mag7 财报上调 capex 当日相对 QQQ 的收益；价格用 https://stockanalysis.com/stocks/ 的公司历史价及 https://stockanalysis.com/etf/qqq/history/，媒体报道交叉。raw 保留事件日、公告、两条价格及相对收益；季报间隙核实最新事件未变则 current
+- **更新锚**: 最近财报 capex 上调事件当日相对 QQQ 收益。
 - **Direction**: punish_bad
 - **Status mapping**: 系统性惩罚 = red / 偶发惩罚 = yellow / 奖励 = green
 
 ### `ceo_hedging` — CEO 表态对冲程度
 - **Axis**: stage
-- **Source**: web_search Sam Altman / Sundar Pichai / Jamie Dimon / Satya Nadella / Mark Zuckerberg 最近公开发言中"bubble" "irrational" "overheated"等
+- **Cadence**: scan
+- **Source**: 按近60天扫描 Sam Altman / Sundar Pichai / Jamie Dimon / Satya Nadella / Mark Zuckerberg 的具名公开发言（bubble / irrational / overheated 等），主流媒体或实际演讲原文；raw 保存发言者、实际日期、内容与 URL。未见新相关发言以有记录扫描结论处理；AI安全/能力言论不能替代泡沫表态
+- **更新锚**: 60天具名相关发言列表。
 - **Direction**: hedging_bad
 - **Status mapping**: 普遍承认过热 = red / 部分 = yellow / 无 = green
 

@@ -1,10 +1,11 @@
 name: Prefetch Data
 
-# 每周日 21:00 UTC 机械抓取 egress 受限的数据源，写 docs/data/prefetch/latest.json，
+# 每周六 13:23、周日 15:23 UTC 机械抓取 egress 受限的数据源，写 docs/data/prefetch/latest.json，
 # 供 23:00 UTC 的周报 routine 优先取用（routine 沙箱 clone 时自带该文件）。
 on:
   schedule:
-    - cron: '0 21 * * 0'
+    - cron: '23 13 * * 6'
+    - cron: '23 15 * * 0'
   workflow_dispatch:
 
 permissions:

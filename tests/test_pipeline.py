@@ -42,6 +42,7 @@ class PipelineTests(unittest.TestCase):
                 "debt_review": {"searched_urls": ["https://example.test/synthetic"], "weekly_search_note": "Synthetic test only",
                                 "full_reconciliation": True, "reconciliation_note": "Synthetic test only"}}
         data["debt_ledger"]["last_full_recon"] = self.context["as_of_date"]
+        specs, _ = p.definitions(self.root)
         for idx, item in enumerate(data["indicators"]):
             key = item["id"]
             raw = copy.deepcopy(self.history.get(key, [{"raw": {"synthetic_observation": "test only"}}])[-1]["raw"])
@@ -50,6 +51,11 @@ class PipelineTests(unittest.TestCase):
                 if not any(k in raw and p.numeric(raw[k]) for k in group):
                     raw[group[0]] = item["value"] if p.numeric(item["value"]) else 3.25
             item["stale"] = idx < stale_count
+            if not item["stale"] and specs[key]["cadence"] == "scan":
+                item["as_of"] = self.context["as_of_date"]
+                raw.update(window={"start": "2026-10-02", "end": self.context["as_of_date"]},
+                           queries=[f"Synthetic {key} test scan"],
+                           sources_checked=["https://example.test/synthetic"], events=[])
             data["evidence"][key] = {"kind": "carry" if item["stale"] else "web", "checked_at": p.iso(self.at),
                                      "raw": raw, "rationale": "Synthetic test observation",
                                      "urls": ["https://example.test/synthetic"], "attempted_urls": ["https://example.test/synthetic"]}
@@ -89,6 +95,10 @@ class PipelineTests(unittest.TestCase):
         cache_path = self.root / "docs/data/prefetch/latest.json"
         cache = p.read(cache_path)
         cache["_meta"]["fetched_at"] = p.iso(self.at - timedelta(hours=1))
+        for source in cache["sources"].values():
+            source["as_of"] = "2026-10-10"
+        cache["sources"]["hy_oas"]["as_of"] = "2026-10-08"
+        cache["sources"]["hy_oas"]["data"]["oas_bps"] = 303
         cache_path.write_bytes(p.encoded(cache))
         self.context = p.prepare(self.root, self.at)
         b = self.bundle()
@@ -103,7 +113,7 @@ class PipelineTests(unittest.TestCase):
                 item["as_of"] = source["as_of"]
         files = p.build(self.root, b, self.context, self.at)
         hy = next(i for i in files["docs/data/latest.json"]["indicators"] if i["id"] == "hy_oas")
-        self.assertEqual(hy["as_of"], "2026-10-06")
+        self.assertEqual(hy["as_of"], "2026-10-08")
         self.assertEqual(hy["value"], 303)
 
     def test_prefetch_expiry_and_partial(self):
@@ -153,10 +163,147 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(p.GateError, "Pending notification"):
             p.prepare(self.root, self.at)
 
-    def test_debt_reconciliation_cannot_be_skipped(self):
+    def test_overdue_debt_reconciliation_is_warning_not_stale(self):
         b = self.bundle()
         b["debt_review"]["full_reconciliation"] = False
-        with self.assertRaisesRegex(p.GateError, "28-day full debt reconciliation due"):
+        b["debt_ledger"]["last_full_recon"] = "2026-09-06"
+        files = p.build(self.root, b, self.context, self.at)
+        run = files["runs/2026-10-11.json"]
+        self.assertEqual(run["status"], "validated_release")
+        self.assertEqual(run["debt_reconciliation_overdue_days"], 7)
+        self.assertNotIn("debt_capex_ratio", run["stale_ids"])
+        text = json.dumps(files["feishu_outbox/2026-10-11.json"], ensure_ascii=False)
+        self.assertIn("债务完整对账逾期 7 天", text)
+
+    def current(self, bundle, key):
+        item = next(i for i in bundle["indicators"] if i["id"] == key)
+        evidence = bundle["evidence"][key]
+        evidence["kind"] = "current"
+        evidence["raw"].update(latest_release_date=item["as_of"], next_expected="尚未公布 / not announced")
+        return item, evidence
+
+    def test_periodic_current_keeps_prior_fields_and_not_stale(self):
+        b = self.bundle()
+        prior = next(i for i in self.old["indicators"] if i["id"] == "hyperscaler_capex_yoy")
+        self.current(b, prior["id"])
+        files = p.build(self.root, b, self.context, self.at)
+        actual = next(i for i in files["docs/data/latest.json"]["indicators"] if i["id"] == prior["id"])
+        for field in ["value", "status", "as_of", "value_display", "value_display_en"]:
+            self.assertEqual(actual.get(field), prior.get(field))
+        self.assertFalse(actual["stale"])
+        self.assertEqual(files["runs/2026-10-11.json"]["freshness_counts"], {"new": 24, "current": 1, "stale": 0})
+        self.assertIn("new 24 / current 1 / stale 0", json.dumps(files["feishu_outbox/2026-10-11.json"], ensure_ascii=False))
+
+    def test_current_cannot_change_prior_observation_or_display(self):
+        for field, value in [("value", 79), ("status", "green"), ("as_of", "2026-10-11"),
+                             ("value_display", "synthetic different"), ("value_display_en", "different")]:
+            with self.subTest(field=field):
+                b = self.bundle()
+                item, _ = self.current(b, "hyperscaler_capex_yoy")
+                item[field] = value
+                with self.assertRaisesRegex(p.GateError, f"current changed {field}"):
+                    p.build(self.root, b, self.context, self.at)
+
+    def test_current_age_limits_include_boundary_and_survey_exception(self):
+        for key, maximum in [("hyperscaler_capex_yoy", 120), ("enterprise_deploy", 200)]:
+            for age in [maximum, maximum + 1]:
+                with self.subTest(key=key, age=age):
+                    prior = copy.deepcopy(self.old)
+                    prior_item = next(i for i in prior["indicators"] if i["id"] == key)
+                    prior_item["as_of"] = (self.at - timedelta(days=age)).date().isoformat()
+                    (self.root / "docs/data/latest.json").write_bytes(p.encoded(prior))
+                    self.context = p.prepare(self.root, self.at)
+                    b = self.bundle()
+                    item, ev = self.current(b, key)
+                    item["as_of"] = prior_item["as_of"]
+                    ev["raw"]["latest_release_date"] = prior_item["as_of"]
+                    if age == maximum:
+                        p.build(self.root, b, self.context, self.at)
+                    else:
+                        with self.assertRaisesRegex(p.GateError, "exceeds .*maximum age"):
+                            p.build(self.root, b, self.context, self.at)
+
+    def test_live_and_scan_do_not_allow_current(self):
+        for key in ["cape", "accounting_events"]:
+            b = self.bundle()
+            self.current(b, key)
+            with self.assertRaisesRegex(p.GateError, "current is allowed only for periodic"):
+                p.build(self.root, b, self.context, self.at)
+
+    def test_current_requires_opened_url_metadata_and_successful_check(self):
+        for missing in ["urls", "latest_release_date", "next_expected"]:
+            with self.subTest(missing=missing):
+                b = self.bundle()
+                _, ev = self.current(b, "hyperscaler_capex_yoy")
+                if missing == "urls":
+                    ev["urls"] = []
+                else:
+                    ev["raw"].pop(missing)
+                with self.assertRaises(p.GateError):
+                    p.build(self.root, b, self.context, self.at)
+        b = self.bundle()
+        item, ev = self.current(b, "hyperscaler_capex_yoy")
+        item["stale"] = True
+        with self.assertRaisesRegex(p.GateError, "current must have stale=false"):
+            p.build(self.root, b, self.context, self.at)
+        item["stale"] = False
+        ev["raw"]["source_failed"] = True
+        with self.assertRaisesRegex(p.GateError, "failed source check must be stale"):
+            p.build(self.root, b, self.context, self.at)
+
+    def test_scan_empty_events_can_be_fresh(self):
+        b = self.bundle()
+        ev = b["evidence"]["accounting_events"]
+        self.assertEqual(ev["raw"]["events"], [])
+        files = p.build(self.root, b, self.context, self.at)
+        item = next(i for i in files["docs/data/latest.json"]["indicators"] if i["id"] == "accounting_events")
+        self.assertFalse(item["stale"])
+        self.assertEqual(item["as_of"], self.context["as_of_date"])
+
+    def test_scan_needs_recorded_window_queries_sources_events(self):
+        for field in ["window", "queries", "sources_checked", "events"]:
+            with self.subTest(field=field):
+                b = self.bundle()
+                b["evidence"]["accounting_events"]["raw"].pop(field)
+                with self.assertRaises(p.GateError):
+                    p.build(self.root, b, self.context, self.at)
+
+    def test_scan_failure_cannot_be_reported_as_empty_fresh_observation(self):
+        for field in ["source_failed", "tool_failed", "fetch_failed", "search_failed"]:
+            with self.subTest(field=field):
+                b = self.bundle()
+                b["evidence"]["accounting_events"]["raw"][field] = True
+                with self.assertRaises(p.GateError):
+                    p.build(self.root, b, self.context, self.at)
+        b = self.bundle()
+        b["evidence"]["accounting_events"]["raw"]["sources_checked"] = [{"url": "https://example.test/synthetic", "status": "error"}]
+        with self.assertRaisesRegex(p.GateError, "failed/incomplete scan source must be stale"):
+            p.build(self.root, b, self.context, self.at)
+
+    def test_failure_outbox_counts_current_and_shows_debt_overdue(self):
+        b = self.bundle(6)
+        self.current(b, "cloud_rpo_growth")
+        files = p.build(self.root, b, self.context, self.at)
+        self.assertEqual(files["runs/2026-10-11.json"]["freshness_counts"], {"new": 18, "current": 1, "stale": 6})
+        text = files["feishu_outbox/2026-10-11.json"]["content"]["text"]
+        self.assertIn("new 18 / current 1 / stale 6", text)
+        self.assertIn("债务完整对账逾期 7 天", text)
+
+    def test_debt_weekly_search_and_all_in_numerator_still_required(self):
+        for missing in ["searched_urls", "weekly_search_note"]:
+            b = self.bundle()
+            b["debt_review"].pop(missing)
+            with self.assertRaisesRegex(p.GateError, "Weekly debt search evidence required"):
+                p.build(self.root, b, self.context, self.at)
+        b = self.bundle()
+        b["debt_ledger"]["ms_anchor"]["numerator_usd_b"] = 100
+        with self.assertRaisesRegex(p.GateError, "Debt ratio inconsistent with all-in anchor"):
+            p.build(self.root, b, self.context, self.at)
+
+    def test_unreconciled_debt_cannot_advance_reconciliation_date(self):
+        b = self.bundle()
+        b["debt_review"]["full_reconciliation"] = False
+        with self.assertRaisesRegex(p.GateError, "Cannot advance unreconciled date"):
             p.build(self.root, b, self.context, self.at)
 
     def test_numeric_threshold_mismatch_is_blocked(self):

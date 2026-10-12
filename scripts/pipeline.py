@@ -89,15 +89,23 @@ def definitions(root):
             need(m[1] not in result, "Duplicate indicator definition")
             result[m[1]] = current
         if current is not None:
-            for field in ["Axis", "Direction"]:
+            for field in ["Axis", "Direction", "Cadence"]:
                 m = re.search(r"\*\*" + field + r"\*\*:\s*([a-z_]+)", line)
                 if m:
                     current[field.lower()] = m[1]
             m = re.search(r"\*\*Thresholds\*\*:\s*red=([-\d.]+),\s*yellow=([-\d.]+)", line)
             if m:
                 current["thresholds"] = [float(m[1]), float(m[2])]
+            m = re.search(r"\*\*Max age\*\*:\s*(\d+)\s*days", line)
+            if m:
+                current["max_age_days"] = int(m[1])
     for key, spec in result.items():
         need(spec.get("axis") in ("stage", "trigger") and "direction" in spec, f"Incomplete definition: {key}")
+        need(spec.get("cadence") in ("live", "periodic", "scan"), f"Missing or invalid cadence: {key}")
+        if spec["cadence"] == "periodic":
+            limit = 200 if key == "enterprise_deploy" else 120
+            spec.setdefault("max_age_days", limit)
+            need(0 < spec["max_age_days"] <= limit, f"{key}: periodic age limit exceeds contract")
     need(result, "No indicators parsed")
     historical = {}
     for line in text.splitlines():
@@ -243,6 +251,52 @@ def static_weeks(records, aliases):
     return max(unchanged, streak(missing), streak(lambda r: r["raw"].get("estimated", False)))
 
 
+def validate_scan(key, item, evidence, context):
+    """A recorded, successful search is an observation; an empty event list is valid."""
+    raw = evidence["raw"]
+    failed = any(raw.get(k) for k in ("fetch_failed", "source_failed", "tool_failed", "search_failed"))
+    unavailable = any(raw.get(k) is False for k in ("search_available", "tool_available", "scan_complete"))
+    need(not failed and not unavailable, f"{key}: failed/incomplete scan must be stale")
+    window = raw.get("window")
+    need(isinstance(window, dict) and window.get("start") and window.get("end"), f"{key}: scan window start/end required")
+    start, end = (date.fromisoformat(window[k]) for k in ("start", "end"))
+    need(start <= end and window["end"] == item["as_of"] == context["as_of_date"], f"{key}: scan window/date mismatch")
+    queries = raw.get("queries")
+    need(isinstance(queries, list) and queries and all(isinstance(q, str) and q.strip() for q in queries), f"{key}: recorded scan queries required")
+    checked = raw.get("sources_checked")
+    need(isinstance(checked, list) and checked, f"{key}: scan sources_checked required")
+    for entry in checked:
+        url = entry.get("url") if isinstance(entry, dict) else entry
+        need(isinstance(url, str) and url.startswith(("https://", "http://")) and url in evidence["urls"], f"{key}: checked scan source must be an opened URL")
+        if isinstance(entry, dict):
+            need(entry.get("status") == "ok", f"{key}: failed/incomplete scan source must be stale")
+    events = raw.get("events")
+    need(isinstance(events, list), f"{key}: scan events list required (may be empty)")
+    for event in events:
+        need(isinstance(event, dict) and isinstance(event.get("what"), str) and event["what"].strip(), f"{key}: scan event description required")
+        event_date = date.fromisoformat(event["date"])
+        need(start <= event_date <= end, f"{key}: scan event outside search window")
+        need(isinstance(event.get("url"), str) and event["url"].startswith(("https://", "http://")) and event["url"] in evidence["urls"], f"{key}: opened scan event URL required")
+
+
+def freshness_counts(indicators, evidence):
+    counts = {"new": 0, "current": 0, "stale": 0}
+    for item in indicators:
+        state = "stale" if item["stale"] else "current" if evidence[item["id"]]["kind"] == "current" else "new"
+        counts[state] += 1
+    return counts
+
+
+def debt_reconciliation_warning(root, context, ledger=None):
+    ledger = ledger if ledger is not None else read(root / "docs/data/debt_ledger.json")
+    age = (date.fromisoformat(context["as_of_date"]) - date.fromisoformat(ledger["last_full_recon"])).days
+    need(age >= 0, "Future debt reconciliation date")
+    if age >= 28:
+        return {"debt_reconciliation_overdue_days": age - 28,
+                "message": f"⚠ 债务完整对账逾期 {age - 28} 天（上次 {ledger['last_full_recon']}）；周度增量扫描不替代完整对账"}
+    return None
+
+
 def validate_indicators(root, bundle, context, at):
     specs, calibration = definitions(root)
     config = read(root / "automation/task.json")
@@ -270,6 +324,8 @@ def validate_indicators(root, bundle, context, at):
         checked = timestamp(ev["checked_at"])
         need(timestamp(context["prepared_at"]) - timedelta(minutes=5) <= checked <= at + timedelta(minutes=5), f"{key}: evidence was not checked in this run")
         need(ev.get("rationale") and ev.get("raw") is not None, f"{key}: evidence rationale/raw missing")
+        if ev.get("kind") == "current":
+            need(not item["stale"], f"{key}: current must have stale=false")
         if item["stale"]:
             need(source is None, f"{key}: usable prefetch must be consumed")
             need(ev.get("kind") == "carry" and ev.get("attempted_urls"), f"{key}: document failed source chain")
@@ -278,6 +334,23 @@ def validate_indicators(root, bundle, context, at):
                 need(item.get(field) == old[key].get(field), f"{key}: stale carry changed {field}")
             raw = copy.deepcopy(ev["raw"])
             raw["fetch_failed"] = True
+        elif ev.get("kind") == "current":
+            need(spec["cadence"] == "periodic", f"{key}: current is allowed only for periodic indicators")
+            need(source is None, f"{key}: valid prefetch has priority")
+            need(ev.get("urls") and all(isinstance(u, str) and u.startswith(("https://", "http://")) for u in ev["urls"]), f"{key}: current requires opened source URLs")
+            need(isinstance(ev["raw"], dict) and not ev["raw"].get("fetch_failed"), f"{key}: current requires a successful disclosure check")
+            need(not any(ev["raw"].get(k) for k in ("source_failed", "tool_failed", "search_failed")), f"{key}: failed source check must be stale")
+            release_date = ev["raw"].get("latest_release_date")
+            need(isinstance(release_date, str), f"{key}: current latest_release_date required")
+            date.fromisoformat(release_date)
+            need(release_date <= context["as_of_date"], f"{key}: future latest_release_date")
+            need(isinstance(ev["raw"].get("next_expected"), str) and ev["raw"]["next_expected"].strip(), f"{key}: current next_expected disclosure metadata required")
+            need(key in old, f"{key}: no prior observation for current")
+            for field in ["value", "value_display", "value_display_en", "status", "as_of"]:
+                need(item.get(field) == old[key].get(field), f"{key}: current changed {field}")
+            age = (date.fromisoformat(context["as_of_date"]) - date.fromisoformat(item["as_of"])).days
+            need(age <= spec["max_age_days"], f"{key}: current observation exceeds {spec['max_age_days']}-day maximum age; mark stale")
+            raw = copy.deepcopy(ev["raw"])
         elif source is not None:
             need(ev.get("kind") == "prefetch", f"{key}: valid prefetch has priority")
             need(item["as_of"] == source["as_of"], f"{key}: prefetch observation date mismatch")
@@ -291,6 +364,8 @@ def validate_indicators(root, bundle, context, at):
             need(ev.get("kind") == "web" and ev.get("urls") and all(u.startswith(("https://", "http://")) for u in ev["urls"]), f"{key}: opened source URLs required")
             need(isinstance(ev["raw"], dict) and ev["raw"] and not ev["raw"].get("fetch_failed"), f"{key}: new raw observations required")
             raw = copy.deepcopy(ev["raw"])
+            if spec["cadence"] == "scan":
+                validate_scan(key, item, ev, context)
         if "thresholds" in spec and not item["stale"]:
             need(numeric(item["value"]), f"{key}: numeric value required")
             red, yellow = spec["thresholds"]
@@ -357,14 +432,16 @@ def validate_debt(root, bundle, context, indicators):
         need(new == old, "Stale debt data cannot change ledger")
         return []
     need(ev.get("searched_urls") and ev.get("weekly_search_note"), "Weekly debt search evidence required, including no-deal weeks")
-    due = (date.fromisoformat(context["as_of_date"]) - date.fromisoformat(old["last_full_recon"])).days >= 28
-    if due:
-        need(ev.get("full_reconciliation") is True and ev.get("reconciliation_note"), "28-day full debt reconciliation due")
+    if ev.get("full_reconciliation"):
+        need(ev.get("reconciliation_note"), "Full debt reconciliation evidence required")
         need(new["last_full_recon"] == context["as_of_date"], "Full reconciliation date mismatch")
-    elif not ev.get("full_reconciliation"):
+    else:
         need(new["last_full_recon"] == old["last_full_recon"], "Cannot advance unreconciled date")
     need(numeric(new.get("capex_denominator_usd_b")) and new["capex_denominator_usd_b"] > 0, "Invalid capex denominator")
-    need(numeric(new["ms_anchor"].get("numerator_usd_b")), "Missing full-scope numerator")
+    need(numeric(new["ms_anchor"].get("numerator_usd_b")) and new["ms_anchor"]["numerator_usd_b"] > 0, "Missing full-scope numerator")
+    need(new["ms_anchor"].get("source"), "Full-scope anchor source required")
+    date.fromisoformat(new["ms_anchor"]["as_of"])
+    need(new["ms_anchor"]["as_of"] <= context["as_of_date"], "Future full-scope anchor")
     need(abs(item["value"] - new["ms_anchor"]["numerator_usd_b"] / new["capex_denominator_usd_b"] * 100) <= 0.51, "Debt ratio inconsistent with all-in anchor")
     corrections = ev.get("corrections", [])
     for deal in old["deals"]:
@@ -407,13 +484,16 @@ def validate_wow(changes, indicators, previous, added):
         need(any(c["indicator_id"] == "debt_capex_ratio" for c in changes), "New >=$10B debt deal must be a WoW change")
 
 
-def notification(snapshot, added, root, config, at):
+def notification(snapshot, added, root, config, at, counts, warning):
     s = snapshot["summary"]
     lines = [f"风险温度：红灯 {s['red_pct']}%（强预警参考线 60%）｜加权风险 {s['weighted_risk_score']}",
              f"🔴 {s['red_count']} 🟡 {s['yellow_count']} 🟢 {s['green_count']}",
              f"两轴：{s['stage_label']} {s['stage_score']} × {s['trigger_label']} {s['trigger_score']}",
              f"历史相似度：{s['similarity'][0]['period']} {s['similarity'][0]['match_pct']}%",
-             f"动量：恶化 {s['momentum']['deteriorated']} / 改善 {s['momentum']['improved']} / 净值 {s['momentum']['net']}"]
+             f"动量：恶化 {s['momentum']['deteriorated']} / 改善 {s['momentum']['improved']} / 净值 {s['momentum']['net']}",
+             f"新鲜度：new {counts['new']} / current {counts['current']} / stale {counts['stale']}（current 为本期核实仍最新，保留真实披露日）"]
+    if warning:
+        lines.append(warning["message"])
     for item in snapshot["indicators"]:
         if item.get("suspect_static"):
             lines.append(f"⚠ 疑似静态：{item['name_zh']} 连续 {item['static_weeks']} 期原始值未变/未获取 = {item['value_display']}，请人工核查")
@@ -439,18 +519,24 @@ def build(root, bundle, context, at):
     config = read(root / "automation/task.json")
     indicators, history, previous, specs, calibration = validate_indicators(root, bundle, context, at)
     stale = [i["id"] for i in indicators if i["stale"]]
+    counts = freshness_counts(indicators, bundle["evidence"])
+    warning = debt_reconciliation_warning(root, context)
     run = {"schema_version": 1, "cycle": context["cycle"], "attempt": context["attempt"], "prepared_at": context["prepared_at"],
            "base_commit": context["base_commit"], "inputs": context["inputs"], "bundle_sha256": digest(encoded(bundle)),
-           "stale_ids": stale, "evidence": bundle["evidence"], "delivery": "queued_only; inspect Feishu Relay result"}
+           "stale_ids": stale, "freshness_counts": counts, "evidence": bundle["evidence"], "delivery": "queued_only; inspect Feishu Relay result"}
     files = {}
     if len(stale) > config["max_stale"]:
         run.update(status="failed_data", published_issue=None)
-        message = f"⚠️ AI Bubble Monitor 周报失败 · {context['as_of_date']}\n\n{len(stale)} 个指标取数失败，超过 stale >{config['max_stale']} 阈值；未更新网页、快照及台账。\n" + "\n".join(f"{k}: {bundle['evidence'][k]['rationale']}" for k in stale)
+        message = f"⚠️ AI Bubble Monitor 周报失败 · {context['as_of_date']}\n\n{len(stale)} 个指标取数失败，超过 stale >{config['max_stale']} 阈值；未更新网页、快照及台账。\n新鲜度：new {counts['new']} / current {counts['current']} / stale {counts['stale']}（current 保留真实披露日）\n"
+        if warning:
+            message += warning["message"] + "\n"
+        message += "\n".join(f"{k}: {bundle['evidence'][k]['rationale']}" for k in stale)
         payload = {"msg_type": "text", "content": {"text": message}}
     else:
         summary, reasons = aggregate(indicators, previous, specs, calibration)
         validate_narrative(bundle, summary, reasons, previous)
         added = validate_debt(root, bundle, context, indicators)
+        warning = debt_reconciliation_warning(root, context, bundle["debt_ledger"])
         validate_wow(bundle["wow_changes"], indicators, previous, added)
         summary.update({k: bundle[k] for k in ["verdict_desc", "verdict_desc_en"]})
         history_seed = (previous.get("history_seed", []) + [{"week": context["as_of_date"][5:], "red_pct": summary["red_pct"], "risk_score": summary["weighted_risk_score"]}])[-config["history_seed_limit"]:]
@@ -461,12 +547,15 @@ def build(root, bundle, context, at):
         need(not (root / snapshot_path).exists(), "Refuse to overwrite a historical snapshot")
         files.update({"docs/data/latest.json": snapshot, snapshot_path: snapshot,
                       "docs/data/debt_ledger.json": bundle["debt_ledger"], "docs/data/raw_history.json": history})
-        payload = notification(snapshot, added, root, config, at)
+        payload = notification(snapshot, added, root, config, at, counts, warning)
         if added:
             total = sum(d["amount_usd_b"] for d in bundle["debt_ledger"]["deals"])
             payload["content"]["post"]["zh_cn"]["content"].insert(5, [{"tag": "text", "text": f"YTD 台账下限：${total:.3f}B；并非全量融资"}])
         run.update(status="validated_release", issue_number=snapshot["issue_number"], as_of_date=snapshot["as_of_date"],
                    latest_sha256=digest(encoded(snapshot)), verdict_reasons=reasons)
+    if warning:
+        run["warnings"] = [warning["message"]]
+        run["debt_reconciliation_overdue_days"] = warning["debt_reconciliation_overdue_days"]
     files[f"feishu_outbox/{context['as_of_date']}.json"] = payload
     files[f"runs/{context['cycle']}.json"] = run
     return files
