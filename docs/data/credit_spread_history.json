@@ -2,7 +2,7 @@
  "_meta": {
   "purpose": "前端 credit spread 趋势图专用（三站小倍数图）。仅展示，不参与红黄绿判读。",
   "schema_version": 1,
-  "fetched_at": "2026-10-12T00:17:51.735Z",
+  "fetched_at": "2026-10-12T08:57:19.588Z",
   "source": "FRED API",
   "window_days": 366,
   "cadence": "daily",
