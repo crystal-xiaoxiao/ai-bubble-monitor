@@ -23,10 +23,20 @@ class PipelineTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         for name in p.INPUTS:
+            if not (REPO / name).exists():
+                continue
             dest = self.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO / name, dest)
         self.at = datetime(2026, 10, 11, 23, 10, tzinfo=timezone.utc)
+        # A deliberately historical, synthetic baseline makes these legacy gates
+        # independent of whichever real issue is currently committed in main.
+        baseline = p.read(self.root / "docs/data/latest.json")
+        baseline.update(issue_number=27, as_of_date="2026-09-27")
+        for item in baseline["indicators"]:
+            if item["as_of"] > self.at.date().isoformat():
+                item["as_of"] = self.at.date().isoformat()
+        (self.root / "docs/data/latest.json").write_bytes(p.encoded(baseline))
         self.head = patch.object(p, "head", return_value="a" * 40)
         self.head.start()
         self.addCleanup(self.head.stop)
@@ -59,8 +69,8 @@ class PipelineTests(unittest.TestCase):
             data["evidence"][key] = {"kind": "carry" if item["stale"] else "web", "checked_at": p.iso(self.at),
                                      "raw": raw, "rationale": "Synthetic test observation",
                                      "urls": ["https://example.test/synthetic"], "attempted_urls": ["https://example.test/synthetic"]}
-        data["verdict_desc"] = "**一句话**：风险温度偏高。\n\n**历史**：2000-02 最接近，本期信用有差异。\n\n**反向证据**：基本面仍有支撑。\n\n**判读**：估值和资金面共振，边际风险需关注。"
-        data["verdict_desc_en"] = "**Bottom line**: Risk remains elevated.\n\n**History**: 2000-02 is the closest comparison, with credit differences.\n\n**Counterevidence**: Fundamentals offer support.\n\n**Verdict**: Category resonance applies; monitor marginal momentum."
+        data["verdict_desc"] = "**一句话**：风险温度偏高。\n\n**历史**：1999-06 与 2000-02 的比较，本期信用有差异。\n\n**反向证据**：基本面仍有支撑。\n\n**判读**：估值和资金面共振，两轴及边际风险需关注。"
+        data["verdict_desc_en"] = "**Bottom line**: Risk remains elevated.\n\n**History**: Comparisons with 1999-06 and 2000-02 have credit differences.\n\n**Counterevidence**: Fundamentals offer support.\n\n**Verdict**: Category resonance applies; monitor two-axis signals and marginal momentum."
         return data
 
     def test_existing_scores_reproduced_without_research(self):

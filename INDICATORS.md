@@ -2,6 +2,10 @@
 
 > Routine 启动时读这个文件。改指标只改这里。指标 ID 一旦定下不要改（会破坏历史比对）。
 
+## 2026-10-18 起生效的结构修复
+
+以下新口径从 **2026-10-18 UTC 调度周期**生效。本次只改研究契约和后续执行，不补跑、重算或覆盖已发布 #28；历史快照、raw_history 旧条目及既有债务台账不重置。enterprise_deploy、nvda_invest_revenue、arr_2nd_deriv、dc_abs_spread 的首个新口径发布期必须在中英文 note 和 raw.basis 明示切换及不可比项；首期 raw.basis_switch=true，由pipeline排除跨口径 WoW/动量比较；不把口径差异写成 WoW 或动量改善。以后每次真实 basis 切换同样处理，原口径历史仍保留。
+
 ## 评分规则
 
 每个指标按 `direction` 和 `thresholds` 打分：
@@ -191,16 +195,17 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 - **Thresholds**: red=50, yellow=30
 - **Anchor**: 健康水位 <30%；2025 创新高 ~70%
 
-### `nvda_invest_revenue` — NVDA 客户投资 / LTM 收入 (%)
+### `nvda_invest_revenue` — NVDA 已签署客户投资/融资承诺 / LTM 收入 (%)
 - **Axis**: stage
 - **Cadence**: periodic
 - **Max age**: 120 days
-- **Source**: 分母 https://stockanalysis.com/stocks/nvda/revenue/ 的 LTM revenue；分子沿用上期 OpenAI/CoreWeave/xAI 等 equity+loan 承诺清单，加本周新闻扫描确认的新增/变化。财报后完整核对承诺清单；raw 分别注明分子、分母、日期及 basis
-- **更新锚**: 最新 LTM 收入分母 + 承诺分子增量；保存承诺清单基线。
+- **Source**: 逐项读取公司公告、SEC文件及具名媒体报道，持久台账为 `docs/data/nvda_commitments.json`。分母优先 NVIDIA 最新 IR/SEC 的四季实际收入之和，保存各季期间/财报/算术并明示来源细微差异；https://stockanalysis.com/stocks/nvda/revenue/ 的真实 LTM revenue 作交叉核对；分子只汇总本口径可确认的已签署 equity、loan/可转债、担保承诺，不采用笼统新闻“总承诺”或传闻数字。
+- **更新锚**: 最新 LTM 收入分母 + 已签署承诺清单的本周增量；财报后完整核对。每笔记录对象、类型、已签署日期/金额、币种、来源、状态及计入理由。条件性总额仅计已签署部分，未来可选部分/未签意向不计；已签但金额未公开的条目保留为未知并写覆盖缺口，不以0或估算填入，已知金额和只可称“可核实下限”，不得冒充完整总承诺；担保计已签署担保上限，不把上限当作已实际支付。重复报道及同一融资中的投资/担保不得重复计数；保留清单与修订依据。
 - **Direction**: high_bad
 - **Thresholds**: red=30, yellow=15
-- **Anchor**: Lucent 1999 vendor financing 24% 已是末期；NVDA 当前 60%+
-- **Note（常红处理）**：本指标已长期击穿红线，note 里要写明连续红灯期数与二阶变化（承诺额环比在扩大还是收敛），避免"常红麻木"丢失边际信息。
+- **计算**: 已签署计入金额之和 ÷ 同期可核实 NVDA LTM revenue ×100；raw 写分子分项、分母日期和计算。首期由旧43–45%口径切换，必须明确“不可比”，不能用它倒推新台账总额或宣称变化；其后以上一版已签署台账为基线只追加有出处的新增/变化，不每周从零重建。历史条目不删除，纠错保留前后值、原因和来源。
+- **Anchor**: Lucent 1999 vendor financing 24% 为历史类比，不代替本期 NVDA 逐项计数。
+- **Note（常红处理）**: 连续红灯期数只在同口径序列内计算；同时说明已签署承诺扩大/收敛及担保或未支付承诺的组成，避免把上限误写为现金流出。
 
 ---
 
@@ -245,13 +250,15 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 - **Thresholds**: red=500, yellow=350
 - **Anchor**: 2000/2008/2020 风险事件 >500bps
 
-### `dc_abs_spread` — 数据中心 ABS 利差状态
+### `dc_abs_spread` — 数据中心 ABS/项目融资信用状态
 - **Axis**: trigger
 - **Cadence**: scan
-- **Source**: 新发数据中心 ABS/CMBS 定价报道及 KBRA https://www.kbra.com/ / S&P https://www.spglobal.com/ratings/ presale 报告；备源媒体转载。可用 prefetch CCC 利差、Oracle/CoreWeave 债价作代理交叉，注明代理口径，不把普通公司债价替换 ABS bps。没有新定价时按本周扫描结论维持已验证状态
-- **更新锚**: 实际定价/事件列表；无新定价的成功扫描可维持，代理不是同口径利差。
+- **Source**: 近90天的数据中心 ABS 与项目融资发行、定价及信用事件；KBRA https://www.kbra.com/、S&P https://www.spglobal.com/ratings/、公司公告，以及 Reuters/Bloomberg 等可访问报道。包括项目融资，不限于 ABS/CMBS；CCC利差、Oracle/CoreWeave公司债价仅代理交叉，不能代替项目/ABS已确认事件。
+- **更新锚**: 近90天已确认信用事件与发行状态列表；无事件的有效扫描也是本期观测。英文名固定为 Data-center ABS/project-finance credit status；保留原 id，旧利差状态不回写。
 - **Direction**: qualitative
-- **Status mapping**: 走阔 50bps+ = red / 稳定 = yellow / 收窄 = green
+- **Status mapping**: red：已确认违约、不可抗力（force majeure）、评级下调、发行撤回、被迫大幅重定价，或报道确认同口径利差走阔≥50bp。yellow：已确认发行延迟或融资条款收紧，且没有 red 事件。green：顺利发行或完成扫描未见上述事件。先判 red 再 yellow；消息未证实不升级为已确认信用事件。
+- **证据字段**: raw.basis=`dc_abs_project_finance_credit_status`；raw.window 为扫描日往前90天，queries/sources_checked 非空，events 每项为 `{date,what,url,event_type,confirmed}`。event_type 取 default / force_majeure / downgrade / issuance_withdrawal / forced_repricing / spread_widening / issuance_delay / terms_tightening / smooth_issuance；confirmed 为布尔值。spread_widening 另填真实 `spread_change_bps` 数字并保留同口径前后定价。空事件允许；未证实报道可记录 confirmed=false 及缺口，不能作为升红唯一依据。
+- **切换说明**: 首期写明由“ABS利差状态”改为“ABS/项目融资信用状态”，不将旧 yellow 的“稳定利差”直接解读成新口径 green 的改善；不与旧值计算 WoW。
 
 ### `neocloud_credit` — Neocloud 90 日信用事件数
 - **Axis**: trigger
@@ -274,9 +281,9 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
     - `value` = 年化分子（ms_anchor 锚定值，用台账 YTD 累计交叉校准；若台账 run-rate 与锚定值偏离 >15%，以两者区间呈现并在 note 说明）÷ 分母 capex_denominator
     - note **必须给出周度边际**：「本周新增 $XB（列出 deal 名），YTD 台账累计 $YB，年化 run-rate 对应比值 Z%」；本周无新 deal 就写「本周无新增 deal，YTD 累计 $YB」——这本身也是边际信息
     - `as_of` 更新为本期日期；单笔 ≥$10B 的新 deal 写进 wow_changes 并上飞书
-  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），并把 `last_full_recon` 更新为今天。到期但无法完成时保留旧 last_full_recon、记录原因，输出“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28）；这是警告而非 stale/发布硬错误，周度扫描及 ms_anchor 有有效依据即可。
+  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），并把 `last_full_recon` 更新为今天。到期但无法完成时保留旧 last_full_recon、记录原因，输出“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28）；通常为警告而非 stale/发布硬错误；**2026-10-18 周期例外：必须真正完成一次完整对账并更新 last_full_recon、分子、分母及出处，未完成不得发布成功包，不能只出逾期警告。** 周度增量不能替代本次完整对账。
   - `docs/data/debt_ledger.json` 结构：`{"last_full_recon": "YYYY-MM-DD", "ms_anchor": {"numerator_usd_b": N, "as_of": "YYYY-MM-DD", "source": "..."}, "capex_denominator_usd_b": N, "deals": [{"date": "YYYY-MM-DD", "borrower": "...", "instrument": "bond|loan|abs|private_credit|spv_jv", "amount_usd_b": N, "source_url": "..."}]}`。去重键 = borrower + amount 近似 + 公告日 ±7 天；同一 deal 的多篇报道只记一次。
-  - 周度扫描成功且仍有可用 ms_anchor 时不因完整对账逾期标 stale；周度搜索与锚定数据均无法提供可核实依据才为真失败。每次扫描仍必须有查询、来源和真实日期，不将未执行的对账写成已完成。
+  - 通常周度扫描成功且仍有可用 ms_anchor 时不因完整对账逾期标 stale；2026-10-18 的强制完整对账发布闸门仍必须通过；周度搜索与锚定数据均无法提供可核实依据才为真失败。每次扫描仍必须有查询、来源和真实日期，不将未执行的对账写成已完成。
 - **【完整拆解】流量口径 = 2026E 全口径 AI 新增债务 ÷ 2026E 全口径 AI 基建 capex**。分子分母口径必须对齐（都用"全口径/all-in"，否则比值失真）：
   - **分子（新增债务，流量）**：web_search 当年 AI 相关新发债务总额。优先抓 Morgan Stanley「AI debt issuance / AI debt monitor」年度估算（最新一期，含已发 vs 全年预测）——它是全口径（公开债 + 私募信用 + ABS + JV/SPV）。交叉核对三块：① hyperscaler + JV 发债（MSFT/META/AMZN/GOOGL/Oracle 债券、Stargate 等）；② neoclouds 全部新增债务（CoreWeave/Nebius/Crusoe/Lambda 的债券、银行贷款、GPU 抵押 ABS）；③ 表外 SPV / 经营租赁融资（Meta Hyperion、Oracle Stargate-Abilene、Blue Owl/PIMCO/Blackstone 私募信用 SPV）。
   - **分母（capex，流量）**：web_search 2026E 全口径 AI 基建 capex。基线 = 五大 hyperscaler（含 Oracle）合计，**再加** neoclouds、Apple、中国、主权及其他 → 全口径约 $1.0-1.1T。**别只用 big-4 的 ~$700B 当分母**（会漏掉 neocloud capex，与全口径分子不匹配、比值虚高）。
@@ -306,19 +313,23 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 - **Axis**: trigger
 - **Cadence**: periodic
 - **Max age**: 120 days
-- **Source**: The Information / Reuters / CNBC / Axios / Bloomberg 报道的 Anthropic + OpenAI 最新 run-rate，备源公司公告。raw 保存两家数值、实际日期及 gross/net 等 basis，按同口径台账算最近3个月增速与二阶导；一家的新读数可更新锚，另一家沿用并明示。不同 gross/net 口径不作二阶差分；不能用未来目标代替当前 ARR
-- **更新锚**: 两家最新 run-rate 的锚定读数；缺失分项保留真实旧日期，状态依据同口径方向证据。
+- **Source**: 最近9个月 Anthropic/OpenAI 已发生的实际 ARR/run-rate 披露，公司公告或 The Information / Reuters / CNBC / Axios / Bloomberg 的具体数字。`docs/data/arr_ledger.json` 持久保存每条公司、实际数据日、披露日、数值、单位、gross/net basis 及来源。预测、年底目标、未实现计划单独作为旁证，不计入数值台账或增长率。
+- **更新锚**: 各公司的同口径实际 run-rate 序列。OpenAI gross 与 net 分开，不能拼成一条增长曲线；跨公司不互相补时间点。台账只追加新披露/带出处的修订，保留历史；资料不足不插值、猜测或用未来预测填满9个月。为计算窗口可保留9个月范围之前最近一个实际开盘基线，并显式标为 opening context；不是本期新观测。只知道周/月时 raw 写 as_of_precision 和 observed_interval，取区间终点作保守日期界限并明示非精确日。
 - **Direction**: low_bad
-- **Status mapping**: 减速=red / 平稳=yellow / 加速=green
+- **Status mapping**: 同公司同 basis 的最近3个月增长率，相比此前3个月增长率下降=red / 不变=yellow / 上升=green；每家公司单列计算及实际端点日期，再形成有依据的整体判读。不能用近期绝对 ARR 更高证明二阶导加速。
+- **计算**: 以同公司、同basis最新实际读数日T（非报道发布日）为锚，先确定T−3、T−6个日历月截止日；各端点优先取截止日实际读数，否则取截止日或之前最新一条实际披露，滞后最多31天。`g_recent=(R_T/R_anchor_3m−1)×100`，`g_prior=(R_anchor_3m/R_anchor_6m−1)×100`，二阶变化为 `g_recent−g_prior`（百分点）。raw保留每个截止日、实际数据日、滞后天数及原文“大于/约”等限定；有任何端点lag>0时中英文 note 必须明确“披露序列/披露点”与 disclosed-series/reported observations；原文大于/约等金额只称 reported-point estimate，不作精确真实值。稀疏披露只能称“已披露序列的3个月区间增长代理”，不能冒充截止日精确经济增长率。超31天或basis不明则没有可比窗口，不插值、不年化填补、不跨gross/net计算。复合更新时另家公司可以沿用真实日期，但不能把未计算分项写成已验证；主锚不足则 stale。
+- **切换说明**: 首个新口径期在中英文 note 说明“近9个月实际披露、同 basis 两段3个月增长率”，旧混合/含预测的口径不可比，不回算已发布 #28。
 
-### `enterprise_deploy` — 企业生产环境部署率 (%)
+### `enterprise_deploy` — 企业显著员工 AI 采用率 (%)
 - **Axis**: stage
 - **Cadence**: periodic
 - **Max age**: 200 days
-- **Source**: 维持企业“生产环境部署率”口径：McKinsey / Deloitte / Gartner / IDC 同类调查。没有同口径新调查但已核实最新披露时可 current（≤200天）；KPMG AI Quarterly Pulse 的在建/部署/开发 agent 比例只交叉，不进入 value。2026-10-12 决策：不换锚
-- **更新锚**: 同口径生产部署率调查。
-- **Direction**: low_bad
-- **Thresholds**: red=50, yellow=65
+- **Source**: KPMG US AI Quarterly Pulse 的同一问题 significant workforce adoption。主源 https://kpmg.com/us/en/media/news/q3-ai-pulse-2026.html ，官方报告 https://kpmg.com/kpmg-us/content/dam/kpmg/pdf/2026/aipulsesurvey-q3.pdf 。2026-09-24 发布的 Q3 2026 全美大型企业样本披露44%，上季度23%，一年前10%；调查期2026-07-24至08-25，314名美国 $1B+ 企业高管。上述比较数由同一官方发布核实；它不是“构建/部署/开发agent”的62%问题，也不是全部美国企业或员工比例。
+- **更新锚**: KPMG 同一调查问题的相邻季度变化（百分点），value 保留当前百分比，raw 保留当前/上期读数、季度、来源及真实披露日。取消旧72%“生产部署率”锚和 red=50/yellow=65 的水平阈值；不同调查/问题不可拼接。
+- **Direction**: qualitative
+- **Status mapping**: `change_pp=current_pct−previous_pct`；change_pp≥+3 为 green；−3≤change_pp<+3 为 yellow；change_pp<−3 为 red。边界+3归绿、−3归黄，按变化而非采用率水平评分。Q3 2026 44−Q2 2026 23=+21pp 只是官方读数的已核实例，不提前生成后续周期快照。
+- **证据字段**: raw 包含 `basis:"kpmg_significant_workforce_adoption"`、`current_pct`/`previous_pct`（数值）、`current_quarter:"2026-Q3"`/`previous_quarter:"2026-Q2"`（相邻季度字符串）、`change_pp`（百分点）、实际 publication_date/调查期和来源。季度未更新时本期实际核实最新报告仍相同且≤200天可 current，保留真实披露日；不能把核实访问日改成新披露日。
+- **切换说明**: 首期双语 note 明示由旧生产部署率/72%口径切换为 KPMG significant workforce adoption，旧水平值不可比；新序列将季度变化与周度沿用区分，不把切换形成的颜色差异算作真实 WoW 改善。
 
 ### `cloud_rpo_growth` — 云厂商递延收入增速状态
 - **Axis**: trigger
@@ -387,7 +398,7 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
 
 ## 历史校准表（相似度比对用）
 
-四个历史时点的指标颜色向量。R=红 Y=黄 G=绿，`—`=该时点无合理类比（不计入该时点 match 分母）。AI 特有指标按括号内类比资产判定。**本表为初稿判定（2026-07-06），阈值随研究演进校订。**
+四个历史时点的指标颜色向量。2026-10-18 起结构修复不回写此历史矩阵；首个新口径期的判读需明示部分定义改变使相似度仅供模式参照，不能视作完整同口径历史回测。R=红 Y=黄 G=绿，`—`=该时点无合理类比（不计入该时点 match 分母）。AI 特有指标按括号内类比资产判定。**本表为初稿判定（2026-07-06），阈值随研究演进校订。**
 
 | 指标 | 1999-06<br>(dot-com 顶前 9 月) | 2000-02<br>(顶前 1 月) | 2007-10<br>(金融危机股顶) | 2021-11<br>(成长股/SPAC 顶) |
 |---|---|---|---|---|
@@ -485,11 +496,16 @@ JSON 喂给两个 dashboard：中文版（aibubble-cn.github.io）和英文版�
       "source_name": "multpl.com",
       "source_url": "https://www.multpl.com/shiller-pe",
       "as_of": "YYYY-MM-DD",
-      "stale": false
+      "stale": false,
+      "freshness": "new"
     }
   ]
 }
 ```
+
+### 快照新鲜度显示
+
+新快照每项增加 `freshness`（new / current / stale），语义由 evidence 和实际核实结果确定：new 不加角标；current 显示“最新披露”/“Latest filing”，并显示原真实 as_of；stale 显示 STALE。新字段与 stale 布尔值必须一致。旧快照缺少 freshness 时只按原有 stale/as_of 沿用兼容显示，不能追溯推断其已核实为 current，也不写回历史文件。成功/失败包中 new/current/stale 计数与各项一致。
 
 ### 双语字段约定
 

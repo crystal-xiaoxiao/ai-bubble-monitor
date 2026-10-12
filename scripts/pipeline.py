@@ -25,7 +25,9 @@ PERIODS = [("1999-06", "互联网泡沫顶前 9 个月", "9 months before dot-co
            ("2021-11", "成长股/SPAC 顶", "Growth/SPAC top")]
 INPUTS = ["INDICATORS.md", "ROUTINE_PROMPT.md", "automation/task.json", "scripts/pipeline.py",
           "docs/data/latest.json", "docs/data/debt_ledger.json", "docs/data/raw_history.json",
-          "docs/data/prefetch/latest.json"]
+          "docs/data/prefetch/latest.json", "docs/data/nvda_commitments.json", "docs/data/arr_ledger.json"]
+LEDGERS = {"nvda_commitments": ("docs/data/nvda_commitments.json", "entries"),
+           "arr_ledger": ("docs/data/arr_ledger.json", "observations")}
 
 
 class GateError(ValueError):
@@ -72,7 +74,307 @@ def head(root):
 
 
 def fingerprints(root):
-    return {p: digest((root / p).read_bytes()) for p in INPUTS}
+    return {p: digest((root / p).read_bytes()) if (root / p).exists() else None for p in INPUTS}
+
+
+def structural_active(config, cycle):
+    return cycle >= config["structural_contracts"]["effective_cycle"]
+
+
+def valid_url(value):
+    return isinstance(value, str) and value.startswith(("https://", "http://"))
+
+
+def source_record(record, as_of, label):
+    need(valid_url(record.get("source_url")), f"{label}: source URL required")
+    need(record.get("source_date") and record["source_date"] <= as_of, f"{label}: valid nonfuture source date required")
+    date.fromisoformat(record["source_date"])
+    need(record.get("accessed_at"), f"{label}: actual source access timestamp required")
+    need(timestamp(record["accessed_at"]).date() <= date.fromisoformat(as_of), f"{label}: future access timestamp")
+
+
+def ledger_candidate(root, bundle, key):
+    path, records_key = LEDGERS[key]
+    need((root / path).exists(), f"Missing persistent ledger: {path}")
+    old = read(root / path)
+    new = copy.deepcopy(bundle.get(key, old))
+    need(new.get("schema_version") == 1 and isinstance(new.get(records_key), list), f"{key}: invalid ledger structure")
+    records = new[records_key]
+    need(all(isinstance(r, dict) and isinstance(r.get("id"), str) and r["id"] for r in records), f"{key}: stable record IDs required")
+    need(len({r["id"] for r in records}) == len(records), f"{key}: duplicate record ID")
+    by_id = {r["id"]: r for r in records}
+    for record in old[records_key]:
+        need(by_id.get(record["id"]) == record, f"{key}: historical record changed or removed; append a sourced superseding record")
+    if key == "arr_ledger":
+        confirmations = {r.get("id"): r for r in new.get("basis_confirmations", [])}
+        need(len(confirmations) == len(new.get("basis_confirmations", [])), "ARR: duplicate basis confirmation ID")
+        for confirmation in old.get("basis_confirmations", []):
+            need(confirmations.get(confirmation["id"]) == confirmation, "ARR: historical basis confirmation changed or removed")
+    for field in ("excluded_reports", "exclusions"):
+        need(all(record in new.get(field, []) for record in old.get(field, [])), f"{key}: historical exclusion audit removed")
+    return new
+
+
+def active_records(records, label):
+    ids = {r["id"] for r in records}
+    superseded = set()
+    links = {}
+    for record in records:
+        prior = record.get("supersedes", [])
+        prior = [prior] if isinstance(prior, str) else prior
+        need(isinstance(prior, list) and all(p in ids and p != record["id"] for p in prior), f"{label}: invalid supersedes reference")
+        need(not (superseded & set(prior)), f"{label}: one record superseded more than once")
+        superseded.update(prior)
+        links[record["id"]] = prior
+    def visit(key, trail):
+        need(key not in trail, f"{label}: cyclic supersedes references")
+        for prior in links[key]:
+            visit(prior, trail | {key})
+    for key in links:
+        visit(key, set())
+    return [r for r in records if r["id"] not in superseded]
+
+
+def nvda_totals(ledger, as_of):
+    need(ledger.get("basis") == "signed_customer_financing_including_guarantees", "NVDA: signed financing basis required")
+    coverage = ledger.get("coverage")
+    need(isinstance(coverage, dict) and isinstance(coverage.get("complete"), bool), "NVDA: coverage disclosure required")
+    active = active_records(ledger["entries"], "NVDA")
+    total, unresolved = 0.0, []
+    for entry in ledger["entries"]:
+        label = f"NVDA {entry['id']}"
+        source_record(entry, as_of, label)
+        need(entry.get("customer") and entry.get("notes"), f"{label}: customer and signed/draw conditions required")
+        need(entry.get("instrument") in ("equity", "loan", "convertible", "financing_guarantee"), f"{label}: unsupported financing instrument")
+        need(entry.get("status") in ("signed", "conditional", "drawn"), f"{label}: invalid signing status")
+        date.fromisoformat(entry["announcement_date"])
+        need(entry["announcement_date"] <= as_of, f"{label}: future announcement")
+        signed, ceiling = entry.get("signed_amount_usd_bn"), entry.get("amount_usd_bn")
+        need(signed is None or numeric(signed) and signed >= 0, f"{label}: invalid signed amount")
+        need(ceiling is None or numeric(ceiling) and ceiling >= 0, f"{label}: invalid announced ceiling")
+        need(signed is None or ceiling is None or signed <= ceiling + 0.000001, f"{label}: signed amount exceeds announced ceiling")
+        if entry in active and not entry.get("included_in"):
+            if signed is None and entry["status"] in ("signed", "drawn"):
+                unresolved.append(entry["id"])
+            elif signed is not None:
+                total += signed
+    active_by_id = {e["id"]: e for e in active}
+    for parent in active:
+        children = [e for e in active if e.get("included_in") == parent["id"]]
+        if children:
+            need(not parent.get("included_in") and numeric(parent.get("signed_amount_usd_bn")), "NVDA: included detail requires one active signed aggregate")
+            need(all(e["instrument"] == parent["instrument"] and numeric(e.get("signed_amount_usd_bn")) for e in children), "NVDA: included detail must match aggregate instrument and known signed amounts")
+            need(sum(e["signed_amount_usd_bn"] for e in children) <= parent["signed_amount_usd_bn"] + 0.000001, "NVDA: included details exceed signed aggregate")
+    need(all(not e.get("included_in") or e["included_in"] in active_by_id and e["included_in"] != e["id"] for e in active), "NVDA: missing/self included aggregate reference")
+    need(not coverage["complete"] or not unresolved, "NVDA: undisclosed signed amounts cannot claim complete coverage")
+    declared_unresolved = coverage.get("unresolved_ids", [])
+    need(isinstance(declared_unresolved, list) and set(unresolved) <= set(declared_unresolved), "NVDA: missing unresolved signing disclosure")
+    ltm = ledger.get("ltm_revenue", {})
+    quarters = ltm.get("quarters")
+    need(isinstance(quarters, list) and len(quarters) == 4, "NVDA: exactly four actual revenue quarters required")
+    need(len({q.get("fiscal_period") for q in quarters}) == 4, "NVDA: duplicate fiscal quarter")
+    ends = []
+    for quarter in quarters:
+        need(valid_url(quarter.get("source_url")) and quarter.get("source_date") <= as_of, "NVDA: quarter filing source required")
+        date.fromisoformat(quarter["source_date"])
+        end = date.fromisoformat(quarter["period_end"])
+        need(end.isoformat() <= as_of and numeric(quarter.get("revenue_usd_bn")) and quarter["revenue_usd_bn"] > 0, "NVDA: invalid actual quarterly revenue")
+        ends.append(end)
+    ends.sort()
+    need(all(75 <= (b - a).days <= 110 for a, b in zip(ends, ends[1:])), "NVDA: LTM quarters must be consecutive")
+    need(ltm.get("as_of") == ends[-1].isoformat(), "NVDA: LTM as_of must be latest quarter end")
+    revenue = sum(q["revenue_usd_bn"] for q in quarters)
+    need(numeric(ltm.get("revenue_usd_bn")) and abs(ltm["revenue_usd_bn"] - revenue) < 0.011, "NVDA: LTM revenue sum mismatch")
+    need(numeric(ledger.get("total_signed_usd_bn")) and abs(ledger["total_signed_usd_bn"] - total) < 0.011, "NVDA: signed numerator sum mismatch")
+    ratio = total / revenue * 100
+    need(numeric(ledger.get("ratio_pct")) and abs(ledger["ratio_pct"] - ratio) <= 0.011, "NVDA: signed/LTM ratio mismatch")
+    signing_dates = []
+    for entry in active:
+        if entry["status"] in ("signed", "drawn") or (entry.get("signed_amount_usd_bn") or 0) > 0:
+            observed = entry.get("drawn_date") if entry["status"] == "drawn" else None
+            observed = observed or entry.get("signed_date") or entry["announcement_date"]
+            date.fromisoformat(observed)
+            need(observed <= as_of, "NVDA: future signing/draw date")
+            signing_dates.append(observed)
+    return {"numerator_signed_usd_bn": round(total, 6), "ltm_revenue_usd_bn": round(revenue, 6),
+            "ratio_pct": round(ratio, 6), "coverage_complete": coverage["complete"], "unresolved_ids": unresolved,
+            "metric_as_of": max([ltm["as_of"]] + signing_dates)}
+
+
+def subtract_months(value, months):
+    """Calendar cutoffs; observations retain their real dates, never interpolated."""
+    import calendar
+    year, month = divmod(value.year * 12 + value.month - 1 - months, 12)
+    month += 1
+    return value.replace(year=year, month=month, day=min(value.day, calendar.monthrange(year, month)[1]))
+
+
+def arr_calculations(ledger, as_of):
+    points = active_records(ledger["observations"], "ARR")
+    confirmations = {r["id"]: r for r in ledger.get("basis_confirmations", [])}
+    need(len(confirmations) == len(ledger.get("basis_confirmations", [])), "ARR: duplicate basis confirmation ID")
+    for confirmation in confirmations.values():
+        source_record(confirmation, as_of, "ARR basis confirmation")
+        need(confirmation.get("company") in ("OpenAI", "Anthropic") and confirmation.get("basis") in ("gross", "net"), "ARR: invalid sourced basis confirmation")
+        need(confirmation.get("reading") and confirmation.get("application"), "ARR: retrospective basis confirmation reading/application required")
+    for point in ledger["observations"]:
+        label = f"ARR {point['id']}"
+        source_record(point, as_of, label)
+        need(point.get("company") in ("OpenAI", "Anthropic"), f"{label}: unsupported company")
+        need(point.get("basis") in ("gross", "net", "unspecified"), f"{label}: accounting basis required")
+        need(point.get("as_of_precision") in ("day", "month_end", "month", "early_month", "week"), f"{label}: date precision required")
+        need(point.get("reported_qualifier") in ("exact", "about", "more_than", "nearly"), f"{label}: reported qualifier required")
+        need(point.get("source_type") in ("company", "mainstream_media"), f"{label}: company or mainstream media source required")
+        need(point.get("raw_reading") and point.get("notes"), f"{label}: actual reading and basis notes required")
+        need(point.get("is_forecast") is False, f"{label}: forecasts cannot enter actual ARR ledger")
+        need(numeric(point.get("amount_usd_bn")) and point["amount_usd_bn"] > 0, f"{label}: actual run-rate required")
+        date.fromisoformat(point["as_of"])
+        need(point["as_of"] <= point["source_date"] <= as_of, f"{label}: future/forecast observation date")
+        if point.get("basis_confirmation_id"):
+            confirmation = confirmations.get(point["basis_confirmation_id"])
+            need(confirmation and confirmation["company"] == point["company"] and confirmation["basis"] == point["basis"], f"{label}: missing or mismatched accounting-basis confirmation")
+        if "observed_interval" in point:
+            interval = point["observed_interval"]
+            need(isinstance(interval, dict) and interval.get("start") and interval.get("end"), f"{label}: invalid reported observation interval")
+            start, end = (date.fromisoformat(interval[k]) for k in ("start", "end"))
+            need(start <= end and end.isoformat() == point["as_of"], f"{label}: retain conservative upper bound of uncertain date")
+    unique = [(p["company"], p["as_of"], p["basis"]) for p in points]
+    need(len(set(unique)) == len(unique), "ARR: duplicate company/date/basis point")
+    results, excluded = {}, {}
+    for company in ("OpenAI", "Anthropic"):
+        candidates = []
+        for basis in ("gross", "net"):
+            series = sorted((p for p in points if p["company"] == company and p["basis"] == basis), key=lambda p: p["as_of"])
+            if not series:
+                continue
+            latest = series[-1]
+            end = date.fromisoformat(latest["as_of"])
+            cutoff3, cutoff6 = subtract_months(end, 3), subtract_months(end, 6)
+            anchors = [next((p for p in reversed(series) if p["as_of"] <= cutoff.isoformat()), None) for cutoff in (cutoff3, cutoff6)]
+            if any(p is None for p in anchors):
+                continue
+            previous, earlier = anchors
+            lags = [(cutoff3 - date.fromisoformat(previous["as_of"])).days, (cutoff6 - date.fromisoformat(earlier["as_of"])).days]
+            if any(lag > 31 for lag in lags) or (date.fromisoformat(as_of) - end).days > 120:
+                continue
+            need(earlier["as_of"] < previous["as_of"] < latest["as_of"], "ARR: distinct actual anchors required")
+            recent = (latest["amount_usd_bn"] / previous["amount_usd_bn"] - 1) * 100
+            prior = (previous["amount_usd_bn"] / earlier["amount_usd_bn"] - 1) * 100
+            candidates.append({"basis": basis, "latest": latest, "previous": previous, "earlier": earlier,
+                               "cutoff_3m": cutoff3.isoformat(), "cutoff_6m": cutoff6.isoformat(),
+                               "anchor_lag_days": lags,
+                               "recent_growth_pct": round(recent, 6), "prior_growth_pct": round(prior, 6),
+                               "acceleration_pp": round(recent - prior, 6),
+                               "reported_point_estimate": any(p["reported_qualifier"] != "exact" for p in (latest, previous, earlier))})
+        if candidates:
+            results[company] = max(candidates, key=lambda c: c["latest"]["as_of"])
+        else:
+            excluded[company] = "Fewer than three dated actual observations in one confirmed gross/net basis at the calendar cutoffs"
+    return {"companies": results, "excluded_companies": excluded}
+
+
+def enterprise_status(raw, value):
+    need(raw.get("basis") == "kpmg_significant_workforce_adoption", "enterprise_deploy: KPMG significant workforce adoption basis required")
+    current, previous = raw.get("current_pct"), raw.get("previous_pct")
+    need(all(numeric(v) and 0 <= v <= 100 for v in (current, previous)), "enterprise_deploy: actual current/prior percentage required")
+    quarters = []
+    for key in ("current_quarter", "previous_quarter"):
+        match = re.fullmatch(r"(\d{4})-Q([1-4])", str(raw.get(key)))
+        need(match is not None, "enterprise_deploy: actual quarter metadata required")
+        quarters.append(int(match[1]) * 4 + int(match[2]))
+    need(quarters[0] - quarters[1] == 1, "enterprise_deploy: compare adjacent quarters")
+    change = round(current - previous, 10)
+    need(numeric(raw.get("change_pp")) and abs(raw["change_pp"] - change) < 0.001, "enterprise_deploy: quarterly change mismatch")
+    need(numeric(value) and abs(value - current) < 0.001, "enterprise_deploy: level must be reported KPMG percentage")
+    return "green" if change >= 3 else "red" if change < -3 else "yellow"
+
+
+def dc_credit_status(raw):
+    red = {"default", "force_majeure", "downgrade", "issuance_withdrawal", "forced_repricing"}
+    yellow = {"issuance_delay", "terms_tightening"}
+    states = []
+    for event in raw["events"]:
+        kind = event.get("event_type")
+        need(kind in red | yellow | {"spread_widening", "smooth_issuance"}, "dc_abs_spread: classified credit event required")
+        need(isinstance(event.get("confirmed"), bool), "dc_abs_spread: confirmation status required")
+        if kind == "spread_widening":
+            need(numeric(event.get("spread_change_bps")), "dc_abs_spread: reported spread change in bps required")
+        if not event["confirmed"]:
+            continue
+        states.append("red" if kind in red or kind == "spread_widening" and event["spread_change_bps"] >= 50 else "yellow" if kind in yellow else "green")
+    return "red" if "red" in states else "yellow" if "yellow" in states else "green"
+
+
+def structural_status(key, item, raw, ledgers, context):
+    """Derive the new contracts from source readings and persistent ledgers."""
+    def computed(name, value):
+        need(name not in raw or raw[name] == value, f"{key}: supplied {name} disagrees with authoritative ledger")
+        raw[name] = value
+    if key == "enterprise_deploy":
+        publication = raw.get("publication_date")
+        need(isinstance(publication, str) and publication <= context["as_of_date"], "enterprise_deploy: actual publication date required")
+        date.fromisoformat(publication)
+        need(item["as_of"] == publication, "enterprise_deploy: as_of must be actual KPMG publication date")
+        if "latest_release_date" in raw:
+            need(raw["latest_release_date"] == publication, "enterprise_deploy: current release date contradicts actual publication")
+        status = enterprise_status(raw, item["value"])
+        year, quarter = (int(v) for v in raw["current_quarter"].replace("Q", "").split("-"))
+        checked_date = date.fromisoformat(context["as_of_date"])
+        need(year * 4 + quarter <= checked_date.year * 4 + (checked_date.month - 1) // 3 + 1, "enterprise_deploy: future survey quarter")
+        return status
+    if key == "dc_abs_spread":
+        need(raw.get("basis") == "dc_abs_project_finance_credit_status", "dc_abs_spread: ABS/project-finance credit basis required")
+        start, end = (date.fromisoformat(raw["window"][k]) for k in ("start", "end"))
+        need((end - start).days == 90, "dc_abs_spread: complete 90-day scan window required")
+        return dc_credit_status(raw)
+    if key == "nvda_invest_revenue":
+        ledger = ledgers["nvda_commitments"]
+        totals = nvda_totals(ledger, context["as_of_date"])
+        computed("basis", ledger["basis"])
+        computed("numerator_signed_usd_bn", totals["numerator_signed_usd_bn"])
+        computed("ltm_revenue_usd_bn", totals["ltm_revenue_usd_bn"])
+        computed("nvda_coverage", {"complete": totals["coverage_complete"], "unresolved_ids": totals["unresolved_ids"]})
+        computed("nvda_active_commitments", [{k: e.get(k) for k in ("id", "instrument", "status", "signed_amount_usd_bn", "included_in")} for e in sorted(active_records(ledger["entries"], "NVDA"), key=lambda e: e["id"])])
+        computed("ltm_period_end", ledger["ltm_revenue"]["as_of"])
+        need(numeric(item["value"]) and abs(item["value"] - totals["ratio_pct"]) <= 0.51, "nvda_invest_revenue: value disagrees with signed commitments/LTM")
+        need(item["as_of"] == totals["metric_as_of"], "nvda_invest_revenue: as_of must be latest actual signing/draw or revenue-quarter date")
+        if not totals["coverage_complete"]:
+            need("下限" in item["note"] and "lower bound" in item["note_en"].lower(), "NVDA: incomplete coverage requires bilingual lower-bound disclosure")
+            need(totals["ratio_pct"] >= 30, "NVDA: incomplete lower bound below red cannot establish an exact green/yellow status; mark stale")
+        return "red" if totals["ratio_pct"] >= 30 else "yellow" if totals["ratio_pct"] >= 15 else "green"
+    if key == "arr_2nd_deriv":
+        calculations = arr_calculations(ledgers["arr_ledger"], context["as_of_date"])
+        need(calculations["companies"], "arr_2nd_deriv: no same-basis comparable three-anchor disclosed series; mark stale")
+        computed("basis", "same_basis_disclosed_series_3m_vs_prior3m")
+        computed("arr_calculations", calculations)
+        computed("arr_basis_signature", {company: c["basis"] for company, c in calculations["companies"].items()})
+        computed("arr_anchor_ids", {company: [c[p]["id"] for p in ("latest", "previous", "earlier")] for company, c in calculations["companies"].items()})
+        need(item["as_of"] == max(c["latest"]["as_of"] for c in calculations["companies"].values()), "arr_2nd_deriv: as_of must be latest actual calculated-series observation date")
+        for company in calculations["excluded_companies"]:
+            need(company.lower() in item["note"].lower() and company.lower() in item["note_en"].lower(), "ARR: excluded company must be named in both notes")
+        if any(any(c["anchor_lag_days"]) for c in calculations["companies"].values()):
+            need(any(term in item["note"] for term in ("披露序列", "披露点")) and any(term in item["note_en"].lower() for term in ("disclosed-series", "reported observations")), "ARR: nonzero anchor lag requires disclosed-series qualification")
+        if any(c["reported_point_estimate"] for c in calculations["companies"].values()):
+            need(any(term in item["note"] for term in ("估算", "约", "披露点")) and any(term in item["note_en"].lower() for term in ("estimate", "approx", "reported observations")), "ARR: approximate source readings require point-estimate qualification")
+        directions = [c["acceleration_pp"] for c in calculations["companies"].values()]
+        return "green" if all(d > 0 for d in directions) else "red" if all(d < 0 for d in directions) else "yellow"
+    return None
+
+
+STRUCTURAL_CANONICAL = {
+    "enterprise_deploy": ("basis", "current_pct", "previous_pct", "current_quarter", "previous_quarter", "change_pp", "publication_date"),
+    "nvda_invest_revenue": ("basis", "numerator_signed_usd_bn", "ltm_revenue_usd_bn", "nvda_active_commitments", "ltm_period_end"),
+    "arr_2nd_deriv": ("basis", "arr_anchor_ids", "arr_basis_signature"),
+    "dc_abs_spread": ("basis",),
+}
+STRUCTURAL_LABELS = {
+    "enterprise_deploy": ("企业显著员工 AI 采用率", "KPMG significant workforce adoption",
+                          "较上季 ≥+3pt 绿 / −3pt ≤变化<+3pt 黄 / 下降>3pt 红",
+                          "QoQ change ≥+3pt green / −3pt ≤ change <+3pt yellow / decline >3pt red"),
+    "dc_abs_spread": ("数据中心 ABS/项目融资信用状态", "Data-center ABS/project-finance credit status",
+                      "90 天内确认信用事件或利差走阔≥50bp 红 / 延期、条款收紧等压力 黄 / 发行顺畅、无事件 绿",
+                      "90d confirmed credit event or spread widening ≥50bp red / delays or tighter terms yellow / smooth issuance and no events green"),
+}
 
 
 def definitions(root):
@@ -200,7 +502,8 @@ def aggregate(indicators, previous, specs, calibration):
         vals = [score[k] for k, v in specs.items() if v["category"] == cat]
         result["category_scores"][cat] = round(sum(vals) / len(vals) * 50, 1)
     old = {i["id"]: POINTS[i["status"]] for i in previous["indicators"]}
-    delta = [v - old[k] for k, v in score.items() if k in old]
+    incomparable = {i["id"] for i in indicators if i.get("basis_changed")}
+    delta = [v - old[k] for k, v in score.items() if k in old and k not in incomparable]
     deteriorated, improved = sum(max(x, 0) for x in delta), sum(max(-x, 0) for x in delta)
     result["momentum"] = {"deteriorated": deteriorated, "improved": improved, "net": deteriorated - improved}
     similarity = []
@@ -283,6 +586,7 @@ def freshness_counts(indicators, evidence):
     counts = {"new": 0, "current": 0, "stale": 0}
     for item in indicators:
         state = "stale" if item["stale"] else "current" if evidence[item["id"]]["kind"] == "current" else "new"
+        need(item.get("freshness", state) == state, f"{item['id']}: freshness contradicts validated evidence")
         counts[state] += 1
     return counts
 
@@ -306,6 +610,8 @@ def validate_indicators(root, bundle, context, at):
     need(len(indicators) == len(specs) and {i["id"] for i in indicators} == set(specs), "Indicator ID mismatch")
     need(set(bundle["evidence"]) == set(specs), "Evidence IDs must match indicators")
     history = read(root / "docs/data/raw_history.json")
+    active = structural_active(config, context["cycle"])
+    ledgers = {k: ledger_candidate(root, bundle, k) for k in LEDGERS} if active else {}
     for item in indicators:
         key = item["id"]
         spec, ev = specs[key], bundle["evidence"][key]
@@ -366,6 +672,35 @@ def validate_indicators(root, bundle, context, at):
             raw = copy.deepcopy(ev["raw"])
             if spec["cadence"] == "scan":
                 validate_scan(key, item, ev, context)
+        item["freshness"] = "stale" if item["stale"] else "current" if ev["kind"] == "current" else "new"
+        item.pop("basis_changed", None)
+        if active and not item["stale"] and raw.get("basis") is not None:
+            item["basis"] = copy.deepcopy(raw["basis"])
+            prior_basis = history.get(key, [{}])[-1].get("raw", {}).get("basis")
+            if prior_basis is not None and prior_basis != raw["basis"]:
+                item["basis_changed"] = True
+        if active and key in STRUCTURAL_CANONICAL and not item["stale"]:
+            expected_status = structural_status(key, item, raw, ledgers, context)
+            need(item["status"] == expected_status, f"{key}: status contradicts deterministic structural contract")
+            item["basis"] = raw["basis"]
+            item["basis_changed"] = old[key].get("basis") != item["basis"]
+            if key == "arr_2nd_deriv":
+                item["basis_components"] = copy.deepcopy(raw["arr_basis_signature"])
+                item["basis_changed"] = item["basis_changed"] or old[key].get("basis_components") != item["basis_components"]
+            if ev["kind"] == "current":
+                need(not item["basis_changed"], f"{key}: basis switch is a new observation, cannot be current")
+                prior_raw = history.get(key, [{}])[-1].get("raw", {})
+                for field in STRUCTURAL_CANONICAL[key]:
+                    need(field in prior_raw and raw[field] == prior_raw[field], f"{key}: current changed canonical {field}")
+            if item["basis_changed"]:
+                need("口径" in item["note"] and any(t in item["note"] for t in ("切换", "重建", "不可比")), f"{key}: first observation requires Chinese basis-switch note")
+                need(any(t in item["note_en"].lower() for t in ("basis switch", "incomparable", "not comparable", "rebuild")), f"{key}: first observation requires English basis-switch note")
+                if key == "nvda_invest_revenue":
+                    need(all(t in item["note"] and t in item["note_en"] for t in ("43", "45")), "NVDA: first rebuilt numerator must disclose old 43–45% is incomparable")
+            if key in STRUCTURAL_LABELS:
+                item["name_zh"], item["name_en"], item["threshold_text"], item["threshold_text_en"] = STRUCTURAL_LABELS[key]
+        if active:
+            raw["basis_switch"] = bool(item.get("basis_changed"))
         if "thresholds" in spec and not item["stale"]:
             need(numeric(item["value"]), f"{key}: numeric value required")
             red, yellow = spec["thresholds"]
@@ -385,7 +720,7 @@ def validate_indicators(root, bundle, context, at):
             need(op in ["change_pct", "ratio_pct", "ratio"], f"{key}: unknown calculation")
             expected = (x / y - 1) * 100 if op == "change_pct" else x / y * (100 if op == "ratio_pct" else 1)
             need(numeric(item["value"]) and abs(item["value"] - expected) <= 0.51, f"{key}: derived value mismatch")
-        records = history.get(key, []) + [{"date": item["as_of"], "run_date": context["as_of_date"], "cycle": context["cycle"], "raw": raw, "value": item["value"], "stale": item["stale"]}]
+        records = history.get(key, []) + [{"date": item["as_of"], "run_date": context["as_of_date"], "cycle": context["cycle"], "raw": raw, "value": item["value"], "stale": item["stale"], "freshness": item["freshness"]}]
         if key in config["static_core_keys"]:
             aliases = config["static_core_keys"][key]
             need(item["stale"] or core_values(raw, aliases) is not None, f"{key}: missing static-check core fields; document raw alias in task.json")
@@ -423,11 +758,29 @@ def validate_narrative(bundle, summary, reasons, previous):
         need("分母" in zh and "denominator" in en, "Explain changed denominator")
 
 
-def validate_debt(root, bundle, context, indicators):
+def validate_debt(root, bundle, context, indicators, at=None):
     old = read(root / "docs/data/debt_ledger.json")
     new = bundle["debt_ledger"]
     ev = bundle["debt_review"]
     item = next(i for i in indicators if i["id"] == "debt_capex_ratio")
+    config = read(root / "automation/task.json")
+    deadline = config["debt_reconciliation"]["required_from_cycle"]
+    required = context["cycle"] >= deadline and old["last_full_recon"] < deadline
+    if required:
+        need(not item["stale"] and ev.get("full_reconciliation") is True, "Debt full reconciliation is mandatory from 2026-10-18 until actually completed; a warning or stale carry cannot release")
+    if required or (structural_active(config, context["cycle"]) and ev.get("full_reconciliation")):
+        audits = ev.get("reconciliation_sources")
+        need(isinstance(audits, list) and audits, "Debt full reconciliation requires this-run source audit")
+        scopes = set()
+        for audit in audits:
+            need(isinstance(audit, dict) and audit.get("scope") in ("financing_anchor", "capex_denominator", "deal_reconciliation"), "Debt reconciliation audit scope required")
+            need(valid_url(audit.get("url")) and audit["url"] in ev.get("searched_urls", []), "Debt reconciliation audit must reference an opened searched URL")
+            need(isinstance(audit.get("raw_reading"), str) and audit["raw_reading"].strip(), "Debt reconciliation audit actual reading required")
+            checked = timestamp(audit["checked_at"])
+            prepared = timestamp(context["prepared_at"])
+            need(prepared - timedelta(minutes=5) <= checked <= (at or now()) + timedelta(minutes=5), "Debt reconciliation audit was not checked in this run")
+            scopes.add(audit["scope"])
+        need(scopes == {"financing_anchor", "capex_denominator", "deal_reconciliation"}, "Debt reconciliation must audit annual financing, all-in capex denominator and historical deals")
     if item["stale"]:
         need(new == old, "Stale debt data cannot change ledger")
         return []
@@ -470,6 +823,7 @@ def validate_wow(changes, indicators, previous, added):
         key = change["indicator_id"]
         need(key in old and key in new and change.get("note") and change.get("note_en"), "Invalid or untranslated WoW change")
         a, b = old[key], new[key]
+        need(not b.get("basis_changed"), f"{key}: first basis switch is incomparable and cannot be a WoW change")
         kind = change["type"]
         delta = POINTS[b["status"]] - POINTS[a["status"]]
         if kind in ("status_upgrade", "status_downgrade"):
@@ -535,7 +889,7 @@ def build(root, bundle, context, at):
     else:
         summary, reasons = aggregate(indicators, previous, specs, calibration)
         validate_narrative(bundle, summary, reasons, previous)
-        added = validate_debt(root, bundle, context, indicators)
+        added = validate_debt(root, bundle, context, indicators, at)
         warning = debt_reconciliation_warning(root, context, bundle["debt_ledger"])
         validate_wow(bundle["wow_changes"], indicators, previous, added)
         summary.update({k: bundle[k] for k in ["verdict_desc", "verdict_desc_en"]})
@@ -547,6 +901,15 @@ def build(root, bundle, context, at):
         need(not (root / snapshot_path).exists(), "Refuse to overwrite a historical snapshot")
         files.update({"docs/data/latest.json": snapshot, snapshot_path: snapshot,
                       "docs/data/debt_ledger.json": bundle["debt_ledger"], "docs/data/raw_history.json": history})
+        if structural_active(config, context["cycle"]):
+            ledger_values = {key: ledger_candidate(root, bundle, key) for key in LEDGERS}
+            nvda_totals(ledger_values["nvda_commitments"], context["as_of_date"])
+            arr_calculations(ledger_values["arr_ledger"], context["as_of_date"])
+            run["ledger_sha256"] = {key: digest(encoded(value)) for key, value in ledger_values.items()}
+            for key, value in ledger_values.items():
+                path = LEDGERS[key][0]
+                if value != read(root / path):
+                    files[path] = value
         payload = notification(snapshot, added, root, config, at, counts, warning)
         if added:
             total = sum(d["amount_usd_b"] for d in bundle["debt_ledger"]["deals"])
@@ -599,8 +962,31 @@ def main():
         args.out.write_bytes(encoded(output))
     elif args.command == "score":
         specs, calibration = definitions(root)
-        result, reasons = aggregate(read(args.bundle)["indicators"], read(root / "docs/data/latest.json"), specs, calibration)
-        output = {"summary": result, "verdict_reasons": reasons}
+        bundle = read(args.bundle)
+        config = read(root / "automation/task.json")
+        indicators = copy.deepcopy(bundle["indicators"])
+        previous = read(root / "docs/data/latest.json")
+        if structural_active(config, bundle["cycle"]):
+            ledgers = {key: ledger_candidate(root, bundle, key) for key in LEDGERS}
+            old = {i["id"]: i for i in previous["indicators"]}
+            history = read(root / "docs/data/raw_history.json")
+            context = {"as_of_date": now().date().isoformat()}
+            for item in indicators:
+                item.pop("basis_changed", None)
+                if item["stale"]:
+                    continue
+                raw = copy.deepcopy(bundle["evidence"][item["id"]]["raw"])
+                prior_basis = history.get(item["id"], [{}])[-1].get("raw", {}).get("basis")
+                if raw.get("basis") is not None and prior_basis is not None and raw["basis"] != prior_basis:
+                    item["basis_changed"] = True
+                if item["id"] in STRUCTURAL_CANONICAL:
+                    item["status"] = structural_status(item["id"], item, raw, ledgers, context)
+                    item["basis_changed"] = old[item["id"]].get("basis") != raw["basis"]
+                    if item["id"] == "arr_2nd_deriv":
+                        item["basis_changed"] = item["basis_changed"] or old[item["id"]].get("basis_components") != raw["arr_basis_signature"]
+        result, reasons = aggregate(indicators, previous, specs, calibration)
+        output = {"summary": result, "verdict_reasons": reasons,
+                  "indicator_statuses": {i["id"]: i["status"] for i in indicators}}
     elif args.command in ["build", "check"]:
         context, bundle = read(args.context), read(args.bundle)
         files = build(root, bundle, context, now())

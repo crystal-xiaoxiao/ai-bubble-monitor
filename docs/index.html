@@ -105,7 +105,7 @@
   article.indicator .note { font-family: "Noto Serif SC", serif; font-size: 13px; color: var(--warm); line-height: 1.55; font-style: italic; }
   article.indicator .meta { border-top: 1px dashed #999; padding-top: 8px; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
   article.indicator.stale::after { content: "STALE"; position: absolute; top: 8px; right: 8px; font-family: "IBM Plex Mono", monospace; font-size: 9px; padding: 2px 5px; background: #ddd; color: #555; letter-spacing: 0.1em; }
-  .carry-tag { background: #E8E0D0; color: #7a5c10; padding: 1px 4px; font-weight: 600; }
+  .carry-tag, .current-tag { background: #E8E0D0; color: #7a5c10; padding: 1px 4px; font-weight: 600; }
   .static-tag { background: #F0D9D9; color: #7C1D1D; padding: 1px 4px; font-weight: 600; }
 
   /* Two-axis read (stage x trigger) */
@@ -182,7 +182,7 @@ const CATEGORY_ORDER = [
 const WATCH_LIST = [
   { icon: '①', title: 'Hyperscaler Capex 指引', desc: '任何一家 Mag7 在下次季报下调当年 capex 即转 RED——结构性顶部信号' },
   { icon: '②', title: 'Fed 政策路径', desc: '油价/CPI 若迫使 Fed 重启加息，与 1999-2000、1845 铁路狂热顶部完全同构' },
-  { icon: '③', title: 'CoreWeave / Nebius 信用', desc: '数据中心 ABS 利差走阔 50bps+ 是 vendor financing 链条松动的最早信号' },
+  { icon: '③', title: 'CoreWeave / Nebius 信用', desc: '数据中心 ABS / 项目融资确认信用事件或公开报道利差走阔 ≥50bp，提示融资链条压力' },
   { icon: '④', title: 'OpenAI 审计师披露', desc: 'Burry 提出但未确认。任何 round-tripping 调查都是即时 RED' },
   { icon: '⑤', title: 'Anthropic IPO 时点', desc: '若 10 月按计划推进，"AI 公司 IPO 洪流"指标可能转 RED' },
   { icon: '⑥', title: 'Mag7 内部人减持', desc: '当前类 Thiel 案例零星出现，需观察是否扩散至 Mag7 高管' }
@@ -223,6 +223,20 @@ function fallbackSplit(t) {
   }
   if (cur.trim()) paras.push(cur);
   return paras.length ? paras : [t];  // 级3：整段返回，等价旧行为
+}
+
+// Snapshot freshness is authoritative; older snapshots retain their original date-based tags.
+function indicatorFreshness(ind, issueDate) {
+  if (ind.freshness === 'new') return { stale: false, tag: '' };
+  if (ind.freshness === 'current') {
+    return { stale: false, tag: ' <span class="current-tag">最新披露</span>' };
+  }
+  if (ind.freshness === 'stale') return { stale: true, tag: '' };
+  const carried = !ind.stale && ind.as_of && issueDate && ind.as_of < issueDate;
+  return {
+    stale: Boolean(ind.stale),
+    tag: carried ? ' <span class="carry-tag">沿用</span>' : ''
+  };
 }
 
 function statusBadge(status) {
@@ -362,10 +376,10 @@ function render(data, credit) {
           </div>
           <div class="indicator-grid">
             ${items.map(ind => {
-              const carried = !ind.stale && ind.as_of && data.as_of_date && ind.as_of < data.as_of_date;
+              const freshness = indicatorFreshness(ind, data.as_of_date);
               const staticTag = ind.suspect_static ? ` <span class="static-tag">${ind.static_weeks ? ind.static_weeks + '期未变' : '疑似静态'}</span>` : '';
               return `
-              <article class="indicator${ind.stale ? ' stale' : ''}">
+              <article class="indicator${freshness.stale ? ' stale' : ''}">
                 <div class="status-bar ${ind.status}"></div>
                 <div class="head">
                   <div>
@@ -378,7 +392,7 @@ function render(data, credit) {
                 <div class="note">${escapeHtml(ind.note)}</div>
                 <div class="meta">
                   <span>${escapeHtml(ind.threshold_text)}</span>
-                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${carried ? ' <span class="carry-tag">沿用</span>' : ''}${staticTag}</span>
+                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${freshness.tag}${staticTag}</span>
                 </div>
               </article>
             `;}).join('')}
@@ -430,7 +444,7 @@ function render(data, credit) {
         </div>
         <div>
           <h4>数据新鲜度</h4>
-          <div>多数指标每周一刷新，卡片右下角标注各自 as_of 日期；与本期日期不一致的卡片标"沿用"。债务/Capex 比走周度增量台账 + 28 天完整对账；企业部署率等调查类按季刷新。数据源失败标 STALE；原始值连续多期未变/未获取的卡片标"N 期未变"，提示人工核查。</div>
+          <div>卡片标注真实数据日期。新读数不打新鲜度标签；重新核验且仍有效的最新定期披露标"最新披露"；抓取失败或过期数据标 STALE。旧快照没有 freshness 字段时，保留原有按日期标"沿用"的逻辑。债务/Capex 比走周度增量台账 + 28 天完整对账；企业调查按季刷新。"N 期未变"提示原始值重复，需人工核查。</div>
         </div>
         <div>
           <h4>免责</h4>

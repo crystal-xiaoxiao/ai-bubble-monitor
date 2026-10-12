@@ -1,0 +1,748 @@
+{
+  "schema_version": 1,
+  "basis": "signed_customer_financing_including_guarantees",
+  "as_of": "2026-10-12",
+  "effective_from_cycle": "2026-10-18",
+  "rebuilt_at": "2026-10-12T10:46:21.666Z",
+  "latest_identified_signed_change_date": "2026-09-17",
+  "legacy_comparison_note": "首次按已签约股权/贷款/可转债和融资担保重建，含已执行担保合同的累计法律上限；与旧43–45%不可比。",
+  "legacy_comparison_note_en": "First rebuild on signed equity, loans/convertibles and financing guarantees, including executed contractual guarantee caps. Not comparable with the old 43–45% series.",
+  "method": {
+    "numerator": "Sum quantified NVIDIA signed/drawn contributions, not investee round totals, market values, forecasts or optional non-binding ceilings. Paid amounts are part of signed commitments, not an additional charge.",
+    "guarantees": "Use gross cap of the executed NVIDIA guarantee covering already-contracted initial capacity. Payment/default conditions do not turn a signed guarantee into an unsigned proposal; optional expansion is excluded.",
+    "netting": "No guessed netting of indemnities or collateral. Guarantees, equity and convertibles are separate legal commitments; parent aggregate/component guarantee rows are counted once via included_in.",
+    "customer_scope": "AI model developers, AI cloud customers and projects supporting NVIDIA compute purchases, including Nokia AI-RAN. Pure upstream supplier equity, acquisitions, licenses and ordinary service purchases excluded.",
+    "unknown_amounts": "Null means NVIDIA allocation not public/verified, never zero. total_signed_usd_bn and ratio_pct are documented disclosed lower bounds while coverage.complete is false.",
+    "upkeep": "Keep baseline and append new dated commitments weekly; change/correct an existing amount only through a documented superseding revision. Reconcile after NVIDIA earnings. Never reset history or resubmit this seed as a new weekly economic observation."
+  },
+  "coverage": {
+    "complete": false,
+    "searched_at": "2026-10-12T10:46:21.666Z",
+    "scope": "Publicly identifiable customer financing commitments through October 12, 2026; major frontier labs, neoclouds and disclosed guarantee totals cross-checked.",
+    "unresolved_ids": [
+      "nebius-private-placement-20241202",
+      "lambda-series-d-20250220",
+      "crusoe-series-d-20241212",
+      "crusoe-series-e-20251024",
+      "crusoe-series-f-20260917",
+      "nscale-series-b-20250925",
+      "xai-series-e-20260106",
+      "thinking-machines-investment-20260310",
+      "mistral-series-c-20250909",
+      "firmus-equity-20250916",
+      "firmus-equity-20260807",
+      "together-ai-series-b-20250220",
+      "helix-founder-capital-20260611",
+      "ai-cloud-lps-guarantees-counterparty-breakdown",
+      "prior-undisclosed-startup-rounds"
+    ],
+    "note": "Most privately held customers do not publish NVIDIA investor allocations. $3.5B guarantee total has only one identifiable $0.86034B component. The exact global per-deal total is not publicly reconstructible; the quantified floor already exceeds the 30% red threshold."
+  },
+  "entries": [
+    {
+      "id": "coreweave-series-b-20230420",
+      "customer": "CoreWeave",
+      "instrument": "equity",
+      "amount_usd_bn": 0.1,
+      "signed_amount_usd_bn": 0.1,
+      "status": "drawn",
+      "announcement_date": "2023-04-20",
+      "source_date": "2026-01-26",
+      "source_url": "https://www.businessinsider.com/nvidia-buys-2-billion-coreweave-stock-ai-partnership-2026-1",
+      "accessed_at": "2026-10-12T10:39:19.188Z",
+      "notes": "Historical investment reported as approximately $100M; Series B announcement date is April 20, 2023. Not current market value.",
+      "amount_precision": "approximately",
+      "supporting_sources": [
+        {
+          "url": "https://techcrunch.com/2023/04/20/coreweave-a-gpu-focused-cloud-compute-provider-lands-221m-investment/",
+          "source_date": "2023-04-20",
+          "accessed_at": "2026-10-12T10:39:19.188Z",
+          "supports": "Series B date and NVIDIA participation"
+        }
+      ]
+    },
+    {
+      "id": "openai-funding-20241002",
+      "customer": "OpenAI",
+      "instrument": "equity",
+      "amount_usd_bn": 0.1,
+      "signed_amount_usd_bn": 0.1,
+      "status": "drawn",
+      "announcement_date": "2024-10-02",
+      "source_date": "2024-10-03",
+      "source_url": "https://www.livemint.com/companies/start-ups/openai-nearly-doubles-valuation-to-157-billion-in-funding-round-11727949127921.html",
+      "accessed_at": "2026-10-12T10:39:19.188Z",
+      "notes": "WSJ report, reproduced by Mint, identifies approximately $100M NVIDIA contribution; $6.6B was the whole round.",
+      "amount_precision": "approximately"
+    },
+    {
+      "id": "applied-digital-pipe-20240905",
+      "customer": "Applied Digital",
+      "instrument": "equity",
+      "amount_usd_bn": 0.025000002,
+      "signed_amount_usd_bn": 0.025000002,
+      "status": "drawn",
+      "announcement_date": "2024-09-05",
+      "source_date": "2024-10-16",
+      "source_url": "https://ir.applieddigital.com/sec-filings/all-sec-filings/content/0001493152-24-041332/0001493152-24-041332.pdf",
+      "accessed_at": "2026-10-12T10:39:59.772Z",
+      "notes": "PIPE closed September 9. NVIDIA-owned PIPE shares 7,716,050 x $3.24 = $25,000,002; whole-round $160M is not NVIDIA contribution.",
+      "calculation": {
+        "shares": 7716050,
+        "price_usd": 3.24,
+        "amount_usd": 25000002
+      }
+    },
+    {
+      "id": "nebius-private-placement-20241202",
+      "customer": "Nebius",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2024-12-02",
+      "source_date": "2024-12-02",
+      "source_url": "https://nebius.com/newsroom/nebius-announces-oversubscribed-strategic-equity-financing-of-usd-700-million-to-accelerate-roll-out-of-full-stack-ai-infrastructure",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Definitive financing announced, NVIDIA participates, but NVIDIA allocation undisclosed. $700M whole round excluded.",
+      "round_total_usd_bn": 0.7
+    },
+    {
+      "id": "coreweave-ipo-20250327",
+      "customer": "CoreWeave",
+      "instrument": "equity",
+      "amount_usd_bn": 0.25,
+      "signed_amount_usd_bn": 0.25,
+      "status": "drawn",
+      "announcement_date": "2025-03-27",
+      "source_date": "2025-03-28",
+      "source_url": "https://www.streetinsider.com/Reuters/CoreWeave%2Bvalued%2Bat%2B%2423%2Bbillion%2Bin%2Bmuted%2BNasdaq%2Bdebut/24563335.html",
+      "accessed_at": "2026-10-12T10:46:21.666Z",
+      "notes": "Post-IPO Reuters report confirms NVIDIA contributed $250M order to completed IPO. Investing.com closing-day report says stock was bought; prior March 27 intention alone is not the support.",
+      "supporting_sources": [
+        {
+          "url": "https://www.investing.com/news/stock-market-news/coreweave-stock-whimpers-to-ipo-debut-3954765",
+          "source_date": "2025-03-28",
+          "accessed_at": "2026-10-12T10:46:21.666Z",
+          "supports": "Closing-day report says NVIDIA bought $250M stock"
+        }
+      ]
+    },
+    {
+      "id": "lambda-series-d-20250220",
+      "customer": "Lambda",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2025-02-20",
+      "source_date": "2025-02-20",
+      "source_url": "https://www.hpcwire.com/aiwire/2025/02/20/lambda-raises-480m-to-expand-ai-cloud-platform/",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Lambda-issued release lists NVIDIA in completed round, without investor allocation; $480M whole round excluded.",
+      "round_total_usd_bn": 0.48
+    },
+    {
+      "id": "crusoe-series-d-20241212",
+      "customer": "Crusoe",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2024-12-12",
+      "source_date": "2024-12-12",
+      "source_url": "https://www.crusoe.ai/resources/newsroom/crusoe-closes-series-d-funding",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Closed round lists NVIDIA; contribution undisclosed. Do not allocate the full $600M to NVIDIA.",
+      "round_total_usd_bn": 0.6
+    },
+    {
+      "id": "crusoe-series-e-20251024",
+      "customer": "Crusoe",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2025-10-24",
+      "source_date": "2025-10-24",
+      "source_url": "https://www.crusoe.ai/resources/newsroom/crusoe-announces-series-e-funding",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Initial closing announced with NVIDIA participation; NVIDIA portion of anticipated $1.375B round undisclosed.",
+      "round_total_usd_bn": 1.375
+    },
+    {
+      "id": "crusoe-series-f-20260917",
+      "customer": "Crusoe",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2026-09-17",
+      "source_date": "2026-09-17",
+      "source_url": "https://www.crusoe.ai/resources/newsroom/crusoe-announces-series-f-funding",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Initial closing announced with NVIDIA among investors; NVIDIA allocation of anticipated $3.9B round undisclosed.",
+      "round_total_usd_bn": 3.9
+    },
+    {
+      "id": "nscale-series-b-20250925",
+      "customer": "Nscale",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2025-09-25",
+      "source_date": "2025-09-25",
+      "source_url": "https://www.nscale.com/press-releases/nscale-series-b",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "NVIDIA share not quantified by issuer. Media conflict $500M versus GBP500M/$683M; neither is silently selected. Whole-round $1.1B excluded.",
+      "round_total_usd_bn": 1.1
+    },
+    {
+      "id": "nscale-pre-series-c-safe-20250929",
+      "customer": "Nscale",
+      "instrument": "convertible",
+      "amount_usd_bn": 0.3,
+      "signed_amount_usd_bn": 0.3,
+      "status": "drawn",
+      "announcement_date": "2025-09-29",
+      "source_date": "2026-09-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2110365/000119312526395475/ck0002110365-20260918.htm",
+      "accessed_at": "2026-10-12T10:30:59.588661Z",
+      "notes": "NVIDIA $300M SAFE converted March 9, 2026. Count principal once; 16,346,160 conversion shares are not a second investment.",
+      "converted_on": "2026-03-09"
+    },
+    {
+      "id": "nscale-series-c-additional-20260309",
+      "customer": "Nscale",
+      "instrument": "equity",
+      "amount_usd_bn": 0.47739938246,
+      "signed_amount_usd_bn": 0.47739938246,
+      "status": "drawn",
+      "announcement_date": "2026-03-09",
+      "source_date": "2026-09-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2110365/000119312526395475/ck0002110365-20260918.htm",
+      "accessed_at": "2026-10-12T10:30:59.588661Z",
+      "notes": "Separate subscription: 23,410,920 Series C-4 shares, $477,399,382.46; additional to converted $300M SAFE."
+    },
+    {
+      "id": "nscale-convertible-subscription-20260915",
+      "customer": "Nscale",
+      "instrument": "convertible",
+      "amount_usd_bn": 1.0,
+      "signed_amount_usd_bn": 1.0,
+      "status": "signed",
+      "announcement_date": "2026-09-15",
+      "source_date": "2026-09-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2110365/000119312526395475/ck0002110365-20260918.htm",
+      "accessed_at": "2026-10-12T10:30:59.588661Z",
+      "notes": "Signed NVIDIA subscription $1B; funding expected November 16, 2026, in convertible notes or non-voting shares. Other investors excluded.",
+      "funding_status": "not_yet_drawn"
+    },
+    {
+      "id": "ai-cloud-lps-guarantees-20260726",
+      "customer": "Select AI cloud partners (aggregate disclosed)",
+      "instrument": "financing_guarantee",
+      "amount_usd_bn": 3.5,
+      "signed_amount_usd_bn": 3.5,
+      "status": "signed",
+      "announcement_date": "2026-07-26",
+      "source_date": "2026-08-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Note 10 aggregate legal cap as of July 26; not per-deal disclosure. Includes Ward County component below; not added twice.",
+      "disclosure_level": "aggregate",
+      "announcement_date_precision": "as_of_reporting_period",
+      "guarantee_payment_status": "contingent_not_paid"
+    },
+    {
+      "id": "nscale-ward-county-guarantee-20251014",
+      "customer": "Nscale",
+      "instrument": "financing_guarantee",
+      "amount_usd_bn": 0.86034,
+      "signed_amount_usd_bn": 0.86034,
+      "status": "signed",
+      "announcement_date": "2025-10-14",
+      "source_date": "2026-09-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2110365/000119312526395475/ck0002110365-20260918.htm",
+      "accessed_at": "2026-10-12T10:30:59.588661Z",
+      "notes": "Five-year Texas lease guarantee cap $860,340,000. Component of aggregate AI-cloud LPS guarantees; no second numerator charge. Warrants are consideration, not extra cash equity.",
+      "included_in": "ai-cloud-lps-guarantees-20260726",
+      "guarantee_payment_status": "contingent_not_paid"
+    },
+    {
+      "id": "openai-funding-20260227",
+      "customer": "OpenAI",
+      "instrument": "equity",
+      "amount_usd_bn": 30.0,
+      "signed_amount_usd_bn": 30.0,
+      "status": "signed",
+      "announcement_date": "2026-02-27",
+      "source_date": "2026-03-04",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-will-not-be-able-to-invest-100-billion-in-openai-due-to-ipo-ceo-jensen-says-4541937",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Reuters reports finalized $30B investment; OpenAI issuer confirms allocation. Replaces unsigned up-to-$100B proposal, not $30B plus $100B.",
+      "supporting_sources": [
+        {
+          "url": "https://openai.com/index/scaling-ai-for-everyone/",
+          "source_date": "2026-02-27",
+          "accessed_at": "2026-10-12T10:37:20.801Z",
+          "supports": "NVIDIA allocation $30B"
+        }
+      ]
+    },
+    {
+      "id": "anthropic-investment-20251118",
+      "customer": "Anthropic",
+      "instrument": "equity",
+      "amount_usd_bn": 10.0,
+      "signed_amount_usd_bn": 10.0,
+      "status": "signed",
+      "announcement_date": "2025-11-18",
+      "source_date": "2026-03-04",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-will-not-be-able-to-invest-100-billion-in-openai-due-to-ipo-ceo-jensen-says-4541937",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Original up-to-$10B announcement later identified by CEO as $10B investment in Reuters. Cash draw timing not inferred. Potential later IPO investment excluded.",
+      "commitment_confirmation": "CEO confirmation reported by Reuters; contractual documents not public"
+    },
+    {
+      "id": "xai-series-e-20260106",
+      "customer": "xAI (subsequently SpaceXAI)",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2026-01-06",
+      "source_date": "2026-01-06",
+      "source_url": "https://x.ai/news/series-e",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Completed Series E names NVIDIA but does not disclose its final amount or debt/equity split. Previously reported up-to-$2B is not an executed amount.",
+      "instrument_confirmation": "Strategic participation disclosed; final instrument split not disclosed",
+      "round_total_usd_bn": 20.0
+    },
+    {
+      "id": "sb-energy-prepaid-forward-20260817",
+      "customer": "SB Energy",
+      "instrument": "equity",
+      "amount_usd_bn": 1.5,
+      "signed_amount_usd_bn": 1.5,
+      "status": "drawn",
+      "announcement_date": "2026-08-17",
+      "source_date": "2026-09-01",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2133037/000162828026059639/sbenergy-sx1.htm",
+      "accessed_at": "2026-10-12T10:34:08.317950Z",
+      "notes": "Prepaid forward fully funded August 17; equity delivery depends on IPO. Distinct from concurrent $1.5B placement below.",
+      "instrument_detail": "prepaid equity forward",
+      "supporting_sources": [
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/2133037/000162828026059639/exhibit1027-prepaidforward.htm",
+          "source_date": "2026-09-01",
+          "accessed_at": "2026-10-12T10:49:52.358Z",
+          "supports": "Execution-version prepaid forward dated August 17; separate from concurrent share purchase"
+        }
+      ]
+    },
+    {
+      "id": "sb-energy-ipo-share-purchase-20260817",
+      "customer": "SB Energy",
+      "instrument": "equity",
+      "amount_usd_bn": 1.5,
+      "signed_amount_usd_bn": 1.5,
+      "status": "signed",
+      "announcement_date": "2026-08-17",
+      "source_date": "2026-09-01",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2133037/000162828026059639/sbenergy-sx1.htm",
+      "accessed_at": "2026-10-12T10:34:08.317950Z",
+      "notes": "Separate Share Purchase Agreement signed August 17 for $1.5B Class N shares; funding contingent on IPO closing, not yet drawn.",
+      "funding_status": "not_yet_drawn; IPO condition",
+      "supporting_sources": [
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/2133037/000162828026059639/exhibit1028-sharepurchasea.htm",
+          "source_date": "2026-09-01",
+          "accessed_at": "2026-10-12T10:49:52.358Z",
+          "supports": "Execution-version agreement dated August 17; $1.5B equity purchase legally binding with IPO conditions"
+        }
+      ]
+    },
+    {
+      "id": "openai-sb-energy-ports-guarantees-20260817",
+      "customer": "OpenAI / SB Energy PORTS-Pike",
+      "instrument": "financing_guarantee",
+      "amount_usd_bn": 105.0,
+      "signed_amount_usd_bn": 105.0,
+      "status": "signed",
+      "announcement_date": "2026-08-17",
+      "source_date": "2026-08-17",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Executed initial 4.25GW guarantee agreements, cumulative legal cap $105B. Future lease/default conditions affect payments, not signed status. Optional additional 3.8GW excluded.",
+      "guarantee_payment_status": "contingent_not_paid; phases expected from 2028",
+      "exposure_basis": "gross_signed_legal_cap"
+    },
+    {
+      "id": "safe-superintelligence-investment-20260727",
+      "customer": "Safe Superintelligence",
+      "instrument": "equity",
+      "amount_usd_bn": 5.0,
+      "signed_amount_usd_bn": 5.0,
+      "status": "signed",
+      "announcement_date": "2026-07-27",
+      "source_date": "2026-07-27",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-to-invest-5-billion-in-ilya-sutskevers-ai-startup-source-says-4814862",
+      "accessed_at": "2026-10-12T10:45:20.760Z",
+      "notes": "NVIDIA issuer explicitly says an investment has been made; Reuters quantifies the same announced partnership at $5B. Executed investment, not an unsigned funding discussion; cash transfer date undisclosed.",
+      "supporting_sources": [
+        {
+          "url": "https://investor.nvidia.com/news/press-release-details/2026/Ilya-Sutskevers-Safe-Superintelligence-Inc--and-NVIDIA-Announce-Long-Term-Strategic-Partnership/default.aspx",
+          "source_date": "2026-07-27",
+          "accessed_at": "2026-10-12T10:45:20.760Z",
+          "supports": "Partnership and investment confirmed by NVIDIA"
+        }
+      ],
+      "raw_reading": {
+        "execution_confirmation": "NVIDIA has additionally made an investment in SSI.",
+        "primary_source_url": "https://investor.nvidia.com/news/press-release-details/2026/Ilya-Sutskevers-Safe-Superintelligence-Inc--and-NVIDIA-Announce-Long-Term-Strategic-Partnership/default.aspx",
+        "amount_confirmation": "Reuters reports $5B equity investment as part of the same announced partnership."
+      }
+    },
+    {
+      "id": "reflection-investment-20251009",
+      "customer": "Reflection AI",
+      "instrument": "equity",
+      "amount_usd_bn": 0.8,
+      "signed_amount_usd_bn": 0.8,
+      "status": "drawn",
+      "announcement_date": "2025-10-09",
+      "source_date": "2026-10-10",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-in-talks-to-invest-further-in-reflection-ai-or-buy-it-ft-reports-4942221",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Reuters recounts FT report of $800M already invested. October 2026 acquisition or follow-on talks add no signed amount.",
+      "amount_precision": "media-reported",
+      "source_tier": "Reuters reporting FT; Reuters did not independently verify FT report"
+    },
+    {
+      "id": "poolside-additional-equity-20260820",
+      "customer": "Poolside",
+      "instrument": "equity",
+      "amount_usd_bn": 1.0,
+      "signed_amount_usd_bn": 1.0,
+      "status": "signed",
+      "announcement_date": "2026-08-20",
+      "source_date": "2026-08-20",
+      "source_url": "https://www.newcomer.co/p/sources-poolside-strikes-6-billion",
+      "accessed_at": "2026-10-12T10:45:20.760Z",
+      "notes": "Investor-letter reporting identifies $1B equity separately from $6B model license. Earlier up-to-$1B funding talks are not assumed to be another completed investment.",
+      "source_tier": "Investor-letter reporting plus independently opened Bloomberg reprint; original Bloomberg/Yahoo article blocked",
+      "raw_reading": {
+        "execution_confirmation": "The startup also received an additional $1 billion investment from Nvidia",
+        "source_url": "https://vmvirtualmachine.com/nvidia-to-pay-poolside-a-6-billion-license-tap-startups-staff/",
+        "source_date": "2026-08-21",
+        "accessed_at": "2026-10-12T10:45:20.760Z",
+        "attribution": "Bloomberg, Benoit Berthelot, Rebecca Torrence and Ian King; reprint body actually opened"
+      },
+      "supporting_sources": [
+        {
+          "url": "https://vmvirtualmachine.com/nvidia-to-pay-poolside-a-6-billion-license-tap-startups-staff/",
+          "source_date": "2026-08-21",
+          "accessed_at": "2026-10-12T10:45:20.760Z",
+          "supports": "Bloomberg body reports equity received; not only a prospective up-to investment"
+        }
+      ]
+    },
+    {
+      "id": "nokia-ai-ran-equity-20251028",
+      "customer": "Nokia",
+      "instrument": "equity",
+      "amount_usd_bn": 1.0,
+      "signed_amount_usd_bn": 1.0,
+      "status": "drawn",
+      "announcement_date": "2025-10-28",
+      "source_date": "2026-01-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/924613/000110465926007608/tm264427d1_6k.htm",
+      "accessed_at": "2026-10-12T10:39:19.188Z",
+      "notes": "Nokia confirms $1B issue completed November 13, 2025. Customer scope: Nokia embeds NVIDIA ARC-Pro/CUDA compute in commercial AI-RAN, not only upstream supply.",
+      "drawn_date": "2025-11-13",
+      "supporting_sources": [
+        {
+          "url": "https://nvidianews.nvidia.com/news/nvidia-nokia-ai-telecommunications",
+          "source_date": "2025-10-28",
+          "accessed_at": "2026-10-12T10:39:19.188Z",
+          "supports": "AI-RAN products embed NVIDIA compute"
+        }
+      ]
+    },
+    {
+      "id": "thinking-machines-investment-20260310",
+      "customer": "Thinking Machines Lab",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2026-03-10",
+      "source_date": "2026-03-10",
+      "source_url": "https://thinkingmachines.ai/news/nvidia-partnership/",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Issuer confirms significant investment without amount. Later $2.5B funding discussions do not quantify this earlier executed investment."
+    },
+    {
+      "id": "mistral-series-c-20250909",
+      "customer": "Mistral AI",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2025-09-09",
+      "source_date": "2025-09-09",
+      "source_url": "https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Issuer lists NVIDIA as existing investor participating in EUR1.7B round; NVIDIA amount not disclosed. No guessed EUR/USD allocation.",
+      "round_total_currency": "EUR",
+      "round_total_bn": 1.7
+    },
+    {
+      "id": "firmus-equity-20250916",
+      "customer": "Firmus",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "drawn",
+      "announcement_date": "2025-09-16",
+      "source_date": "2025-09-16",
+      "source_url": "https://firmus.co/newsroom/firmus-closes-usd330m-raise-with-nvidia-joining-as-an-investor",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Issuer says completed A$330M equity placement, NVIDIA allocation undisclosed. URL slug is misleading; original currency is AUD.",
+      "round_total_currency": "AUD",
+      "round_total_bn": 0.33
+    },
+    {
+      "id": "firmus-equity-20260807",
+      "customer": "Firmus",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2026-08-07",
+      "source_date": "2026-08-07",
+      "source_url": "https://firmus.co/newsroom/firmus-announces-fully-subscribed-usdusd2-billion-strategic-equity-investment-to-accelerate-nvidia-ai-factory-expansion-across-australia-and-asia-pacific",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Issuer confirms fully committed $2B round and NVIDIA follow-on participation, but no NVIDIA allocation.",
+      "round_total_usd_bn": 2.0
+    },
+    {
+      "id": "together-ai-series-b-20250220",
+      "customer": "Together AI",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2025-02-20",
+      "source_date": "2025-02-20",
+      "source_url": "https://www.together.ai/blog/together-ai-announcing-305m-series-b",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "notes": "Company funding announcement names NVIDIA without contribution amount; all-investor $305M excluded.",
+      "round_total_usd_bn": 0.305
+    },
+    {
+      "id": "helix-founder-capital-20260611",
+      "customer": "Helix Digital Infrastructure",
+      "instrument": "equity",
+      "amount_usd_bn": null,
+      "signed_amount_usd_bn": null,
+      "status": "signed",
+      "announcement_date": "2026-06-11",
+      "source_date": "2026-06-11",
+      "source_url": "https://www.helixdi.com/news-insights/kkr-launches-helix-digital-infrastructure-to-finance-and-deliver-the-next-generation-of-ai-infrastructure/",
+      "accessed_at": "2026-10-12T10:39:19.188Z",
+      "notes": "Issuer names NVIDIA as founding investor and DSX partner; NVIDIA share of over $10B total committed capital undisclosed.",
+      "round_total_usd_bn": 10.0,
+      "round_total_precision": "over"
+    },
+    {
+      "id": "coreweave-private-placement-20260123",
+      "customer": "CoreWeave",
+      "instrument": "equity",
+      "amount_usd_bn": 2.0,
+      "signed_amount_usd_bn": 2.0,
+      "status": "drawn",
+      "announcement_date": "2026-01-26",
+      "signed_date": "2026-01-23",
+      "drawn_date": "2026-01-23",
+      "source_date": "2026-01-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000044/crwv-20260123.htm",
+      "accessed_at": "2026-10-12T10:46:21.666Z",
+      "notes": "SEC 8-K confirms January 23 securities purchase agreement and completed cash sale: 22,935,780 shares at $87.20, aggregate $2B. Separate from 2023 funding and 2025 IPO."
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "openai-nvidia-loi-20250922",
+      "customer": "OpenAI",
+      "ceiling_usd_bn": 100,
+      "status": "conditional",
+      "source_date": "2025-09-22",
+      "source_url": "https://openai.com/index/openai-nvidia-systems-partnership/",
+      "accessed_at": "2026-10-12T10:36:34.344Z",
+      "reason": "Letter of intent/up-to ceiling, not a signed $100B equity amount; finalized $30B deal recorded separately."
+    },
+    {
+      "id": "ports-optional-extra-3.8gw",
+      "customer": "OpenAI / SB Energy",
+      "ceiling_usd_bn": null,
+      "status": "conditional",
+      "source_date": "2026-08-17",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm",
+      "accessed_at": "2026-10-12T10:37:20.801Z",
+      "reason": "Optional 3.8GW expansion exercisable solely by NVIDIA; not part of signed initial $105B cap."
+    },
+    {
+      "id": "third-party-financing-platforms-20260810",
+      "customer": "NVIDIA ecosystem",
+      "ceiling_usd_bn": 500,
+      "status": "conditional",
+      "source_date": "2026-08-10",
+      "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Partners-With-Apollo-BlackRock-Blackstone-Brookfield-Goldman-Sachs-and-KKR-to-Establish-AI-Compute-Infrastructure-Financing-Platforms-to-Mobilize-Over-500-Billion-of-Third-Party-Capital/default.aspx",
+      "accessed_at": "2026-10-12T10:36:34.344Z",
+      "reason": "Third-party platform target and MOUs, subject to final agreements; not NVIDIA-signed $500B capital contribution."
+    },
+    {
+      "id": "coreweave-capacity-purchase-20250909",
+      "customer": "CoreWeave",
+      "ceiling_usd_bn": 6.3,
+      "status": "signed",
+      "source_date": "2025-09-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1769628/000114036125036349/ny20053122x7_424b3.htm",
+      "accessed_at": "2026-10-12T10:48:49.272560+00:00",
+      "reason": "Reserved/residual cloud capacity purchase is not equity, a loan, a convertible or an executed financing guarantee; kept outside the specified numerator.",
+      "access_note": "SEC full filing actually opened; reserved residual capacity purchase confirmed; not an equity/loan/convertible/financing guarantee."
+    },
+    {
+      "id": "poolside-license-20260820",
+      "customer": "Poolside",
+      "ceiling_usd_bn": 6,
+      "status": "signed",
+      "source_date": "2026-08-20",
+      "source_url": "https://www.newcomer.co/p/sources-poolside-strikes-6-billion",
+      "accessed_at": "2026-10-12T10:39:59.772Z",
+      "reason": "Technology license payment, separate from $1B equity; not customer financing."
+    },
+    {
+      "id": "poolside-up-to-investment-20251030",
+      "customer": "Poolside",
+      "ceiling_usd_bn": 1,
+      "status": "conditional",
+      "source_date": "2025-10-30",
+      "source_url": "https://news.bloomberglaw.com/privacy-and-data-security/nvidia-to-invest-up-to-1-billion-in-ai-startup-poolside",
+      "accessed_at": "2026-10-12T10:45:20.760Z",
+      "reason": "Funding talks with conditional escalation from $500M; no independently verified prior executed tranche. Do not duplicate later $1B equity."
+    },
+    {
+      "id": "thinking-machines-follow-on-talks-20260903",
+      "customer": "Thinking Machines Lab",
+      "ceiling_usd_bn": 2.5,
+      "status": "conditional",
+      "source_date": "2026-09-03",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-in-talks-to-invest-25-bln-in-thinking-machines-lab--the-information-4888766",
+      "accessed_at": "2026-10-12T10:45:20.760Z",
+      "reason": "Talks, not an executed investment; earlier undisclosed investment remains a null entry."
+    },
+    {
+      "id": "reflection-follow-on-ma-talks-20261010",
+      "customer": "Reflection AI",
+      "ceiling_usd_bn": null,
+      "status": "conditional",
+      "source_date": "2026-10-10",
+      "source_url": "https://www.investing.com/news/stock-market-news/nvidia-in-talks-to-invest-further-in-reflection-ai-or-buy-it-ft-reports-4942221",
+      "accessed_at": "2026-10-12T10:45:20.760Z",
+      "reason": "Exploratory follow-on/acquisition talks; do not add to earlier $800M."
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "prior-undisclosed-startup-rounds",
+      "reason": "Earlier NVIDIA customer stakes and later rounds in Mistral, Together AI, Thinking Machines, Lambda, Perplexity and other private companies may not expose investor allocation or instrument terms. No claim of exhaustive private NVentures coverage."
+    },
+    {
+      "id": "ai-cloud-lps-guarantees-counterparty-breakdown",
+      "reason": "Issuer discloses $3.5B as aggregate, not each guaranty. Named Ward County component is displayed with included_in, without invented names for the remaining aggregate."
+    },
+    {
+      "id": "nscale-series-b-dollar-sterling-conflict",
+      "reason": "Public reports differ on currency/amount of NVIDIA 2025 investment; primary issuer confirms participation but exact subscription not located. Does not affect independently documented $300M SAFE, $477.399M additional shares or $1B signed convertible."
+    },
+    {
+      "id": "direct-customer-loans",
+      "reason": "No individually quantified standalone NVIDIA cash loan identified in opened sources. This is a research coverage limit, not a claim that loans do not exist. Convertible/Safe commitments are itemized."
+    }
+  ],
+  "ltm_revenue": {
+    "as_of": "2026-07-26",
+    "basis": "GAAP quarterly revenue; sum four independently reported quarters",
+    "quarters": [
+      {
+        "fiscal_period": "FY2026 Q3",
+        "period_end": "2025-10-26",
+        "revenue_usd_bn": 57.006,
+        "source_date": "2025-11-19",
+        "source_url": "https://investor.nvidia.com/news/press-release-details/2025/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2026/default.aspx",
+        "accessed_at": "2026-10-12T10:39:19.188Z"
+      },
+      {
+        "fiscal_period": "FY2026 Q4",
+        "period_end": "2026-01-25",
+        "revenue_usd_bn": 68.127,
+        "source_date": "2026-02-25",
+        "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/default.aspx",
+        "accessed_at": "2026-10-12T10:39:19.188Z"
+      },
+      {
+        "fiscal_period": "FY2027 Q1",
+        "period_end": "2026-04-26",
+        "revenue_usd_bn": 81.615,
+        "source_date": "2026-05-20",
+        "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+        "accessed_at": "2026-10-12T10:39:19.188Z"
+      },
+      {
+        "fiscal_period": "FY2027 Q2",
+        "period_end": "2026-07-26",
+        "revenue_usd_bn": 96.221,
+        "source_date": "2026-08-26",
+        "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/default.aspx",
+        "accessed_at": "2026-10-12T10:39:19.188Z"
+      }
+    ],
+    "revenue_usd_bn": 302.969,
+    "measurement_note": "Each quarter taken from its reported quarter table. Latest six-month table 177,837M differs by 1M from 81,615M + 96,221M; use explicit four-quarter sum 302,969M, preserve the source discrepancy rather than silently change Q1."
+  },
+  "total_signed_usd_bn": 163.55239938446,
+  "ratio_pct": 53.9832126,
+  "ratio_is_lower_bound": true,
+  "status_supported_by_lower_bound": "red",
+  "change_control": {
+    "weekly_action": "append_new_entries_only; source-backed revisions explicitly supersede old IDs",
+    "historical_snapshots": "unchanged; no rerun of Issue 28"
+  },
+  "filing_date_audit": [
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1769628/000114036125036349/0001140361-25-036349-index.html",
+      "filing_date": "2025-09-26",
+      "accessed_at": "2026-10-12T10:49:52.358Z"
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/2110365/000119312526395475/0001193125-26-395475-index.html",
+      "filing_date": "2026-09-18",
+      "accessed_at": "2026-10-12T10:49:52.358Z"
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/2133037/000162828026059639/0001628280-26-059639-index.html",
+      "filing_date": "2026-09-01",
+      "accessed_at": "2026-10-12T10:49:52.358Z"
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/0001045810-26-000075-index.html",
+      "filing_date": "2026-08-26",
+      "accessed_at": "2026-10-12T10:49:52.358Z"
+    }
+  ],
+  "latest_quantified_signed_change_date": "2026-09-15"
+}

@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "indicator_id": "arr_2nd_deriv",
+  "effective_cycle": "2026-10-18",
+  "backfilled_at": "2026-10-12T10:33:40.560Z",
+  "backfill_window": {
+    "start": "2026-01-12",
+    "end": "2026-10-12"
+  },
+  "observations": [
+    {
+      "id": "anthropic-2025-12-31-gross",
+      "company": "Anthropic",
+      "as_of": "2025-12-31",
+      "as_of_precision": "month_end",
+      "amount_usd_bn": 9,
+      "basis": "gross",
+      "reported_qualifier": "about",
+      "source_date": "2026-04-06",
+      "source_url": "https://www.anthropic.com/news/google-broadcom-partnership-compute",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "run_rate_usd_bn": 9,
+        "period": "end of 2025"
+      },
+      "notes": "Opening anchor before the nine-month window. April company disclosure and August Reuters report directly compare this historical figure with the later company series.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method",
+      "anchor_outside_backfill_window": true
+    },
+    {
+      "id": "anthropic-2026-02-12-gross",
+      "company": "Anthropic",
+      "as_of": "2026-02-12",
+      "as_of_precision": "day",
+      "amount_usd_bn": 14,
+      "basis": "gross",
+      "reported_qualifier": "exact",
+      "source_date": "2026-02-12",
+      "source_url": "https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "run_rate_usd_bn": 14,
+        "period": "today, February 12 2026"
+      },
+      "notes": "Company-wide run rate; excludes the separately disclosed Claude Code-only $2.5B subsegment to avoid double counting.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method"
+    },
+    {
+      "id": "anthropic-2026-03-03-gross",
+      "company": "Anthropic",
+      "as_of": "2026-03-03",
+      "as_of_precision": "day",
+      "amount_usd_bn": 19,
+      "basis": "gross",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-03-03",
+      "source_url": "https://news.bloomberglaw.com/artificial-intelligence/anthropic-nears-20-billion-revenue-run-rate-amid-pentagon-feud",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "raw_reading": {
+        "run_rate_usd_bn": 19,
+        "period": "recently surpassed, reported March 3 2026"
+      },
+      "notes": "The exact crossing day was not disclosed. as_of is the latest possible date in this report, not a fabricated crossing day. Reuters independently reported a $19B current run rate on March 12.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method",
+      "as_of_is_upper_bound": true,
+      "additional_sources": [
+        {
+          "source_date": "2026-03-12",
+          "source_url": "https://www.reuters.com/technology/artificial-intelligence/artificial-intelligencer-anthropics-delicate-dance-with-pentagon-2026-03-12/",
+          "accessed_at": "2026-10-12T10:36:19.512Z",
+          "reading": {
+            "run_rate_usd_bn": 19
+          }
+        }
+      ]
+    },
+    {
+      "id": "anthropic-2026-04-06-gross",
+      "company": "Anthropic",
+      "as_of": "2026-04-06",
+      "as_of_precision": "day",
+      "amount_usd_bn": 30,
+      "basis": "gross",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-04-06",
+      "source_url": "https://www.anthropic.com/news/google-broadcom-partnership-compute",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "run_rate_usd_bn": 30,
+        "period": "now, April 6 2026"
+      },
+      "notes": "Same company disclosure directly compares the $30B-plus current run rate with approximately $9B at the end of 2025.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method"
+    },
+    {
+      "id": "anthropic-2026-05-gross",
+      "company": "Anthropic",
+      "as_of": "2026-05-28",
+      "as_of_precision": "month",
+      "amount_usd_bn": 47,
+      "basis": "gross",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-05-28",
+      "source_url": "https://www.anthropic.com/news/series-h",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "run_rate_usd_bn": 47,
+        "period": "earlier in May 2026"
+      },
+      "notes": "Exact crossing day was not disclosed. May 28 is the conservative latest possible date, not an invented measurement on the announcement date.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method",
+      "as_of_is_upper_bound": true,
+      "observed_interval": {
+        "start": "2026-05-01",
+        "end": "2026-05-28"
+      }
+    },
+    {
+      "id": "anthropic-2026-07-31-gross",
+      "company": "Anthropic",
+      "as_of": "2026-07-31",
+      "as_of_precision": "month_end",
+      "amount_usd_bn": 65,
+      "basis": "gross",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-08-17",
+      "source_url": "https://www.marketscreener.com/news/anthropic-revenue-run-rate-tops-65-billion-source-says-ce7859dcdd80ff2d",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "raw_reading": {
+        "run_rate_usd_bn": 65,
+        "period": "by the end of July 2026"
+      },
+      "notes": "Reuters attribution to an investor financial update; the company did not publicly confirm this value in the article. Report directly compares July with May $47B and end-2025 approximately $9B.",
+      "is_forecast": false,
+      "basis_confirmation_id": "anthropic-gross-cloud-sales-2026-10-09",
+      "basis_classification": "retrospective_confirmation_of_company_reporting_method",
+      "company_confirmed": false
+    },
+    {
+      "id": "openai-2025-12-31-company-unspecified",
+      "company": "OpenAI",
+      "as_of": "2025-12-31",
+      "as_of_precision": "month_end",
+      "amount_usd_bn": 20,
+      "basis": "unspecified",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-01-18",
+      "source_url": "https://openai.com/index/a-business-that-scales-with-the-value-of-intelligence/",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "arr_usd_bn": 20,
+        "period": "2025"
+      },
+      "notes": "Company CFO reported $20B-plus ARR for 2025. The article does not state gross/net; do not infer a net historical point from the later accounting-method description. Reuters later relayed a more precise $21.4B year-end reading from The Information; it is retained as an additional source, not counted as a second month.",
+      "is_forecast": false,
+      "anchor_outside_backfill_window": true,
+      "additional_sources": [
+        {
+          "source_date": "2026-03-05",
+          "source_url": "https://www.reuters.com/technology/openai-tops-25-billion-annualized-revenue-last-month-information-reports-2026-03-05/",
+          "accessed_at": "2026-10-12T10:33:40.560Z",
+          "source_type": "mainstream_media",
+          "raw_reading": {
+            "annualized_revenue_usd_bn": 21.4,
+            "period": "end of 2025"
+          },
+          "notes": "The Information figure reported by Reuters. Reuters said it could not independently verify the report. Separate from the company $20B-plus statement; do not sum the two or treat them as different months."
+        }
+      ]
+    },
+    {
+      "id": "openai-2026-02-28-unspecified",
+      "company": "OpenAI",
+      "as_of": "2026-02-28",
+      "as_of_precision": "month_end",
+      "amount_usd_bn": 25,
+      "basis": "unspecified",
+      "reported_qualifier": "more_than",
+      "source_date": "2026-03-05",
+      "source_url": "https://www.reuters.com/technology/openai-tops-25-billion-annualized-revenue-last-month-information-reports-2026-03-05/",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "raw_reading": {
+        "annualized_revenue_usd_bn": 25,
+        "period": "end of the prior month, February 2026",
+        "reported_growth_pct": 17
+      },
+      "notes": "The Information report relayed by Reuters; Reuters could not verify it independently. Gross/net is absent in the report. Its reported 17% historical comparison is not substituted for a verified same-basis ledger calculation.",
+      "is_forecast": false,
+      "independently_verified_by_reuters": false
+    },
+    {
+      "id": "openai-2026-03-31-unspecified",
+      "company": "OpenAI",
+      "as_of": "2026-03-31",
+      "as_of_precision": "day",
+      "amount_usd_bn": 24,
+      "basis": "unspecified",
+      "reported_qualifier": "exact",
+      "source_date": "2026-03-31",
+      "source_url": "https://openai.com/index/accelerating-the-next-phase-ai/",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "company",
+      "raw_reading": {
+        "revenue_per_month_usd_bn": 2,
+        "annualization_multiplier": 12,
+        "period": "now, March 31 2026"
+      },
+      "notes": "Calculated annual run rate = disclosed current monthly revenue $2B × 12. This is annualization of an actual disclosed monthly reading, not a future full-year forecast. Gross/net is not specified; the source is rounded, so the $24B equivalent does not prove a decline from February $25B-plus.",
+      "is_forecast": false,
+      "calculation": {
+        "operator": "multiply",
+        "current": 2,
+        "factor": 12,
+        "result": 24
+      }
+    },
+    {
+      "id": "openai-2026-08-week-unspecified",
+      "company": "OpenAI",
+      "as_of": "2026-08-16",
+      "as_of_precision": "week",
+      "amount_usd_bn": 40,
+      "basis": "unspecified",
+      "reported_qualifier": "exact",
+      "source_date": "2026-08-17",
+      "source_url": "https://www.axios.com/2026/08/17/anthropic-revenue-run-rate-ipo-openai",
+      "accessed_at": "2026-10-12T10:32:32.623292Z",
+      "source_type": "mainstream_media",
+      "raw_reading": {
+        "run_rate_usd_bn": 40,
+        "period": "internal message shared in the week before August 17 2026"
+      },
+      "notes": "Axios attributes this actual run-rate reading to an internal Greg Brockman message. The precise observation day and gross/net basis are unconfirmed. Later accounts dispute how historical media figures were grossed up; exclude from acceleration until the basis is established.",
+      "is_forecast": false,
+      "as_of_is_upper_bound": true,
+      "observed_interval": {
+        "start": "2026-08-10",
+        "end": "2026-08-16"
+      }
+    },
+    {
+      "id": "openai-2026-09-30-net",
+      "company": "OpenAI",
+      "as_of": "2026-09-30",
+      "as_of_precision": "month_end",
+      "amount_usd_bn": 50,
+      "basis": "net",
+      "reported_qualifier": "nearly",
+      "source_date": "2026-10-08",
+      "source_url": "https://www.investing.com/news/stock-market-news/openais-annualized-revenue-20-billion-less-than-previously-signaled-ft-reports-4939854",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "raw_reading": {
+        "annualized_revenue_usd_bn": 50,
+        "period": "September 2026"
+      },
+      "notes": "Reuters investor-source reading after the September headline correction. Net means OpenAI recognizes its share of certain partner sales; it is not a universal subtraction of all revenue-sharing or compute costs. Do not compare against the earlier $70B headline as an economic decline.",
+      "is_forecast": false,
+      "basis_confirmation_id": "openai-net-cloud-sales-2026-10-09"
+    }
+  ],
+  "basis_confirmations": [
+    {
+      "id": "anthropic-gross-cloud-sales-2026-10-09",
+      "company": "Anthropic",
+      "basis": "gross",
+      "source_date": "2026-10-09",
+      "source_url": "https://news.bloomberglaw.com/business-and-practice/black-box-revenue-from-anthropic-and-openai-stumps-traders",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "reading": "Anthropic records gross cloud-partner sales.",
+      "application": "Historical company run-rate series classified retrospectively using this explicit accounting-method report, together with direct within-series historical comparisons in the company April 6 disclosure and Reuters August 17 report. No gross-to-net conversion is invented."
+    },
+    {
+      "id": "openai-net-cloud-sales-2026-10-09",
+      "company": "OpenAI",
+      "basis": "net",
+      "source_date": "2026-10-09",
+      "source_url": "https://news.bloomberglaw.com/business-and-practice/black-box-revenue-from-anthropic-and-openai-stumps-traders",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "source_type": "mainstream_media",
+      "reading": "OpenAI records its share of partner sales.",
+      "application": "Supports the corrected September $50B reading alongside Reuters October 8. Does not resolve the basis of all earlier media observations."
+    }
+  ],
+  "excluded_reports": [
+    {
+      "company": "OpenAI",
+      "reported_amount_usd_bn": 70,
+      "reported_period": "September 2026",
+      "source_date": "2026-10-08",
+      "source_url": "https://www.investing.com/news/stock-market-news/openais-annualized-revenue-20-billion-less-than-previously-signaled-ft-reports-4939854",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "reason": "Corrected historical media headline; accounting treatment disputed. Keep in audit trail, not in actual observations or a gross-to-net growth comparison."
+    },
+    {
+      "company": "OpenAI",
+      "reported_amount_usd_bn": 70,
+      "reported_period": "end of 2026",
+      "source_date": "2026-10-09",
+      "source_url": "https://news.bloomberglaw.com/business-and-practice/black-box-revenue-from-anthropic-and-openai-stumps-traders",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "reason": "Future year-end target, not an actual dated run rate."
+    },
+    {
+      "company": "Anthropic",
+      "reported_amount_usd_bn": 100,
+      "reported_period": "end of 2026",
+      "source_date": "2026-10-08",
+      "source_url": "https://www.investing.com/news/stock-market-news/openais-annualized-revenue-20-billion-less-than-previously-signaled-ft-reports-4939854",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "reason": "Future year-end target, not an actual dated run rate."
+    },
+    {
+      "company": "Anthropic",
+      "reported_amount_range_usd_bn": [
+        190,
+        200
+      ],
+      "reported_period": "2028",
+      "source_date": "2026-08-17",
+      "source_url": "https://www.marketscreener.com/news/anthropic-revenue-run-rate-tops-65-billion-source-says-ce7859dcdd80ff2d",
+      "accessed_at": "2026-10-12T10:33:40.560Z",
+      "reason": "Forecast annual revenue, not a current run-rate observation."
+    }
+  ],
+  "calculation_policy": {
+    "same_company_and_basis_only": true,
+    "allowed_bases": [
+      "gross",
+      "net"
+    ],
+    "unspecified_basis_excluded": true,
+    "forecasts_excluded": true,
+    "method": "For each company and explicit basis, use latest actual point T; select the latest disclosed actual points at or before T minus three calendar months and T minus six calendar months. Keep every selected point actual date and disclosure qualifier. No interpolation, invented month points, cross-company sum, or gross/net conversion. Each historical cutoff anchor must lag by at most 31 days; otherwise this company/basis is unavailable. Cutoffs, actual dates and lags are reported separately; this is not exact cutoff-date economic revenue growth.",
+    "formula": {
+      "recent_growth_pct": "100 * (R(T) / R(T-3m) - 1)",
+      "previous_growth_pct": "100 * (R(T-3m) / R(T-6m) - 1)",
+      "second_difference_pp": "recent_growth_pct - previous_growth_pct"
+    },
+    "date_precision": "as_of may be a conservative interval upper bound when the source does not identify a day; as_of_precision and observed_interval retain that uncertainty. Such values are not described as exact daily measurements.",
+    "qualifiers": "Arithmetic uses the reported rounded value/bound as an indicative estimate. More-than/nearly/about qualifiers remain visible; the result is not an independently verified exact revenue measurement.",
+    "incremental_updates": "After this backfill, append newly disclosed actual points by id. Do not regenerate or clear the historical ledger. Source corrections preserve an audit record and explain any basis reclassification.",
+    "max_anchor_lag_days": 31,
+    "calculation_type": "disclosed-series growth proxy; reported-point estimate"
+  },
+  "backfill_findings": {
+    "anthropic_gross": {
+      "available": true,
+      "latest_observation_id": "anthropic-2026-07-31-gross",
+      "three_month_cutoff": "2026-04-30",
+      "three_month_anchor_id": "anthropic-2026-04-06-gross",
+      "three_month_anchor_lag_days": 24,
+      "six_month_cutoff": "2026-01-31",
+      "six_month_anchor_id": "anthropic-2025-12-31-gross",
+      "six_month_anchor_lag_days": 31,
+      "indicative_recent_growth_pct": 116.666667,
+      "indicative_previous_growth_pct": 233.333333,
+      "indicative_second_difference_pp": -116.666667,
+      "qualification": "Reported rounded / greater-than run rates; latest-known quarterly cutoff method, not fabricated exact quarter-end observations."
+    },
+    "openai_net": {
+      "available": false,
+      "latest_observation_id": "openai-2026-09-30-net",
+      "reason": "Only the corrected September point has a confirmed net basis; earlier actual observations are retained as unspecified. Two same-basis historical quarter anchors still require confirmation."
+    },
+    "coverage": "Nine actual observations fall inside the requested nine-month observation window, plus two explicitly marked year-end opening anchors. Months without a disclosed actual observation are not filled with forecasts or synthetic readings."
+  }
+}

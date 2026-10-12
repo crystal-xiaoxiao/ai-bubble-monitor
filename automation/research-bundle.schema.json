@@ -2,21 +2,80 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "AI Bubble Watch model-neutral research bundle",
   "type": "object",
-  "required": ["schema_version", "cycle", "indicators", "evidence"],
+  "required": [
+    "schema_version",
+    "cycle",
+    "indicators",
+    "evidence"
+  ],
   "properties": {
-    "schema_version": {"const": 1},
-    "cycle": {"type": "string", "format": "date"},
+    "schema_version": {
+      "const": 1
+    },
+    "cycle": {
+      "type": "string",
+      "format": "date"
+    },
     "indicators": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "name_en", "name_zh", "value", "unit", "value_display", "status", "threshold_text", "threshold_text_en", "note", "note_en", "source_name", "source_url", "as_of", "stale"],
+        "required": [
+          "id",
+          "name_en",
+          "name_zh",
+          "value",
+          "unit",
+          "value_display",
+          "status",
+          "threshold_text",
+          "threshold_text_en",
+          "note",
+          "note_en",
+          "source_name",
+          "source_url",
+          "as_of",
+          "stale"
+        ],
         "properties": {
-          "id": {"type": "string"},
-          "value": {"type": ["number", "string"]},
-          "status": {"enum": ["red", "yellow", "green"]},
-          "stale": {"type": "boolean"},
-          "as_of": {"type": "string", "format": "date"}
+          "id": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "status": {
+            "enum": [
+              "red",
+              "yellow",
+              "green"
+            ]
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date"
+          },
+          "freshness": {
+            "enum": [
+              "new",
+              "current",
+              "stale"
+            ],
+            "description": "Optional input; pipeline derives authoritative freshness from validated stale/evidence, and writes it to every new snapshot."
+          },
+          "basis": {
+            "description": "Pipeline-derived accounting/measurement basis; first switch is incomparable to prior basis."
+          },
+          "basis_changed": {
+            "type": "boolean",
+            "description": "Pipeline-derived first basis switch, excluded from WoW and momentum comparisons."
+          }
         }
       }
     },
@@ -24,36 +83,519 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["kind", "checked_at", "raw", "rationale"],
+        "required": [
+          "kind",
+          "checked_at",
+          "raw",
+          "rationale"
+        ],
         "properties": {
-          "kind": {"enum": ["prefetch", "web", "current", "carry"]},
-          "checked_at": {"type": "string", "format": "date-time"},
-          "raw": {"type": "object", "description": "current: latest_release_date and genuine next_expected disclosure metadata; scan: window {start,end}, queries, sources_checked (opened URL strings or {url,status:ok}), events [{date,what,url}], including an empty events list. Dynamic cadence/date rules are enforced by pipeline.py."},
-          "rationale": {"type": "string", "minLength": 1},
-          "urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
-          "attempted_urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
+          "kind": {
+            "enum": [
+              "prefetch",
+              "web",
+              "current",
+              "carry"
+            ]
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "raw": {
+            "type": "object",
+            "description": "current: latest_release_date and genuine next_expected disclosure metadata; scan: window {start,end}, queries, sources_checked (opened URL strings or {url,status:ok}), events [{date,what,url}], including an empty events list. Dynamic cadence/date rules are enforced by pipeline.py. From cycle2026-10-18: enterprise_deploy basis=kpmg_significant_workforce_adoption/current_pct/previous_pct/current_quarter/previous_quarter/change_pp/publication_date; dc_abs_spread basis=dc_abs_project_finance_credit_status,90-day window and events additionally event_type,confirmed,spread_change_bps for spread_widening. NVDA and ARR authoritative ledger calculations are pipeline-derived."
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "attempted_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
           "calculation": {
             "type": "object",
-            "required": ["operator", "current", "previous"],
-            "properties": {"operator": {"enum": ["change_pct", "ratio_pct", "ratio"]}, "current": {"type": "number"}, "previous": {"type": "number"}}
+            "required": [
+              "operator",
+              "current",
+              "previous"
+            ],
+            "properties": {
+              "operator": {
+                "enum": [
+                  "change_pct",
+                  "ratio_pct",
+                  "ratio"
+                ]
+              },
+              "current": {
+                "type": "number"
+              },
+              "previous": {
+                "type": "number"
+              }
+            }
           }
         }
       }
     },
-    "verdict_desc": {"type": "string", "description": "Required for a successful release; 4–6 headed Chinese paragraphs"},
-    "verdict_desc_en": {"type": "string", "description": "Required for a successful release; matching English structure"},
-    "wow_changes": {"type": "array", "maxItems": 5, "items": {"type": "object", "required": ["indicator_id", "type", "from", "to", "note", "note_en"]}},
-    "debt_ledger": {"type": "object", "description": "Required for a successful release; preserve existing schema and corrections"},
+    "verdict_desc": {
+      "type": "string",
+      "description": "Required for a successful release; 4–6 headed Chinese paragraphs"
+    },
+    "verdict_desc_en": {
+      "type": "string",
+      "description": "Required for a successful release; matching English structure"
+    },
+    "wow_changes": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "indicator_id",
+          "type",
+          "from",
+          "to",
+          "note",
+          "note_en"
+        ]
+      }
+    },
+    "debt_ledger": {
+      "type": "object",
+      "description": "Required for a successful release; preserve existing schema and corrections"
+    },
     "debt_review": {
       "type": "object",
       "properties": {
-        "searched_urls": {"type": "array", "items": {"type": "string", "format": "uri"}},
-        "weekly_search_note": {"type": "string"},
-        "full_reconciliation": {"type": "boolean"},
-        "reconciliation_note": {"type": "string"},
-        "corrections": {"type": "array", "items": {"type": "object", "required": ["borrower", "date", "reason", "source_url"]}}
+        "searched_urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "weekly_search_note": {
+          "type": "string"
+        },
+        "full_reconciliation": {
+          "type": "boolean"
+        },
+        "reconciliation_note": {
+          "type": "string"
+        },
+        "corrections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "borrower",
+              "date",
+              "reason",
+              "source_url"
+            ]
+          }
+        },
+        "reconciliation_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "scope",
+              "url",
+              "checked_at",
+              "raw_reading"
+            ],
+            "properties": {
+              "scope": {
+                "enum": [
+                  "financing_anchor",
+                  "capex_denominator",
+                  "deal_reconciliation"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "checked_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "raw_reading": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "description": "Mandatory for full reconciliations from 2026-10-18: actual this-run opened readings cover all three scopes. Outstanding Oct18 deadline prevents successful release until completed."
+        }
+      }
+    },
+    "nvda_commitments": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "basis",
+        "coverage",
+        "entries",
+        "ltm_revenue",
+        "total_signed_usd_bn",
+        "ratio_pct"
+      ],
+      "description": "Optional full candidate persistent ledger; omitted means use docs/data/nvda_commitments.json. Historical entries immutable; append/supersede by stable ID. Changed validated ledger joins successful manifest only. Counts explicitly signed amounts including guarantees and signed portions of conditional up-to ceilings; included_in detail is not counted twice.",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "basis": {
+          "const": "signed_customer_financing_including_guarantees"
+        },
+        "coverage": {
+          "type": "object",
+          "required": [
+            "complete",
+            "unresolved_ids"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "unresolved_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "customer",
+              "instrument",
+              "announcement_date",
+              "status",
+              "signed_amount_usd_bn",
+              "source_date",
+              "source_url",
+              "accessed_at",
+              "notes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "customer": {
+                "type": "string",
+                "minLength": 1
+              },
+              "instrument": {
+                "enum": [
+                  "equity",
+                  "loan",
+                  "convertible",
+                  "financing_guarantee"
+                ]
+              },
+              "announcement_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "status": {
+                "enum": [
+                  "signed",
+                  "conditional",
+                  "drawn"
+                ]
+              },
+              "signed_amount_usd_bn": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "amount_usd_bn": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "included_in": {
+                "type": "string"
+              },
+              "supersedes": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "source_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "source_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "accessed_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "ltm_revenue": {
+          "type": "object",
+          "required": [
+            "as_of",
+            "quarters",
+            "revenue_usd_bn"
+          ],
+          "properties": {
+            "as_of": {
+              "type": "string",
+              "format": "date"
+            },
+            "revenue_usd_bn": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "quarters": {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "required": [
+                  "fiscal_period",
+                  "period_end",
+                  "revenue_usd_bn",
+                  "source_url",
+                  "source_date"
+                ],
+                "properties": {
+                  "period_end": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "revenue_usd_bn": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "source_url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "source_date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "total_signed_usd_bn": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ratio_pct": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "arr_ledger": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "observations"
+      ],
+      "description": "Optional full candidate persistent ARR ledger; omitted means stored docs/data/arr_ledger.json. Only dated actual company/mainstream-media run rates, retained qualifiers and gross/net/unspecified basis. Append stable IDs and preserve basis confirmations/exclusion audit. Calculate each confirmed basis separately with actual known points at/before 3/6 calendar-month cutoffs, max31-day lag; no interpolation, forecast or cross-basis aggregation.",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "company",
+              "as_of",
+              "as_of_precision",
+              "amount_usd_bn",
+              "basis",
+              "reported_qualifier",
+              "source_date",
+              "source_url",
+              "accessed_at",
+              "source_type",
+              "raw_reading",
+              "notes",
+              "is_forecast"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "company": {
+                "enum": [
+                  "OpenAI",
+                  "Anthropic"
+                ]
+              },
+              "as_of": {
+                "type": "string",
+                "format": "date"
+              },
+              "as_of_precision": {
+                "enum": [
+                  "day",
+                  "month_end",
+                  "month",
+                  "early_month",
+                  "week"
+                ]
+              },
+              "amount_usd_bn": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "basis": {
+                "enum": [
+                  "gross",
+                  "net",
+                  "unspecified"
+                ]
+              },
+              "reported_qualifier": {
+                "enum": [
+                  "exact",
+                  "about",
+                  "more_than",
+                  "nearly"
+                ]
+              },
+              "source_type": {
+                "enum": [
+                  "company",
+                  "mainstream_media"
+                ]
+              },
+              "is_forecast": {
+                "const": false
+              },
+              "basis_confirmation_id": {
+                "type": "string"
+              },
+              "observed_interval": {
+                "type": "object",
+                "required": [
+                  "start",
+                  "end"
+                ],
+                "properties": {
+                  "start": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              },
+              "source_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "source_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "accessed_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "basis_confirmations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "company",
+              "basis",
+              "source_date",
+              "source_url",
+              "accessed_at",
+              "reading",
+              "application"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "company": {
+                "enum": [
+                  "OpenAI",
+                  "Anthropic"
+                ]
+              },
+              "basis": {
+                "enum": [
+                  "gross",
+                  "net"
+                ]
+              },
+              "source_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "source_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "accessed_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
       }
     }
   },
-  "$comment": "pipeline.py enforces dynamic indicator IDs, dates, freshness, scoring and cross-file rules. Successful releases additionally require narratives, wow_changes, debt_ledger and debt_review. Failed-data releases need only indicator/evidence fields. Schema validation alone is insufficient."
+  "$comment": "pipeline.py enforces dynamic indicator IDs, dates, freshness, scoring and cross-file rules. Successful releases additionally require narratives, wow_changes, debt_ledger and debt_review. Failed-data releases need only indicator/evidence fields. Schema validation alone is insufficient. Optional ledger candidates must preserve history. Per-indicator freshness, structural status/basis, source dates, lower-bound certainty, same-basis ARR dates and required debt reconciliation are dynamically enforced by pipeline.py."
 }

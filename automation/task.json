@@ -33,6 +33,19 @@
     "token_volume_mom": [["last30_tokens"]],
     "gpu_rental_price": [["h100_median_on_demand_usd_hr", "h100_usd_hr"]]
   },
+  "structural_contracts": {
+    "effective_cycle": "2026-10-18",
+    "enterprise_basis": "kpmg_significant_workforce_adoption",
+    "dc_abs_window_days": 90,
+    "arr_anchor_max_lag_days": 31,
+    "nvda_commitments_path": "docs/data/nvda_commitments.json",
+    "arr_ledger_path": "docs/data/arr_ledger.json"
+  },
+  "debt_reconciliation": {
+    "interval_days": 28,
+    "required_from_cycle": "2026-10-18",
+    "completion_requires_this_run_source_audit": true
+  },
   "migration": {
     "date": "2026-10-10",
     "visible_legacy_task_id": "6ac5f88cedb88191922f84f4fdbee729",

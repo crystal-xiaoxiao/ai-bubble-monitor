@@ -6,7 +6,7 @@
 - 执行、发布、去重、重试与通知按 `RUNBOOK.md`；线上 Work 启动 prompt 版本见 `automation/WORK_PROMPT.md`。
 - 模型只提交 `automation/research-bundle.schema.json` 所定义的研究包。评分先跑 `score`，最终快照、历史追加和 outbox 由 `pipeline.py build/check` 生成与校验。以下“写入”描述输出要求，不授权手写绕过脚本。
 - 不创建 Dot/Codex Cloud worker，不依赖特定模型、个人电脑或自建服务器。更早 Claude prompt 仅在 `automation/archive/` 留档，不再是当前执行指令。
-- 日程保持每周一北京时间 07:00；本次迁移不触发额外研究、不发送测试通知。
+- 日程保持每周一北京时间07:00；本次结构修复从2026-10-18 UTC调度周期生效，不补跑/重算/改写已发布#28。每项首期切换在双语 note/raw.basis 明示不可比，raw.basis_switch=true；pipeline排除跨口径WoW及动量比较，不当作真实改善。
 
 ### 1. 读配置和上周数据
 
@@ -14,6 +14,8 @@
 - `INDICATORS.md` → 全部指标定义（**指标总数 N 以该文件为准**）、阈值、direction、axis 标签、聚合判读规则（两轴/动量/滞回/历史相似度及校准表）、JSON schema（含双语字段约定）
 - `docs/data/latest.json` → 上期快照，用于 WoW 对比、降档滞回判断和 fallback
 - `docs/data/debt_ledger.json` → 债务交易台账（debt_capex_ratio 的周度数据源）
+- `docs/data/nvda_commitments.json` → 已签署 NVDA 客户股权投资/贷款/可转债/担保逐项台账，签署部分和上限必须可追溯；以后只追加/有证据修订，不从旧43–45%倒推总额
+- `docs/data/arr_ledger.json` → 最近9个月实际 ARR/run-rate 披露台账，OpenAI gross/net 分开，公司/日期/basis 对齐；未来目标与预测不计
 - `docs/data/raw_history.json` → 原始值台账（所有环比/增速/比值从这里的上期原始值计算）
 - `docs/data/prefetch/latest.json` → GitHub Actions 每周六 13:23 UTC、周日 15:23 UTC 机械抓取的原始数据（insider_sell_buy / token_volume_mom / top5_weight / hy_oas 四个映射源，以及研究辅助 frontier_eci）。**读法：先查 `_meta.fetched_at` 距今 <3 天，再查对应 `sources.*.status=="ok"`，两者都满足才可用**；partial/error 或文件过期 → 先只读查看 prefetch Actions 是否正在运行；若在跑最多等15分钟（单次等待≤60秒），完成后取最新 main 并重新 prepare。仍不可用才走定义的备源链；insider/token 没有 Work 备源，必须 stale
 
@@ -26,8 +28,12 @@
 - **prefetch 覆盖的指标（insider_sell_buy / token_volume_mom / top5_weight / hy_oas）一律先读 `docs/data/prefetch/latest.json`**（读法见第 1 步）：该源的 `data` 就是本期原始数据点，note 引用其 `summary` 里的数字，`as_of` 取该源的 `as_of` 字段（是数据自身日期，**不要改写成运行日期**）；prefetch 不可用才走 INDICATORS.md 里写明的备源链
 - 稳定 URL（multpl 等）→ WebFetch；主源失败走 INDICATORS.md 里写明的备源链
 - 指标按 Cadence 和最新主源表抓取；扫描类用有记录 WebSearch + 实际来源访问，periodic 核实最新披露。**Work 不直连 OpenRouter API 或 efts.sec.gov**，insider/token 只走 prefetch，公开新闻不替代聚合读数
-- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天尝试完整自下而上拆解并修正台账；未完成则保留真实 last_full_recon、写原因和逾期天数，警告而非硬错误。不能仅因对账逾期把有周度扫描与有效 ms_anchor 的指标标 stale
+- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天尝试完整自下而上拆解并修正台账；未完成则保留真实 last_full_recon、写原因和逾期天数，警告而非硬错误。通常不能仅因对账逾期把有周度扫描与有效 ms_anchor 的指标标 stale；**2026-10-18 周期必须实际完成完整对账，更新 last_full_recon、全口径分子/分母与真实出处，未完成不得发布成功包，不能用逾期警告代替**
 - `frontier_progress` → 按 INDICATORS.md 三层量化：Epoch ECI SOTA/90天增幅（主锚，优先有效 frontier_eci prefetch）+ 困难基准90天 SOTA 位移 + 发布密度与叙事。METR 仅有新观测时参考；按 INDICATORS 的50%季均比较与连续两个窗口停滞规则，首期写明主锚切换；判定必须与 raw_history 上期数值对比
+- `enterprise_deploy` → KPMG同一问题 significant workforce adoption，以相邻季度 current_pct−previous_pct 的百分点变化评分：≥+3绿，−3≤变化<+3黄，<−3红。取消旧72%锚与红50/黄65的水平阈值；Q3 2026官方44%、Q2 23%、去年10%，真实披露日2026-09-24，不能把62%agent构建/部署问题混进来。季度间核实同一最新披露可 current，年龄≤200天。
+- `nvda_invest_revenue` → 读逐项已签署台账；equity/loan/convertible/担保只计可确认已签部分，条件性总额与未签意向排除，担保用签署上限并明示并非实际支付。对照最新LTM收入计算，不与旧43–45%直接作环比。分子清单只增量更新并保留修订证据；未知已签金额保留未知及覆盖缺口，可核实和只称下限，不虚构完整总额。
+- `arr_2nd_deriv` → 查近9个月实际披露，按同公司、同 gross/net basis 分开计算最近3个月增速与前3个月增速之差。相对最新实际读数日T（非报道发布日）取T、T−3及T−6个日历月截止日，优先截止日读数，允许取截止日或之前最新实际披露且滞后≤31天；raw必须保留真实日期、截止日、lag及原文限定。任何lag>0必须双语说明“披露序列/披露点”与 disclosed-series/reported observations；大于/约读数保留限定称 reported-point estimate。稀疏披露称“已披露序列的3个月区间增长代理”，不是精确经济增长。可保留9个月之前最近一个实际opening基线作计算背景，注明范围；周/月精度注明真实观测区间，不编造精确日。超31天或basis不明就不可比，不插值、不把预测/年底目标填入。每次新披露追加台账；绝对ARR上升不等于二阶导加速。
+- `dc_abs_spread` → 近90天“数据中心 ABS/项目融资信用状态”；已确认违约/不可抗力/降级/撤回/被迫大幅重定价，或同口径利差报道走阔≥50bp为红；确认延迟/条款收紧为黄；顺利发行或有效扫描无事件为绿。保留原ID，raw按INDICATORS事件类型和 confirmed布尔值记录，不只扫描CMBS、也不把普通公司债价当项目/ABS实测利差。
 - **反锚定纪律（全局，见 INDICATORS.md「数据抓取纪律」）**：活源数值型指标的 note 必须写出本期实际抓到的原始数据点（如 insider 卖/买总金额、token 30 日绝对量），给不出=没抓到=按 stale 处理；本期各数值型指标的原始输入写入研究包 evidence.raw，**由 pipeline 追加写入 raw_history.json**（每指标保留 26 期）；**同值预警数 raw 里的核心原始绝对值**（不数派生 value——MoM%/比值在变不能重置计数）：原始值连续 3 期不变或连续 3 期缺失 → 输出 `suspect_static: true` + `static_weeks: N` 并准备飞书提醒行
 
 每个指标产出（**注意双语**）：
@@ -51,7 +57,7 @@
 
 **复合指标**：锚定分项按 INDICATORS 的“更新锚”；锚拿到新值即 new，其他分项可沿用但各带日期，双语 note 点名沿用项。不得以无关新数据代替锚；辅助缺口会改变状态时明确依据。
 
-**台账指标**：debt_capex_ratio、NVDA承诺分子、IPO名单以上期 raw/台账为基线只找新增或变化并去重；债务28天、NVDA财报后才完整重建。不清空历史。raw.basis 写 gross/net、全球/美国、TTM/YTD 或价格来源；跨口径不算环比、二阶差分或 value_change WoW，状态按同口径分项及方向证据判断。
+**台账指标**：debt_capex_ratio、NVDA承诺分子、IPO名单以上期 raw/台账为基线只找新增或变化并去重；债务28天、NVDA财报后完整核对；2026-10-18必须实际完成债务完整对账。不清空历史。raw.basis 写 gross/net、全球/美国、TTM/YTD 或价格来源；跨口径不算环比、二阶差分或 value_change WoW，状态按同口径分项及方向证据判断。
 
 **证据分级**：IR/SEC、官方统计、数据站，以及 Reuters/Bloomberg/CNBC/WSJ/FT/The Information/Axios 的具体报道数字可用，媒体数字标“媒体口径”。原文403/付费墙先找 Yahoo Finance/MarketScreener/Investing.com/TipRanks 转载或 PR Newswire/BusinessWire/GlobeNewswire 新闻稿并实际打开。仅搜索摘要时至少两个独立来源数字一致（同稿转载不是独立），raw.tier=snippet 并记录对应来源；snippet 不能成为红灯升级的唯一依据。
 
@@ -82,7 +88,7 @@ qualitative 指标由 WebSearch 结果直接判断 status。
 
 档位判定顺序（INDICATORS.md 有完整规则）：基础档位（red_pct ≥ 60/40/25/else）→ ①共振升级（估值红 ≥2 且资金面红 ≥3 → 至少高风险预警）→ ②两轴升级（stage ≥60 且 trigger ≥50 → 至少高风险预警；stage ≥60 且 trigger ≥65 → 系统性顶部）→ ③降档滞回（升档即时；降档需本期与上期基础判读连续 2 期低于现档位）。触发任一升级在 verdict_desc 末尾注明哪条。
 
-verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史时点，并点名当前与 2000-02 向量的主要差异指标。
+verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史时点，并点名当前与2000-02向量的主要差异指标。2026-10-18首个新口径期必须注明部分指标定义切换限制历史相似度解释；历史颜色矩阵和快照均不回写。
 
 **verdict_desc(_en) 排版格式（两个语言版本同构，前端按此渲染）**：
 - 用 `\n\n`（连续两个换行符）分成 **4-6 个短段落**，每段一个主题，不允许整段不分段
@@ -96,7 +102,7 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
 对比 latest.json 每个指标上周 status：
 - status_upgrade: green→yellow / yellow→red / green→red
 - status_downgrade: red→yellow / yellow→green / red→green
-- value_change: status 没变但数值变化 >10%（仅同口径数值型；来源/basis 切换首期不计）
+- value_change: status 没变但数值变化 >10%（仅同口径数值型；来源/basis 切换首期不计；状态颜色差异也不当作真实升级/降级）
 
 每条变化（双语）：{ indicator_id, type, from, to, note (中文一句话), note_en (英文一句话) }
 保留最重要的 5 条（红灯转换优先）。上期快照不存在的指标（新增/换入首期）不计入。debt_ledger 本周若有单笔 ≥$10B 的新 deal，也要作为一条变化收录。
@@ -110,11 +116,12 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
 - summary 必有：verdict_label(_en) / verdict_desc(_en) / stage_score / stage_label(_en) / trigger_score / trigger_label(_en) / momentum / category_scores / similarity
 - 每个 indicator 必有 note 和 note_en 及 axis；textual value 必有 value_display_en
 - wow_changes 每条必有 note 和 note_en
-- 确认 debt_ledger.json 与 raw_history.json 已按第 2 步更新（它们随快照一起 commit）
+- 确认 debt_ledger.json、nvda_commitments.json、arr_ledger.json 与 raw_history.json 按规定增量更新，只随脚本manifest发布
+- 每项 freshness=new/current/stale 与 evidence/stale 一致；new无角标，current“最新披露”/“Latest filing”且保留真实日期，stale显示STALE；旧快照缺字段保留原有兼容，不回写历史
 
 ## 发布与运行总结
 
-不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。评分阈值和 stale>5 闸门不变；按最新 Cadence、来源和证据分级执行，不以达到预期 stale 数为目标牺牲事实核验。债务完整对账逾期须在成功/失败通知里单列警告。
+不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。除本次明确改变的 enterprise季度Δ阈值与dc信用状态映射外，其余评分阈值及 stale>5 闸门不变；按最新 Cadence、来源和证据分级执行，不以达到预期 stale 数为目标牺牲事实核验。债务完整对账逾期通常单列警告；2026-10-18强制完整对账必须实际完成，未完成停止成功发布，不伪造对账。
 
 按 RUNBOOK 单次提交 manifest 文件，确认远端 SHA、Pages 整份 JSON 与 relay 状态。分别输出 Issue/日期、红黄绿/风险温度、两轴、判读中英、历史相似度 top1、WoW/静态预警/新债务及 new/current/stale 数、提交链接、网页和通知状态。权限或 Safety 拒绝要如实报告，不更换通道规避。未知消息结果不得盲目重发。
 

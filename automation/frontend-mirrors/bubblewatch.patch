@@ -1,0 +1,72 @@
+--- a/index.html
++++ b/index.html
+@@ -105,7 +105,7 @@
+   article.indicator .note { font-family: "Lora", serif; font-size: 13px; color: var(--warm); line-height: 1.55; font-style: italic; }
+   article.indicator .meta { border-top: 1px dashed #999; padding-top: 8px; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+   article.indicator.stale::after { content: "STALE"; position: absolute; top: 8px; right: 8px; font-family: "IBM Plex Mono", monospace; font-size: 9px; padding: 2px 5px; background: #ddd; color: #555; letter-spacing: 0.1em; }
+-  .carry-tag { background: #E8E0D0; color: #7a5c10; padding: 1px 4px; font-weight: 600; }
++  .carry-tag, .current-tag { background: #E8E0D0; color: #7a5c10; padding: 1px 4px; font-weight: 600; }
+   .static-tag { background: #F0D9D9; color: #7C1D1D; padding: 1px 4px; font-weight: 600; }
+ 
+   /* Two-axis read (stage x trigger) */
+@@ -192,7 +192,7 @@
+ const WATCH_LIST = [
+   { icon: '①', title: 'Hyperscaler Capex Guidance', desc: 'Any Mag7 cutting current-year capex guidance at next earnings → RED. A structural top signal.' },
+   { icon: '②', title: 'Fed Policy Path', desc: 'If oil/CPI forces the Fed to resume hiking, the setup mirrors 1999-2000 and the 1845 Railway Mania top.' },
+-  { icon: '③', title: 'CoreWeave / Nebius Credit', desc: 'Data-center ABS spreads widening 50bps+ is the earliest signal of vendor-financing chain stress.' },
++  { icon: '③', title: 'CoreWeave / Nebius Credit', desc: 'Confirmed data-center ABS / project-finance credit events or reported spread widening of 50bps+ signal funding stress.' },
+   { icon: '④', title: 'OpenAI Auditor Disclosure', desc: 'Raised by Burry but unconfirmed. Any round-tripping investigation is an immediate RED.' },
+   { icon: '⑤', title: 'Anthropic IPO Timing', desc: 'If the planned October IPO proceeds, the "AI IPO flood" indicator may flip to RED.' },
+   { icon: '⑥', title: 'Mag7 Insider Selling', desc: 'Currently sporadic Thiel-style cases; watch whether it spreads to Mag7 executives broadly.' }
+@@ -233,6 +233,20 @@
+   }
+   if (cur.trim()) paras.push(cur);
+   return paras.length ? paras : [t];  // Tier 3: return as-is, same as old behavior
++}
++
++// Snapshot freshness is authoritative; older snapshots retain their original date-based tags.
++function indicatorFreshness(ind, issueDate) {
++  if (ind.freshness === 'new') return { stale: false, tag: '' };
++  if (ind.freshness === 'current') {
++    return { stale: false, tag: ' <span class="current-tag">Latest filing</span>' };
++  }
++  if (ind.freshness === 'stale') return { stale: true, tag: '' };
++  const carried = !ind.stale && ind.as_of && issueDate && ind.as_of < issueDate;
++  return {
++    stale: Boolean(ind.stale),
++    tag: carried ? ' <span class="carry-tag">CARRIED</span>' : ''
++  };
+ }
+ 
+ function statusBadge(status) {
+@@ -385,10 +399,10 @@
+             ${items.map(ind => {
+               const noteEn = pickEn(ind.note_en, ind.note);
+               const valueEn = ind.value_display_en || ind.value_display || ind.value;
+-              const carried = !ind.stale && ind.as_of && data.as_of_date && ind.as_of < data.as_of_date;
++              const freshness = indicatorFreshness(ind, data.as_of_date);
+               const staticTag = ind.suspect_static ? ` <span class="static-tag">${ind.static_weeks ? 'UNCHANGED x' + ind.static_weeks : 'STATIC?'}</span>` : '';
+               return `
+-              <article class="indicator${ind.stale ? ' stale' : ''}">
++              <article class="indicator${freshness.stale ? ' stale' : ''}">
+                 <div class="status-bar ${ind.status}"></div>
+                 <div class="head">
+                   <div>
+@@ -400,7 +414,7 @@
+                 <div class="note">${escapeHtml(noteEn)}</div>
+                 <div class="meta">
+                   <span>${escapeHtml(ind.threshold_text_en || ind.threshold_text)}</span>
+-                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${carried ? ' <span class="carry-tag">CARRIED</span>' : ''}${staticTag}</span>
++                  <span>${escapeHtml(ind.source_name)}${ind.as_of ? ' · ' + escapeHtml(ind.as_of) : ''}${freshness.tag}${staticTag}</span>
+                 </div>
+               </article>
+             `}).join('')}
+@@ -453,7 +467,7 @@
+         </div>
+         <div>
+           <h4>Data Freshness</h4>
+-          <div>Most indicators refresh every Monday; each card shows its own as-of date, and cards older than the issue date are tagged CARRIED. The debt/capex ratio runs a weekly deal ledger with a full reconciliation every 28 days; survey-based indicators refresh quarterly. Failed sources are tagged STALE; cards whose underlying raw value has not changed (or not been re-observed) for several issues are tagged UNCHANGED xN as a manual-review prompt.</div>
++          <div>Each card shows the date of its actual observation. New observations have no freshness tag; rechecked latest periodic disclosures are tagged Latest filing; failed or expired observations are tagged STALE. Older snapshots without a freshness field retain the original date-based CARRIED tag. The debt/capex ratio runs a weekly deal ledger with a full reconciliation every 28 days; survey-based indicators refresh quarterly. UNCHANGED xN flags repeated raw values for manual review.</div>
+         </div>
+         <div>
+           <h4>Disclaimer</h4>

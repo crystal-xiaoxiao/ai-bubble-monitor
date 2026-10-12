@@ -15,9 +15,13 @@
 
 `model: null` 表示不把模型选择写进研究逻辑，不代表平台提供了特定模型或自动切换承诺。迁到 Actions 时另行配置受支持的无人值守模型认证、额度、研究工具和写权限；本迁移未验证订阅登录凭据能否用于未来的 Actions，也未配置任何凭据。
 
+## 结构修复生效边界
+
+2026-10-18 UTC调度周期起按更新后的指标口径执行，不补跑、重算或改写已发布#28。已有快照/台账仍为历史事实；新的basis首期在中英文note与raw中注明不可比，并写raw.basis_switch=true；pipeline排除该项跨口径WoW/动量比较。历史相似度矩阵不变，首期判读必须说明定义切换限制解释。四项变更是KPMG显著员工采用的季度Δ、逐项已签NVDA承诺、同basis实际ARR增长二阶变化、ABS/项目融资信用状态。已发布历史不因前端增加freshness而回写。
+
 ## Work 正常执行
 
-1. 获取远端 `main` 最新完整仓库，在独立工作目录执行。确认可以运行 Python 3，并可通过当前授权方式写 GitHub。读取 AGENTS、研究规范、指标定义、上期数据、债务台账、原始台账、prefetch。
+1. 获取远端 `main` 最新完整仓库，在独立工作目录执行。确认可以运行 Python 3，并可通过当前授权方式写 GitHub。读取 AGENTS、研究规范、指标定义、上期数据、债务/已签NVDA承诺/实际ARR台账、原始台账、prefetch。
 2. `python3 scripts/pipeline.py prepare` 生成 `.run/context.json`。调度周期是最近已到达的周日 23:00 UTC 对应日期；输出日期取本轮开始的 UTC 日期，数据自身 `as_of` 保留真实日期。`ready=false` 时不再研究/发布。脚本也会阻止未处理 outbox 与历史快照覆盖。
 3. 本轮证据写 `.run/bundle.json`。禁止拿旧新闻/上期值假装本轮抓到数据。模型填指标、证据、双语分析、债务台账与 WoW，脚本负责数值阈值校验、汇总、历史相似度、滞回、同值警告、快照和 outbox 组装。
 4. `python3 scripts/pipeline.py score --bundle .run/bundle.json`。在得到确定性结果后写双语判读。定性状态、来源真实性、原始读数口径、ECI/SOTA 比较和分析质量仍必须逐项人工式研究检查；程序不替代研究判断。
@@ -30,7 +34,7 @@
 
 ## 研究包字段
 
-根字段：`schema_version=1`、`cycle`（来自 context）、`indicators`、`evidence`、`verdict_desc`、`verdict_desc_en`、`wow_changes`、`debt_ledger`、`debt_review`。每条 indicator 沿用 INDICATORS 的完整双语字段；不要自算/填快照 summary。
+根字段：`schema_version=1`、`cycle`（来自context）、`indicators`、`evidence`、`verdict_desc`、`verdict_desc_en`、`wow_changes`、`debt_ledger`、`debt_review`。可选 `nvda_commitments` / `arr_ledger` 为两份台账的完整候选对象；不提供则用仓库已存版本，同样执行结构校验。每条 indicator 沿用 INDICATORS 的完整双语字段；不要自算/填快照 summary。
 
 `evidence` 以每个指标 ID 为键，每个值包括：
 
@@ -41,7 +45,13 @@
 
 `raw_history` 由脚本追加，保留过去 26 期及原有 `_meta`，不会让模型整文件替换。活源的稳定 raw 锚定字段见 `task.json.static_core_keys`，别名组内任选一个已定义键；这是历史数据兼容映射，不是评分阈值。数连续未变的绝对值、缺失期数和连续估算，不能因派生百分比变化重置。若更换真实数据口径，需要显式更新映射及测试，不能伪造键值凑过关。季度/低频调查不因周度未更新视为同值异常；本期实际核实同一披露且未超龄可 current。live/scan 不允许 current；全部 Cadence 和年龄界限在 INDICATORS。成功/失败包均记录 new/current/stale 数。扫描 evidence.raw 的 window/queries/sources_checked/events 按研究规范填写，空事件可以是有效扫描，不能伪造查询或成功访问。
 
-`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；到28天完整对账时尝试重建；实际完成才填 `full_reconciliation:true`、`reconciliation_note` 并更新 last_full_recon。未完成填原因、保留旧日期并输出逾期警告；周度扫描及可用 ms_anchor 仍须核实，对账逾期不再作为硬错误。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
+`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；到28天完整对账时尝试重建；实际完成才填 `full_reconciliation:true`、`reconciliation_note` 并更新 last_full_recon。未完成填原因、保留旧日期并输出逾期警告；周度扫描及可用 ms_anchor 仍须核实，一般对账逾期为警告；**2026-10-18周期必须实际完成完整对账，未完成不能发布成功包。** 必须更新真实last_full_recon、全口径年度分子与capex分母及出处，并提供reconciliation_note及 `reconciliation_sources:[{scope,url,checked_at,raw_reading}]`：scope 至少覆盖 financing_anchor、capex_denominator、deal_reconciliation 各一条，本轮实际访问且在 searched_urls 中、checked_at为本轮时刻，raw_reading保留非空真实读数/拆解。不能只列URL宣称对账完成，不以周度扫描或旧锚代替。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
+
+## 新台账与新鲜度接口
+
+`docs/data/nvda_commitments.json` 保存每笔已签 equity/loan/convertible/担保；条件性总额仅纳入已签部分，担保纳入签署上限并区分实际付款。`docs/data/arr_ledger.json` 保存实际ARR/run-rate，gross/net及公司分开，原始数据日与披露日分开。两份台账只在成功release中有变化且通过校验时进入manifest；失败包不写台账。保留既有entry/point不可变ID，修订用新增superseding记录保留原条目，不覆盖旧值。pipeline从已校验台账生成raw.numerator_signed_usd_bn、ltm_revenue_usd_bn、nvda_coverage及raw.arr_calculations（实际端点/滞后日数/两段增速/acceleration_pp），模型不得把自由raw数字当权威台账。ARR截止日按最新实际读数日T（非报道发布日）往前3/6个日历月取，使用截止日或之前最新实际点，最大lag31天，真实日期/截止日/lag及原文限定全部可见；lag>0时中英文note明确披露序列/披露点及disclosed-series/reported observations；近9个月之前一个opening基线可作为明确标记的计算背景，周/月日期注明精度和区间终点；只称已披露序列增长代理，不称精确截止日经济增长、不插值。未来目标和预测不能作为已实现ARR；旧43–45%不能倒推NVDA清单。
+
+新快照每项 `freshness`=new/current/stale：new不加角标；current显示“最新披露”/“Latest filing”并保留真实as_of；stale显示STALE。旧文件缺字段按原stale/as_of兼容，不能把旧“沿用”追溯称为本期核实最新披露。三态计数由pipeline生成并写成功/失败通知。
 
 ## 发布适配器与竞争处理
 
