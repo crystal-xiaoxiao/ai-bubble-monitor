@@ -24,7 +24,7 @@
 1. 获取远端 `main` 最新完整仓库，在独立工作目录执行。确认可以运行 Python 3，并可通过当前授权方式写 GitHub。读取 AGENTS、研究规范、指标定义、上期数据、债务/已签NVDA承诺/实际ARR台账、原始台账、prefetch。
 2. `python3 scripts/pipeline.py prepare` 生成 `.run/context.json`。调度周期是最近已到达的周日 23:00 UTC 对应日期；输出日期取本轮开始的 UTC 日期，数据自身 `as_of` 保留真实日期。`ready=false` 时不再研究/发布。脚本也会阻止未处理 outbox 与历史快照覆盖。
 3. 本轮证据写 `.run/bundle.json`。禁止拿旧新闻/上期值假装本轮抓到数据。模型填指标、证据、双语分析、债务台账与 WoW，脚本负责数值阈值校验、汇总、历史相似度、滞回、同值警告、快照和 outbox 组装。
-4. `python3 scripts/pipeline.py score --bundle .run/bundle.json`。在得到确定性结果后写双语判读。定性状态、来源真实性、原始读数口径、ECI/SOTA 比较和分析质量仍必须逐项人工式研究检查；程序不替代研究判断。
+4. `python3 scripts/pipeline.py score --bundle .run/bundle.json` 使用 prepare 的 `.run/context.json`；自定义上下文路径时加 `--context`，评分与 build 必须使用同一周期和准备日期。在得到确定性结果后写双语判读。定性状态、来源真实性、原始读数口径、ECI/SOTA 比较和分析质量仍必须逐项人工式研究检查；程序不替代研究判断。
 5. `python3 scripts/pipeline.py build --bundle .run/bundle.json` 仅生成 `.run/release/`，不直接覆盖线上数据。
 6. `python3 scripts/pipeline.py check --bundle .run/bundle.json` 重新校验并逐字节检查待发布文件。修正候选包后使用新的空 `--release .run/release-v2`，以免混入旧文件。
 7. 按下节单个提交发布 manifest 中所有文件。失败时不要把其他工作区文件混入提交。
@@ -39,13 +39,13 @@
 `evidence` 以每个指标 ID 为键，每个值包括：
 
 - `kind`: `prefetch` / `web` / `current` / `carry`；`checked_at`: 本轮实际检查时刻 ISO UTC；`rationale`: 原始数字、比较、定性判断或失败原因。
-- `raw`: 本期原始读数对象。prefetch 模式由脚本从缓存复制实际 data，不能以模型提供的值替换。web 模式保存实际读数、真实观测期；current 模式仅用于实际核实仍为最新、未超龄的 periodic 披露，保留原始读数、latest_release_date、next_expected 和真实 as_of；carry 模式保存获取失败时沿用的原始读数，脚本标记 `fetch_failed`。
+- `raw`: 本期原始读数对象。prefetch 模式由脚本从缓存复制实际 data，不能以模型提供的值替换。web 模式保存实际读数、真实观测期；current 模式仅用于实际核实仍为最新、未超龄的 periodic 披露，保留原始读数、latest_release_date、next_expected 和真实 as_of；carry 模式保存沿用的原始读数及实际失败原因。来源获取失败由脚本标记 `fetch_failed`；债务到期未完成对账须另行记录对账原因，不能误称来源访问失败。
 - `urls`: 真正打开的研究来源 URL；`attempted_urls`: 获取失败时实际尝试过的主源和备源。不要把搜索结果标题当作已读取原文。
 - 派生环比/比值可填 `calculation: {operator: "change_pct"|"ratio_pct"|"ratio", current: 120, previous: 100}`，脚本校验算术。依然必须在 raw/rationale 说明分子分母的出处和观测期；多项综合指标按 INDICATORS 写完整拆解，不能把不相关数字拿来凑结果。
 
 `raw_history` 由脚本追加，保留过去 26 期及原有 `_meta`，不会让模型整文件替换。活源的稳定 raw 锚定字段见 `task.json.static_core_keys`，别名组内任选一个已定义键；这是历史数据兼容映射，不是评分阈值。数连续未变的绝对值、缺失期数和连续估算，不能因派生百分比变化重置。若更换真实数据口径，需要显式更新映射及测试，不能伪造键值凑过关。季度/低频调查不因周度未更新视为同值异常；本期实际核实同一披露且未超龄可 current。live/scan 不允许 current；全部 Cadence 和年龄界限在 INDICATORS。成功/失败包均记录 new/current/stale 数。扫描 evidence.raw 的 window/queries/sources_checked/events 按研究规范填写，空事件可以是有效扫描，不能伪造查询或成功访问。
 
-`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；到28天完整对账时尝试重建；实际完成才填 `full_reconciliation:true`、`reconciliation_note` 并更新 last_full_recon。未完成填原因、保留旧日期并输出逾期警告；周度扫描及可用 ms_anchor 仍须核实，一般对账逾期为警告；**2026-10-18周期必须实际完成完整对账，未完成不能发布成功包。** 必须更新真实last_full_recon、全口径年度分子与capex分母及出处，并提供reconciliation_note及 `reconciliation_sources:[{scope,url,checked_at,raw_reading}]`：scope 至少覆盖 financing_anchor、capex_denominator、deal_reconciliation 各一条，本轮实际访问且在 searched_urls 中、checked_at为本轮时刻，raw_reading保留非空真实读数/拆解。不能只列URL宣称对账完成，不以周度扫描或旧锚代替。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
+`debt_review` 必填 `searched_urls`、`weekly_search_note`（无新增也要写）；距上次完整对账达到28天时优先实际重建，实际完成才填 `full_reconciliation:true`、`reconciliation_note` 并更新 last_full_recon。**2026-10-18 UTC周期起，每次到期未完成时填 `full_reconciliation:false`，记录真实尝试及未完成原因；pipeline 将 debt_capex_ratio 标 stale、原样沿用上期 value/status/as_of 及双语显示值，并保留原债务台账与真实 last_full_recon。** 该项计入 stale>5 闸门，未完成不再单独阻断整期发布；成功和失败 outbox 都单列“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28，到期当天0天也提示未完成）。本期实际读取内容保留在 `evidence.raw.attempted_observations`，新增/修订候选交易及候选年度分子/分母保留在 `raw.pending_debt_updates`（`changed_deals`、`proposed_ms_anchor`、`proposed_capex_denominator_usd_b`），供后续真实对账恢复；这些是待核对线索，不当作已入账新债务或 WoW 发布。成功期证据随 raw_history/run 保留，失败期随 run 保留，下次研究先读取尚未对账线索并去重；未到期继续正常周度增量流程。完成对账时必须更新真实last_full_recon、全口径年度分子与capex分母及出处，并提供reconciliation_note及 `reconciliation_sources:[{scope,url,checked_at,raw_reading}]`：scope 至少覆盖 financing_anchor、capex_denominator、deal_reconciliation 各一条，本轮实际访问且在 searched_urls 中、checked_at为本轮时刻，raw_reading保留非空真实读数/拆解。不能只列URL宣称对账完成，不以周度扫描或旧锚代替。改旧 deal 时提供 `corrections: [{borrower, date, reason, source_url}]`；新 deal 按借款人、近似金额、±7 日去重。单笔新债务 ≥$10B 必须出现在 WoW 和通知。分子、分母保持全口径，周度台账只作下限；不要拿不完备的台账替换全量融资估计。
 
 ## 新台账与新鲜度接口
 

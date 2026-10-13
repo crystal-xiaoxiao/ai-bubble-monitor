@@ -67,7 +67,7 @@
               "current",
               "stale"
             ],
-            "description": "Optional input; pipeline derives authoritative freshness from validated stale/evidence, and writes it to every new snapshot."
+            "description": "Optional input; pipeline derives authoritative freshness from validated stale/evidence and the due-but-incomplete debt reconciliation policy, and writes it to every new snapshot."
           },
           "basis": {
             "description": "Pipeline-derived accounting/measurement basis; first switch is incomparable to prior basis."
@@ -240,7 +240,7 @@
               }
             }
           },
-          "description": "Mandatory for full reconciliations from 2026-10-18: actual this-run opened readings cover all three scopes. Outstanding Oct18 deadline prevents successful release until completed."
+          "description": "Mandatory when full_reconciliation is true from cycle 2026-10-18: actual this-run opened readings cover all three scopes. Prioritize genuinely completing each due 28-day reconciliation. If due but incomplete, preserve the prior debt ledger/last_full_recon and debt indicator values/dates, mark debt_capex_ratio stale, count it in the unchanged stale>5 gate, and show a separate due/overdue warning in success and failure notifications. Incomplete reconciliation does not independently block the whole issue."
         }
       }
     },
@@ -597,5 +597,5 @@
       }
     }
   },
-  "$comment": "pipeline.py enforces dynamic indicator IDs, dates, freshness, scoring and cross-file rules. Successful releases additionally require narratives, wow_changes, debt_ledger and debt_review. Failed-data releases need only indicator/evidence fields. Schema validation alone is insufficient. Optional ledger candidates must preserve history. Per-indicator freshness, structural status/basis, source dates, lower-bound certainty, same-basis ARR dates and required debt reconciliation are dynamically enforced by pipeline.py."
+  "$comment": "pipeline.py enforces dynamic indicator IDs, dates, freshness, scoring and cross-file rules. Successful releases additionally require narratives, wow_changes, debt_ledger and debt_review. Failed-data releases need only indicator/evidence fields. Schema validation alone is insufficient. Optional ledger candidates must preserve history. Per-indicator freshness, structural status/basis, source dates, lower-bound certainty, same-basis ARR dates and due debt reconciliation staleness/source audits are dynamically enforced by pipeline.py."
 }

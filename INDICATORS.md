@@ -42,7 +42,7 @@
 
 - **new**：本期取得新观测（含本周完成的有记录扫描），`stale=false`、evidence.kind 为 web 或 prefetch，`as_of` 写真实观测日。扫描没有发现事件也是本期扫描观测，不代表证明所有事件为零。
 - **current（核实仍为最新）**：仅 periodic 可用。本期确实打开来源，核实最新披露仍是上期同一份，且未超过 Max age。value/status/as_of 及双语显示值与上期保持一致，`stale=false`、`evidence.kind="current"`；urls 非空，raw 必填 `latest_release_date`（实际披露日）及 `next_expected`（已公布的下次披露日期；未知时明确写“尚未公布”，不要推测日期）。raw 继续保留原始读数和 basis。current 不计入 stale 闸门，不允许仅复制上期值冒充核实。
-- **stale**：本期未能核实当前状态（主备源失败、扫描工具不可用或 current 已超龄）。evidence.kind=carry，`stale=true`，保留上期 value/status/as_of。stale>5 的失败闸门不变。
+- **stale**：本期未能核实当前状态（主备源失败、扫描工具不可用、current 已超龄，或2026-10-18 UTC周期起债务完整对账到期但未完成）。evidence.kind=carry，`stale=true`，保留上期 value/status/as_of 及双语显示值。债务到期未完成同样计入 stale 数；stale>5 的失败闸门不变。
 - **扫描证据**：raw 必填 `window:{start:"YYYY-MM-DD",end:"YYYY-MM-DD"}`、非空 queries、非空 sources_checked（实际检查成功的 URL 字符串，或 `{url,status:"ok"}`）、`events:[{date,what,url}]`。events 可以为空；note 写“本周扫描未见新事件”，这是有记录的尽职扫描结论。实际访问失败写 attempted_urls，不能算成功来源；工具/来源全部失败必须 stale。窗口按具体定义取 7-10 天、60 天、90 天或未来 6 个月，扫描日写 as_of。
 - 成功与失败通知都列出 new / current / stale 数量；current 披露日保持可见，不把“核实沿用”算成新增披露。
 
@@ -280,10 +280,10 @@ match_pct = Σ per-indicator(同色=1 / 相邻色=0.5 / 红绿对立=0) ÷ 该�
   - **每周必做（增量台账）**：web_search「过去 7-10 天新公告的 AI/数据中心债务融资」（关键词轮换使用：AI data center bond issuance / private credit data center deal / GPU-backed ABS / hyperscaler bond offering / Stargate financing 等，避免每周同一查询）。把搜到的新 deal **去重后追加**进 `docs/data/debt_ledger.json`（结构见下）。然后更新本指标：
     - `value` = 年化分子（ms_anchor 锚定值，用台账 YTD 累计交叉校准；若台账 run-rate 与锚定值偏离 >15%，以两者区间呈现并在 note 说明）÷ 分母 capex_denominator
     - note **必须给出周度边际**：「本周新增 $XB（列出 deal 名），YTD 台账累计 $YB，年化 run-rate 对应比值 Z%」；本周无新 deal 就写「本周无新增 deal，YTD 累计 $YB」——这本身也是边际信息
-    - `as_of` 更新为本期日期；单笔 ≥$10B 的新 deal 写进 wow_changes 并上飞书
-  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），并把 `last_full_recon` 更新为今天。到期但无法完成时保留旧 last_full_recon、记录原因，输出“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28）；通常为警告而非 stale/发布硬错误；**2026-10-18 周期例外：必须真正完成一次完整对账并更新 last_full_recon、分子、分母及出处，未完成不得发布成功包，不能只出逾期警告。** 周度增量不能替代本次完整对账。
+    - 完整对账未到期或本期已实际完成时，`as_of` 更新为本期日期；单笔 ≥$10B 的新 deal 写进 wow_changes 并上飞书。到期未完成的处理见下条。
+  - **每 28 天（完整对账）**：若 `今天 − debt_ledger.json 的 last_full_recon ≥ 28 天`，优先实际执行下面【完整拆解】，用结果修正台账（ms_anchor、capex_denominator、漏记的 deal），实际完成才把 `last_full_recon` 更新为今天。**2026-10-18 UTC周期起，每次到期但未完成时，debt_capex_ratio 标 stale，计入 stale>5 闸门；pipeline 原样沿用上期 value/status/as_of 及双语显示值，保留原债务台账和真实 last_full_recon，记录本期尝试与未完成原因。** 成功和失败通知都单列“⚠ 债务完整对账逾期 N 天”（N=距上次对账天数−28）；到期当天 N=0 也提示到期未完成。未完成不再单独阻断整期发布，是否发布仍由合计 stale 数及其他既有闸门决定。周度增量不能替代完整对账，不将本期日期或旧锚写成已完成对账。
   - `docs/data/debt_ledger.json` 结构：`{"last_full_recon": "YYYY-MM-DD", "ms_anchor": {"numerator_usd_b": N, "as_of": "YYYY-MM-DD", "source": "..."}, "capex_denominator_usd_b": N, "deals": [{"date": "YYYY-MM-DD", "borrower": "...", "instrument": "bond|loan|abs|private_credit|spv_jv", "amount_usd_b": N, "source_url": "..."}]}`。去重键 = borrower + amount 近似 + 公告日 ±7 天；同一 deal 的多篇报道只记一次。
-  - 通常周度扫描成功且仍有可用 ms_anchor 时不因完整对账逾期标 stale；2026-10-18 的强制完整对账发布闸门仍必须通过；周度搜索与锚定数据均无法提供可核实依据才为真失败。每次扫描仍必须有查询、来源和真实日期，不将未执行的对账写成已完成。
+  - 即使本期周度扫描成功且仍有可用 ms_anchor，到期未完成完整对账仍按上述政策标 stale。每次扫描与对账尝试保留查询、来源、真实访问时间和未完成原因；本期新增线索保留在研究证据中供下次对账去重补入，不清空或假更新台账。未到期则继续正常周度增量流程。
 - **【完整拆解】流量口径 = 2026E 全口径 AI 新增债务 ÷ 2026E 全口径 AI 基建 capex**。分子分母口径必须对齐（都用"全口径/all-in"，否则比值失真）：
   - **分子（新增债务，流量）**：web_search 当年 AI 相关新发债务总额。优先抓 Morgan Stanley「AI debt issuance / AI debt monitor」年度估算（最新一期，含已发 vs 全年预测）——它是全口径（公开债 + 私募信用 + ABS + JV/SPV）。交叉核对三块：① hyperscaler + JV 发债（MSFT/META/AMZN/GOOGL/Oracle 债券、Stargate 等）；② neoclouds 全部新增债务（CoreWeave/Nebius/Crusoe/Lambda 的债券、银行贷款、GPU 抵押 ABS）；③ 表外 SPV / 经营租赁融资（Meta Hyperion、Oracle Stargate-Abilene、Blue Owl/PIMCO/Blackstone 私募信用 SPV）。
   - **分母（capex，流量）**：web_search 2026E 全口径 AI 基建 capex。基线 = 五大 hyperscaler（含 Oracle）合计，**再加** neoclouds、Apple、中国、主权及其他 → 全口径约 $1.0-1.1T。**别只用 big-4 的 ~$700B 当分母**（会漏掉 neocloud capex，与全口径分子不匹配、比值虚高）。

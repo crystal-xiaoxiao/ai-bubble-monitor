@@ -591,14 +591,80 @@ def freshness_counts(indicators, evidence):
     return counts
 
 
-def debt_reconciliation_warning(root, context, ledger=None):
+def debt_reconciliation_age(root, context, ledger=None):
     ledger = ledger if ledger is not None else read(root / "docs/data/debt_ledger.json")
+    interval = read(root / "automation/task.json")["debt_reconciliation"]["interval_days"]
+    need(isinstance(interval, int) and not isinstance(interval, bool) and interval > 0, "Invalid debt reconciliation interval")
     age = (date.fromisoformat(context["as_of_date"]) - date.fromisoformat(ledger["last_full_recon"])).days
     need(age >= 0, "Future debt reconciliation date")
-    if age >= 28:
-        return {"debt_reconciliation_overdue_days": age - 28,
-                "message": f"⚠ 债务完整对账逾期 {age - 28} 天（上次 {ledger['last_full_recon']}）；周度增量扫描不替代完整对账"}
+    return age, interval
+
+
+def debt_reconciliation_warning(root, context, ledger=None):
+    ledger = ledger if ledger is not None else read(root / "docs/data/debt_ledger.json")
+    age, interval = debt_reconciliation_age(root, context, ledger)
+    if age >= interval:
+        return {"debt_reconciliation_overdue_days": age - interval,
+                "message": f"⚠ 债务完整对账逾期 {age - interval} 天（上次 {ledger['last_full_recon']}）；周度增量扫描不替代完整对账"}
     return None
+
+
+def apply_debt_reconciliation_policy(root, bundle, context):
+    """Carry an unreconciled due ratio before scoring and the aggregate stale gate."""
+    result = copy.deepcopy(bundle)
+    config = read(root / "automation/task.json")
+    effective = config["debt_reconciliation"]["stale_if_due_unreconciled_from_cycle"]
+    old_ledger = read(root / "docs/data/debt_ledger.json")
+    age, interval = debt_reconciliation_age(root, context, old_ledger)
+    review = result.get("debt_review", {})
+    if context["cycle"] < effective or age < interval or review.get("full_reconciliation") is True:
+        return result
+    candidate = result.get("debt_ledger", old_ledger)
+    need(candidate.get("last_full_recon") == old_ledger["last_full_recon"], "Cannot advance unreconciled date")
+    key = "debt_capex_ratio"
+    prior = next(i for i in read(root / "docs/data/latest.json")["indicators"] if i["id"] == key)
+    item = next(i for i in result["indicators"] if i["id"] == key)
+    ev = result["evidence"][key]
+    supplied_raw = copy.deepcopy(ev.get("raw", {}))
+    already_carried = ev.get("kind") == "carry" and supplied_raw.get("reconciliation_incomplete") is True
+    history = read(root / "docs/data/raw_history.json").get(key, [])
+    raw = supplied_raw if already_carried else copy.deepcopy(history[-1]["raw"] if history else {})
+    if not already_carried:
+        raw["attempted_observations"] = supplied_raw
+    pending = copy.deepcopy(raw.get("pending_debt_updates", {}))
+    changed = pending.get("changed_deals", [])
+    for deal in candidate.get("deals", []):
+        if deal not in old_ledger["deals"] and deal not in changed:
+            changed.append(copy.deepcopy(deal))
+    if changed:
+        pending["changed_deals"] = changed
+    for field in ("ms_anchor", "capex_denominator_usd_b"):
+        if field in candidate and candidate[field] != old_ledger.get(field):
+            pending["proposed_" + field] = copy.deepcopy(candidate[field])
+    if pending:
+        raw["pending_debt_updates"] = pending
+    for field in ("value", "value_display", "value_display_en", "status", "as_of", "basis"):
+        if field in prior:
+            item[field] = copy.deepcopy(prior[field])
+        else:
+            item.pop(field, None)
+    overdue = age - interval
+    reason = review.get("reconciliation_failure_note") or review.get("reconciliation_note") or "完整对账尚未完成 / full reconciliation not completed"
+    raw.update(reconciliation_incomplete=True, last_full_recon=old_ledger["last_full_recon"],
+               reconciliation_age_days=age, reconciliation_overdue_days=overdue,
+               reconciliation_failure_note=reason)
+    raw["fetch_failed"] = bool(supplied_raw.get("fetch_failed"))
+    item.update(stale=True, freshness="stale",
+                note=f"完整债务对账逾期 {overdue} 天仍未完成；沿用 {prior['as_of']} 的已发布值，本期周度线索保留待对账。",
+                note_en=f"Full debt reconciliation remains incomplete, {overdue} days overdue; carrying the published value as of {prior['as_of']}. This week's leads remain pending reconciliation.")
+    ev.update(kind="carry", raw=raw, rationale=f"Full debt reconciliation incomplete ({overdue} days overdue): {reason}")
+    result["debt_ledger"] = copy.deepcopy(old_ledger)
+    if isinstance(result.get("wow_changes"), list):
+        suppressed = [c for c in result["wow_changes"] if isinstance(c, dict) and c.get("indicator_id") == key]
+        if suppressed:
+            raw["suppressed_wow_changes"] = suppressed
+        result["wow_changes"] = [c for c in result["wow_changes"] if c not in suppressed]
+    return result
 
 
 def validate_indicators(root, bundle, context, at):
@@ -634,12 +700,18 @@ def validate_indicators(root, bundle, context, at):
             need(not item["stale"], f"{key}: current must have stale=false")
         if item["stale"]:
             need(source is None, f"{key}: usable prefetch must be consumed")
-            need(ev.get("kind") == "carry" and ev.get("attempted_urls"), f"{key}: document failed source chain")
+            reconciliation_carry = False
+            if key == "debt_capex_ratio" and ev.get("raw", {}).get("reconciliation_incomplete") is True:
+                age, interval = debt_reconciliation_age(root, context)
+                effective = config["debt_reconciliation"]["stale_if_due_unreconciled_from_cycle"]
+                reconciliation_carry = context["cycle"] >= effective and age >= interval and bundle.get("debt_review", {}).get("full_reconciliation") is not True
+            need(ev.get("kind") == "carry" and (ev.get("attempted_urls") or reconciliation_carry), f"{key}: document failed source chain or incomplete debt reconciliation")
             need(key in old, f"{key}: no prior value to carry")
             for field in ["value", "value_display", "value_display_en", "status", "as_of"]:
                 need(item.get(field) == old[key].get(field), f"{key}: stale carry changed {field}")
             raw = copy.deepcopy(ev["raw"])
-            raw["fetch_failed"] = True
+            if not reconciliation_carry:
+                raw["fetch_failed"] = True
         elif ev.get("kind") == "current":
             need(spec["cadence"] == "periodic", f"{key}: current is allowed only for periodic indicators")
             need(source is None, f"{key}: valid prefetch has priority")
@@ -764,11 +836,8 @@ def validate_debt(root, bundle, context, indicators, at=None):
     ev = bundle["debt_review"]
     item = next(i for i in indicators if i["id"] == "debt_capex_ratio")
     config = read(root / "automation/task.json")
-    deadline = config["debt_reconciliation"]["required_from_cycle"]
-    required = context["cycle"] >= deadline and old["last_full_recon"] < deadline
-    if required:
-        need(not item["stale"] and ev.get("full_reconciliation") is True, "Debt full reconciliation is mandatory from 2026-10-18 until actually completed; a warning or stale carry cannot release")
-    if required or (structural_active(config, context["cycle"]) and ev.get("full_reconciliation")):
+    if structural_active(config, context["cycle"]) and ev.get("full_reconciliation"):
+        need(not item["stale"], "Completed debt reconciliation cannot carry stale")
         audits = ev.get("reconciliation_sources")
         need(isinstance(audits, list) and audits, "Debt full reconciliation requires this-run source audit")
         scopes = set()
@@ -871,13 +940,17 @@ def build(root, bundle, context, at):
     need(timestamp(context["prepared_at"]) <= at + timedelta(minutes=5), "Future context")
     need(at - timestamp(context["prepared_at"]) < timedelta(hours=24), "Context expired; refresh evidence and prepare again")
     config = read(root / "automation/task.json")
+    input_bundle_sha256 = digest(encoded(bundle))
+    bundle = apply_debt_reconciliation_policy(root, bundle, context)
     indicators, history, previous, specs, calibration = validate_indicators(root, bundle, context, at)
     stale = [i["id"] for i in indicators if i["stale"]]
     counts = freshness_counts(indicators, bundle["evidence"])
     warning = debt_reconciliation_warning(root, context)
     run = {"schema_version": 1, "cycle": context["cycle"], "attempt": context["attempt"], "prepared_at": context["prepared_at"],
-           "base_commit": context["base_commit"], "inputs": context["inputs"], "bundle_sha256": digest(encoded(bundle)),
+           "base_commit": context["base_commit"], "inputs": context["inputs"], "bundle_sha256": input_bundle_sha256,
            "stale_ids": stale, "freshness_counts": counts, "evidence": bundle["evidence"], "delivery": "queued_only; inspect Feishu Relay result"}
+    if digest(encoded(bundle)) != input_bundle_sha256:
+        run["normalized_bundle_sha256"] = digest(encoded(bundle))
     files = {}
     if len(stale) > config["max_stale"]:
         run.update(status="failed_data", published_issue=None)
@@ -947,6 +1020,7 @@ def main():
     p.add_argument("--out", type=Path, default=Path(".run/context.json"))
     p = subs.add_parser("score")
     p.add_argument("--bundle", type=Path, required=True)
+    p.add_argument("--context", type=Path, default=Path(".run/context.json"))
     for command in ["build", "check"]:
         p = subs.add_parser(command)
         p.add_argument("--bundle", type=Path, required=True)
@@ -964,13 +1038,17 @@ def main():
         specs, calibration = definitions(root)
         bundle = read(args.bundle)
         config = read(root / "automation/task.json")
+        policy_active = bundle["cycle"] >= config["debt_reconciliation"]["stale_if_due_unreconciled_from_cycle"]
+        need(args.context.exists() or not policy_active, "Prepared context required for debt policy; run prepare first")
+        context = read(args.context) if args.context.exists() else {"cycle": bundle["cycle"], "as_of_date": now().date().isoformat()}
+        need(context["cycle"] == bundle["cycle"], "Score context/bundle cycle mismatch")
+        bundle = apply_debt_reconciliation_policy(root, bundle, context)
         indicators = copy.deepcopy(bundle["indicators"])
         previous = read(root / "docs/data/latest.json")
         if structural_active(config, bundle["cycle"]):
             ledgers = {key: ledger_candidate(root, bundle, key) for key in LEDGERS}
             old = {i["id"]: i for i in previous["indicators"]}
             history = read(root / "docs/data/raw_history.json")
-            context = {"as_of_date": now().date().isoformat()}
             for item in indicators:
                 item.pop("basis_changed", None)
                 if item["stale"]:
@@ -985,8 +1063,12 @@ def main():
                     if item["id"] == "arr_2nd_deriv":
                         item["basis_changed"] = item["basis_changed"] or old[item["id"]].get("basis_components") != raw["arr_basis_signature"]
         result, reasons = aggregate(indicators, previous, specs, calibration)
+        for item in indicators:
+            item["freshness"] = "stale" if item["stale"] else "current" if bundle["evidence"][item["id"]]["kind"] == "current" else "new"
         output = {"summary": result, "verdict_reasons": reasons,
-                  "indicator_statuses": {i["id"]: i["status"] for i in indicators}}
+                  "indicator_statuses": {i["id"]: i["status"] for i in indicators},
+                  "indicator_freshness": {i["id"]: i["freshness"] for i in indicators},
+                  "freshness_counts": freshness_counts(indicators, bundle["evidence"])}
     elif args.command in ["build", "check"]:
         context, bundle = read(args.context), read(args.bundle)
         files = build(root, bundle, context, now())

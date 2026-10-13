@@ -28,7 +28,7 @@
 - **prefetch 覆盖的指标（insider_sell_buy / token_volume_mom / top5_weight / hy_oas）一律先读 `docs/data/prefetch/latest.json`**（读法见第 1 步）：该源的 `data` 就是本期原始数据点，note 引用其 `summary` 里的数字，`as_of` 取该源的 `as_of` 字段（是数据自身日期，**不要改写成运行日期**）；prefetch 不可用才走 INDICATORS.md 里写明的备源链
 - 稳定 URL（multpl 等）→ WebFetch；主源失败走 INDICATORS.md 里写明的备源链
 - 指标按 Cadence 和最新主源表抓取；扫描类用有记录 WebSearch + 实际来源访问，periodic 核实最新披露。**Work 不直连 OpenRouter API 或 efts.sec.gov**，insider/token 只走 prefetch，公开新闻不替代聚合读数
-- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后追加进 debt_ledger.json，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate），as_of 更新为本期；距 last_full_recon ≥28 天尝试完整自下而上拆解并修正台账；未完成则保留真实 last_full_recon、写原因和逾期天数，警告而非硬错误。通常不能仅因对账逾期把有周度扫描与有效 ms_anchor 的指标标 stale；**2026-10-18 周期必须实际完成完整对账，更新 last_full_recon、全口径分子/分母与真实出处，未完成不得发布成功包，不能用逾期警告代替**
+- `debt_capex_ratio` → 严格按 INDICATORS.md「周度增量台账 + 28 天完整对账」规则：**每周**搜过去 7-10 天新公告的 AI/数据中心债务 deal（关键词轮换），去重后按正常增量流程更新台账，note 给出周度边际（本周新增 $XB / YTD 累计 / 年化 run-rate）。距 last_full_recon ≥28 天时优先实际完成自下而上拆解，核实全口径分子、分母及deal对账与出处，实际完成才更新 last_full_recon。**2026-10-18 UTC周期起，每次到期但未完成时，pipeline 将 debt_capex_ratio 标 stale，原样沿用上期 value/status/as_of 及双语显示值，保留原台账和真实 last_full_recon；计入 stale>5 闸门，成功/失败通知均单列到期或逾期警告。** 写出本期尝试、未完成原因与逾期天数，周度新线索保留在研究证据中供下次对账；未完成不再单独阻断整期发布，不伪造对账。未到期或本期完成时继续正常增量及本期 as_of 更新。
 - `frontier_progress` → 按 INDICATORS.md 三层量化：Epoch ECI SOTA/90天增幅（主锚，优先有效 frontier_eci prefetch）+ 困难基准90天 SOTA 位移 + 发布密度与叙事。METR 仅有新观测时参考；按 INDICATORS 的50%季均比较与连续两个窗口停滞规则，首期写明主锚切换；判定必须与 raw_history 上期数值对比
 - `enterprise_deploy` → KPMG同一问题 significant workforce adoption，以相邻季度 current_pct−previous_pct 的百分点变化评分：≥+3绿，−3≤变化<+3黄，<−3红。取消旧72%锚与红50/黄65的水平阈值；Q3 2026官方44%、Q2 23%、去年10%，真实披露日2026-09-24，不能把62%agent构建/部署问题混进来。季度间核实同一最新披露可 current，年龄≤200天。
 - `nvda_invest_revenue` → 读逐项已签署台账；equity/loan/convertible/担保只计可确认已签部分，条件性总额与未签意向排除，担保用签署上限并明示并非实际支付。对照最新LTM收入计算，不与旧43–45%直接作环比。分子清单只增量更新并保留修订证据；未知已签金额保留未知及覆盖缺口，可核实和只称下限，不虚构完整总额。
@@ -51,13 +51,13 @@
 **新鲜度三态（stale 表示“没能核实”，不是“没有新数据”）**
 - **new**：本期取得新观测，as_of 保留真实观测日；有记录的本周扫描也是新观测。
 - **current（核实仍为最新）**：仅 Cadence=periodic。本期确实打开非空 urls 的来源，确认最新披露仍是上期同一份；value/status/as_of/双语显示值原样保留，stale=false、evidence.kind=current，raw 保留原始读数及 `latest_release_date`、`next_expected`。next_expected 只写已公布日期，未知写“尚未公布”，不猜。年龄按真实 as_of 至本轮 UTC 日期计算，≤120天，enterprise_deploy ≤200天；超龄不能 current。current 不计 stale 闸门，不把旧披露写成本期日期。
-- **stale**：本期主备源都无法核实（或 current 超龄），kind=carry，沿用真实旧日期并计入闸门。
+- **stale**：本期主备源都无法核实、current 超龄，或2026-10-18 UTC周期起债务完整对账到期但未完成；kind=carry，沿用真实旧日期并计入闸门。债务对账未完成需如实写对应原因，不误称数据源不可用。
 
 **扫描类证据**：本周实际完成定义窗口的扫描，kind=web，as_of=扫描日；raw 必有 `window:{start,end}`（真实日期）、非空 queries、非空 sources_checked（成功检查的 URL 字符串或 `{url,status:"ok"}`）、`events:[{date,what,url}]`。events 可为空，双语 note 写“本周扫描未见新事件”，这是尽职扫描结论，不是声称确认所有事件为零；失败 URL 放 attempted_urls，不计成功来源，搜索/来源全失败必须 stale。
 
 **复合指标**：锚定分项按 INDICATORS 的“更新锚”；锚拿到新值即 new，其他分项可沿用但各带日期，双语 note 点名沿用项。不得以无关新数据代替锚；辅助缺口会改变状态时明确依据。
 
-**台账指标**：debt_capex_ratio、NVDA承诺分子、IPO名单以上期 raw/台账为基线只找新增或变化并去重；债务28天、NVDA财报后完整核对；2026-10-18必须实际完成债务完整对账。不清空历史。raw.basis 写 gross/net、全球/美国、TTM/YTD 或价格来源；跨口径不算环比、二阶差分或 value_change WoW，状态按同口径分项及方向证据判断。
+**台账指标**：debt_capex_ratio、NVDA承诺分子、IPO名单以上期 raw/台账为基线只找新增或变化并去重；债务每28天优先实际完整对账、NVDA财报后完整核对。2026-10-18 UTC周期起，债务到期未完成则保留原台账、该项标 stale 并单列警告，按总 stale 数决定发布。不清空历史。raw.basis 写 gross/net、全球/美国、TTM/YTD 或价格来源；跨口径不算环比、二阶差分或 value_change WoW，状态按同口径分项及方向证据判断。
 
 **证据分级**：IR/SEC、官方统计、数据站，以及 Reuters/Bloomberg/CNBC/WSJ/FT/The Information/Axios 的具体报道数字可用，媒体数字标“媒体口径”。原文403/付费墙先找 Yahoo Finance/MarketScreener/Investing.com/TipRanks 转载或 PR Newswire/BusinessWire/GlobeNewswire 新闻稿并实际打开。仅搜索摘要时至少两个独立来源数字一致（同稿转载不是独立），raw.tier=snippet 并记录对应来源；snippet 不能成为红灯升级的唯一依据。
 
@@ -121,7 +121,7 @@ verdict_desc 和 verdict_desc_en 都要写；须引用相似度最高的历史�
 
 ## 发布与运行总结
 
-不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。除本次明确改变的 enterprise季度Δ阈值与dc信用状态映射外，其余评分阈值及 stale>5 闸门不变；按最新 Cadence、来源和证据分级执行，不以达到预期 stale 数为目标牺牲事实核验。债务完整对账逾期通常单列警告；2026-10-18强制完整对账必须实际完成，未完成停止成功发布，不伪造对账。
+不得直接请求飞书 webhook，不读取其 secret，不把凭据写入文件。GitHub Actions 消费 pipeline 生成的 outbox。正常包包含 snapshot/latest/debt/raw_history/outbox/run；stale>5 的包只含失败 outbox 和失败 run。除本次明确改变的 enterprise季度Δ阈值与dc信用状态映射外，其余评分阈值及 stale>5 闸门不变；按最新 Cadence、来源和证据分级执行，不以达到预期 stale 数为目标牺牲事实核验。2026-10-18 UTC周期起，债务完整对账每次到期未完成都将该项标 stale 并计入总数，成功/失败通知单列警告；优先实际完成对账，未完成不再另设整期发布阻断，不伪造对账。
 
 按 RUNBOOK 单次提交 manifest 文件，确认远端 SHA、Pages 整份 JSON 与 relay 状态。分别输出 Issue/日期、红黄绿/风险温度、两轴、判读中英、历史相似度 top1、WoW/静态预警/新债务及 new/current/stale 数、提交链接、网页和通知状态。权限或 Safety 拒绝要如实报告，不更换通道规避。未知消息结果不得盲目重发。
 

@@ -209,30 +209,20 @@ class StructuralPipelineTests(TestCase):
         with self.assertRaisesRegex(p.GateError,'current changed canonical previous_pct'):
             p.build(self.root,b,self.context,self.at)
 
-    def test_debt_reconciliation_mandatory_even_if_debt_carried_stale(self):
+    def test_incomplete_due_debt_carry_no_longer_blocks_success_on_its_own(self):
         b=self.bundle()
         b['debt_review']['full_reconciliation']=False
         b['debt_ledger']['last_full_recon']='2026-09-06'
-        with self.assertRaisesRegex(p.GateError,'mandatory from 2026-10-18'):
-            p.build(self.root,b,self.context,self.at)
+        files=p.build(self.root,b,self.context,self.at)
+        self.assertEqual(files['runs/2026-10-18.json']['status'],'validated_release')
         item=next(i for i in b['indicators'] if i['id']=='debt_capex_ratio')
-        prior=next(i for i in self.old['indicators'] if i['id']=='debt_capex_ratio')
-        for field in ['value','value_display','value_display_en','status','as_of']:
-            if field in prior:
-                item[field]=prior[field]
-            else:
-                item.pop(field,None)
-        item['stale']=True
+        item['stale']=True  # A researcher can also mark the due item explicitly.
         b['evidence'][item['id']]['kind']='carry'
-        with self.assertRaisesRegex(p.GateError,'mandatory from 2026-10-18'):
-            p.build(self.root,b,self.context,self.at)
-        self.at+=timedelta(days=7)
-        self.context=p.prepare(self.root,self.at)
-        b=self.bundle()
-        b['debt_review']['full_reconciliation']=False
-        b['debt_ledger']['last_full_recon']='2026-09-06'
-        with self.assertRaisesRegex(p.GateError,'mandatory from 2026-10-18'):
-            p.build(self.root,b,self.context,self.at)
+        files=p.build(self.root,b,self.context,self.at)
+        run=files['runs/2026-10-18.json']
+        self.assertEqual(run['status'],'validated_release')
+        self.assertEqual(run['freshness_counts']['stale'],1)
+        self.assertIn('debt_capex_ratio',run['stale_ids'])
 
     def test_debt_source_audit_requires_all_scopes_and_real_this_run_timestamp(self):
         b=self.bundle()
@@ -243,7 +233,7 @@ class StructuralPipelineTests(TestCase):
         b['debt_review']['reconciliation_sources'][0]['checked_at']=p.iso(self.at+timedelta(hours=2))
         with self.assertRaisesRegex(p.GateError,'not checked in this run'):
             p.build(self.root,b,self.context,self.at)
-        # Completing the one-time deadline does not waive audit evidence for
+        # A prior successful reconciliation never waives audit evidence for
         # a later claimed full reconciliation.
         old=p.read(self.root/'docs/data/debt_ledger.json')
         old['last_full_recon']='2026-10-18'

@@ -43,7 +43,7 @@
   },
   "debt_reconciliation": {
     "interval_days": 28,
-    "required_from_cycle": "2026-10-18",
+    "stale_if_due_unreconciled_from_cycle": "2026-10-18",
     "completion_requires_this_run_source_audit": true
   },
   "migration": {
