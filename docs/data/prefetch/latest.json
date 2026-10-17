@@ -2,33 +2,33 @@
   "_meta": {
     "purpose": "GitHub Actions 每周六 13:23、周日 15:23 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-10-12T08:57:19.589Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/38226677164"
+    "fetched_at": "2026-10-17T16:30:34.118Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/39049654771"
   },
   "sources": {
     "insider_sell_buy": {
       "status": "ok",
-      "as_of": "2026-10-12",
+      "as_of": "2026-10-17",
       "window": {
-        "start": "2026-09-12",
-        "end": "2026-10-12"
+        "start": "2026-09-17",
+        "end": "2026-10-17"
       },
-      "summary": "12 家 30 日（2026-09-12~2026-10-12）：卖出 $673.6M / 买入 $3.6M，比值 186.8x（Form 4 公开市场 S/P 口径，共 163 份）",
+      "summary": "12 家 30 日（2026-09-17~2026-10-17）：卖出 $641.2M / 买入 $3.6M，比值 177.8x（Form 4 公开市场 S/P 口径，共 141 份）",
       "data": {
-        "sell_usd": 673603892,
+        "sell_usd": 641170687,
         "buy_usd": 3605267,
-        "ratio": 186.8,
+        "ratio": 177.8,
         "zero_buy": false,
-        "form4_count": 163,
+        "form4_count": 141,
         "skipped_no_price": 0,
-        "skipped_amendments": 0,
+        "skipped_amendments": 1,
         "skipped_ad_mismatch": 0,
         "skipped_non_xml": 0,
         "by_ticker": {
           "NVDA": {
             "sell_usd": 314582260,
             "buy_usd": 0,
-            "form4_count": 10
+            "form4_count": 9
           },
           "AVGO": {
             "sell_usd": 250006184,
@@ -36,44 +36,44 @@
             "form4_count": 3
           },
           "AMD": {
-            "sell_usd": 8683156,
+            "sell_usd": 0,
             "buy_usd": 0,
             "form4_count": 2
           },
           "MSFT": {
-            "sell_usd": 20764845,
+            "sell_usd": 3984303,
             "buy_usd": 0,
-            "form4_count": 31
+            "form4_count": 21
           },
           "GOOGL": {
             "sell_usd": 28257,
             "buy_usd": 0,
-            "form4_count": 20
+            "form4_count": 21
           },
           "META": {
-            "sell_usd": 67809313,
+            "sell_usd": 54415589,
             "buy_usd": 0,
             "form4_count": 10
           },
           "AMZN": {
             "sell_usd": 251500,
             "buy_usd": 0,
-            "form4_count": 3
+            "form4_count": 1
           },
           "ORCL": {
-            "sell_usd": 5342123,
+            "sell_usd": 3819296,
             "buy_usd": 3483800,
             "form4_count": 13
           },
           "TSM": {
             "sell_usd": 0,
             "buy_usd": 121467,
-            "form4_count": 60
+            "form4_count": 30
           },
           "MU": {
-            "sell_usd": 0,
+            "sell_usd": 5883460,
             "buy_usd": 0,
-            "form4_count": 3
+            "form4_count": 20
           },
           "ARM": {
             "sell_usd": 3120000,
@@ -81,9 +81,9 @@
             "form4_count": 3
           },
           "PLTR": {
-            "sell_usd": 3016255,
+            "sell_usd": 5079837,
             "buy_usd": 0,
-            "form4_count": 5
+            "form4_count": 8
           }
         }
       },
@@ -92,37 +92,17 @@
     },
     "token_volume": {
       "status": "ok",
-      "as_of": "2026-10-11",
-      "summary": "OpenRouter 官方 API：近 30 日 646.2T tokens，前 30 日 457.4T，MoM +41.3%（全平台 top50+other 口径，数据截至 2026-10-11）",
+      "as_of": "2026-10-16",
+      "summary": "OpenRouter 官方 API：近 30 日 684.5T tokens，前 30 日 489.6T，MoM +39.8%（全平台 top50+other 口径，数据截至 2026-10-16）",
       "data": {
-        "last30_tokens": 646221522824126,
-        "prev30_tokens": 457379451041524,
-        "last30_tokens_t": 646.2,
-        "prev30_tokens_t": 457.4,
-        "mom_pct": 41.3,
-        "last_data_date": "2026-10-11",
+        "last30_tokens": 684541397505100,
+        "prev30_tokens": 489563597133374,
+        "last30_tokens_t": 684.5,
+        "prev30_tokens_t": 489.6,
+        "mom_pct": 39.8,
+        "last_data_date": "2026-10-16",
         "days_covered": 70,
         "daily_tail": [
-          {
-            "date": "2026-10-05",
-            "tokens_t": 25.9
-          },
-          {
-            "date": "2026-10-06",
-            "tokens_t": 22.1
-          },
-          {
-            "date": "2026-10-07",
-            "tokens_t": 25.1
-          },
-          {
-            "date": "2026-10-08",
-            "tokens_t": 24.5
-          },
-          {
-            "date": "2026-10-09",
-            "tokens_t": 26.6
-          },
           {
             "date": "2026-10-10",
             "tokens_t": 24
@@ -130,6 +110,26 @@
           {
             "date": "2026-10-11",
             "tokens_t": 23.6
+          },
+          {
+            "date": "2026-10-12",
+            "tokens_t": 26.9
+          },
+          {
+            "date": "2026-10-13",
+            "tokens_t": 26.2
+          },
+          {
+            "date": "2026-10-14",
+            "tokens_t": 26.4
+          },
+          {
+            "date": "2026-10-15",
+            "tokens_t": 24.4
+          },
+          {
+            "date": "2026-10-16",
+            "tokens_t": 22.4
           }
         ]
       },
@@ -138,52 +138,52 @@
     },
     "top5_weight": {
       "status": "ok",
-      "as_of": "2026-10-12",
-      "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 28.35%（NVDA 8.34 / AAPL 7.43 / MSFT 5.8 / AMZN 3.73 / GOOGL 3.05）；含 Alphabet 双类约 30.8%；top10 39.07%",
+      "as_of": "2026-10-17",
+      "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 28.18%（NVDA 7.88 / AAPL 7.48 / MSFT 6 / AMZN 3.75 / GOOGL 3.07）；含 Alphabet 双类约 30.64%；top10 38.63%",
       "data": {
-        "top5_single_class_pct": 28.35,
-        "top5_with_dual_class_pct": 30.8,
-        "top10_pct": 39.07,
+        "top5_single_class_pct": 28.18,
+        "top5_with_dual_class_pct": 30.64,
+        "top10_pct": 38.63,
         "constituents": [
           {
             "symbol": "NVDA",
-            "weight_pct": 8.34
+            "weight_pct": 7.88
           },
           {
             "symbol": "AAPL",
-            "weight_pct": 7.43
+            "weight_pct": 7.48
           },
           {
             "symbol": "MSFT",
-            "weight_pct": 5.8
+            "weight_pct": 6
           },
           {
             "symbol": "AMZN",
-            "weight_pct": 3.73
+            "weight_pct": 3.75
           },
           {
             "symbol": "GOOGL",
-            "weight_pct": 3.05
-          },
-          {
-            "symbol": "AVGO",
-            "weight_pct": 2.56
+            "weight_pct": 3.07
           },
           {
             "symbol": "GOOG",
+            "weight_pct": 2.46
+          },
+          {
+            "symbol": "AVGO",
             "weight_pct": 2.45
           },
           {
             "symbol": "META",
-            "weight_pct": 2.38
+            "weight_pct": 2.43
           },
           {
             "symbol": "MU",
-            "weight_pct": 1.75
+            "weight_pct": 1.58
           },
           {
             "symbol": "TSLA",
-            "weight_pct": 1.58
+            "weight_pct": 1.53
           }
         ]
       },
@@ -192,31 +192,31 @@
     },
     "hy_oas": {
       "status": "ok",
-      "as_of": "2026-10-08",
-      "summary": "FRED BAMLH0A0HYM2 = 315 bps（观测日 2026-10-08）",
+      "as_of": "2026-10-15",
+      "summary": "FRED BAMLH0A0HYM2 = 323 bps（观测日 2026-10-15）",
       "data": {
-        "oas_bps": 315,
-        "obs_date": "2026-10-08",
+        "oas_bps": 323,
+        "obs_date": "2026-10-15",
         "recent": [
           {
-            "date": "2026-10-08",
-            "bps": 315
+            "date": "2026-10-15",
+            "bps": 323
           },
           {
-            "date": "2026-10-07",
-            "bps": 309
+            "date": "2026-10-14",
+            "bps": 325
           },
           {
-            "date": "2026-10-06",
-            "bps": 303
+            "date": "2026-10-13",
+            "bps": 316
           },
           {
-            "date": "2026-10-05",
-            "bps": 312
+            "date": "2026-10-12",
+            "bps": 311
           },
           {
-            "date": "2026-10-02",
-            "bps": 310
+            "date": "2026-10-09",
+            "bps": 311
           }
         ]
       },
@@ -226,92 +226,92 @@
     "frontier_eci": {
       "status": "ok",
       "as_of": "2026-09-22",
-      "summary": "Epoch ECI SOTA Claude Opus 5.5 167.33（2026-09-22）；90 天增幅 5.26；过去一年季均增幅 4.2625",
+      "summary": "Epoch ECI SOTA Claude Opus 5.5 166.82（2026-09-22）；90 天增幅 4.69；过去一年季均增幅 4.02",
       "data": {
         "basis": "Epoch ECI rolling maximum by model release date; historical cutoffs reconstructed from the same download",
-        "cutoff_date": "2026-10-12",
+        "cutoff_date": "2026-10-17",
         "baseline_cutoffs": {
-          "90d": "2026-07-14",
-          "180d": "2026-04-15",
-          "365d": "2025-10-12"
+          "90d": "2026-07-19",
+          "180d": "2026-04-20",
+          "365d": "2025-10-17"
         },
         "current_sota": {
           "model": "Claude Opus 5.5",
-          "eci": 167.33,
-          "eci_ci_low": 164.06,
-          "eci_ci_high": 171.68,
+          "eci": 166.82,
+          "eci_ci_low": 163.54,
+          "eci_ci_high": 170.99,
           "date": "2026-09-22",
           "organization": "Anthropic"
         },
         "sota_90d_ago": {
-          "model": "GPT-5.5 Pro",
-          "eci": 162.07,
-          "eci_ci_low": 158.98,
-          "eci_ci_high": 165.82,
-          "date": "2026-04-23",
-          "organization": "OpenAI"
+          "model": "Claude Fable 5",
+          "eci": 162.13,
+          "eci_ci_low": 159.53,
+          "eci_ci_high": 166.32,
+          "date": "2026-06-09",
+          "organization": "Anthropic"
         },
         "sota_180d_ago": {
           "model": "GPT-5.4 Pro",
-          "eci": 158.93,
-          "eci_ci_low": 156.59,
-          "eci_ci_high": 161.78,
+          "eci": 159,
+          "eci_ci_low": 156.48,
+          "eci_ci_high": 161.69,
           "date": "2026-03-05",
           "organization": "OpenAI"
         },
         "sota_365d_ago": {
           "model": "GPT-5 Pro",
-          "eci": 150.28,
-          "eci_ci_low": 148.56,
-          "eci_ci_high": 152.85,
+          "eci": 150.74,
+          "eci_ci_low": 148.91,
+          "eci_ci_high": 154,
           "date": "2025-10-07",
           "organization": "OpenAI"
         },
-        "gain_90d": 5.26,
-        "gain_previous_90d": 3.14,
-        "gain_1y": 17.05,
-        "avg_quarterly_gain_1y": 4.2625,
-        "gain_90d_to_quarterly_1y_ratio": 1.234018,
+        "gain_90d": 4.69,
+        "gain_previous_90d": 3.13,
+        "gain_1y": 16.08,
+        "avg_quarterly_gain_1y": 4.02,
+        "gain_90d_to_quarterly_1y_ratio": 1.166667,
         "frontier_entrants_90d": [
           {
             "model": "Claude Opus 5",
-            "eci": 162.78,
-            "eci_ci_low": 160.12,
-            "eci_ci_high": 166.47,
+            "eci": 162.6,
+            "eci_ci_low": 160,
+            "eci_ci_high": 165.75,
             "date": "2026-07-24",
             "organization": "Anthropic"
           },
           {
             "model": "Claude Fable 5.1",
-            "eci": 164.7,
-            "eci_ci_low": 161.63,
-            "eci_ci_high": 168.81,
+            "eci": 164.65,
+            "eci_ci_low": 161.92,
+            "eci_ci_high": 168.48,
             "date": "2026-09-01",
             "organization": "Anthropic"
           },
           {
             "model": "GPT-6 Astra",
-            "eci": 166.45,
-            "eci_ci_low": 163.34,
-            "eci_ci_high": 171.46,
+            "eci": 166.41,
+            "eci_ci_low": 163.35,
+            "eci_ci_high": 171.23,
             "date": "2026-09-03",
             "organization": "OpenAI"
           },
           {
             "model": "Claude Opus 5.5",
-            "eci": 167.33,
-            "eci_ci_low": 164.06,
-            "eci_ci_high": 171.68,
+            "eci": 166.82,
+            "eci_ci_low": 163.54,
+            "eci_ci_high": 170.99,
             "date": "2026-09-22",
             "organization": "Anthropic"
           }
         ],
-        "models_covered": 274,
+        "models_covered": 277,
         "models_missing_confidence_intervals": 2,
         "models_missing_organization": 17,
         "future_models_excluded": 0,
         "earliest_model_date": "2023-02-24",
-        "latest_model_date": "2026-09-29"
+        "latest_model_date": "2026-10-07"
       },
       "source": "https://epoch.ai/data/benchmark_data.zip",
       "error": null
