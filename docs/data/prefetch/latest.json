@@ -2,31 +2,31 @@
   "_meta": {
     "purpose": "GitHub Actions 每周六 13:23、周日 15:23 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-10-17T16:30:34.118Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/39049654771"
+    "fetched_at": "2026-10-18T18:13:10.553Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/39153099618"
   },
   "sources": {
     "insider_sell_buy": {
       "status": "ok",
-      "as_of": "2026-10-17",
+      "as_of": "2026-10-18",
       "window": {
-        "start": "2026-09-17",
-        "end": "2026-10-17"
+        "start": "2026-09-18",
+        "end": "2026-10-18"
       },
-      "summary": "12 家 30 日（2026-09-17~2026-10-17）：卖出 $641.2M / 买入 $3.6M，比值 177.8x（Form 4 公开市场 S/P 口径，共 141 份）",
+      "summary": "12 家 30 日（2026-09-18~2026-10-18）：卖出 $633.5M / 买入 $3.6M，比值 175.7x（Form 4 公开市场 S/P 口径，共 138 份）",
       "data": {
-        "sell_usd": 641170687,
+        "sell_usd": 633522055,
         "buy_usd": 3605267,
-        "ratio": 177.8,
+        "ratio": 175.7,
         "zero_buy": false,
-        "form4_count": 141,
+        "form4_count": 138,
         "skipped_no_price": 0,
         "skipped_amendments": 1,
         "skipped_ad_mismatch": 0,
         "skipped_non_xml": 0,
         "by_ticker": {
           "NVDA": {
-            "sell_usd": 314582260,
+            "sell_usd": 306933628,
             "buy_usd": 0,
             "form4_count": 9
           },
@@ -43,7 +43,7 @@
           "MSFT": {
             "sell_usd": 3984303,
             "buy_usd": 0,
-            "form4_count": 21
+            "form4_count": 20
           },
           "GOOGL": {
             "sell_usd": 28257,
@@ -53,7 +53,7 @@
           "META": {
             "sell_usd": 54415589,
             "buy_usd": 0,
-            "form4_count": 10
+            "form4_count": 9
           },
           "AMZN": {
             "sell_usd": 251500,
@@ -78,7 +78,7 @@
           "ARM": {
             "sell_usd": 3120000,
             "buy_usd": 0,
-            "form4_count": 3
+            "form4_count": 2
           },
           "PLTR": {
             "sell_usd": 5079837,
@@ -92,21 +92,17 @@
     },
     "token_volume": {
       "status": "ok",
-      "as_of": "2026-10-16",
-      "summary": "OpenRouter 官方 API：近 30 日 684.5T tokens，前 30 日 489.6T，MoM +39.8%（全平台 top50+other 口径，数据截至 2026-10-16）",
+      "as_of": "2026-10-17",
+      "summary": "OpenRouter 官方 API：近 30 日 682.9T tokens，前 30 日 496.8T，MoM +37.5%（全平台 top50+other 口径，数据截至 2026-10-17）",
       "data": {
-        "last30_tokens": 684541397505100,
-        "prev30_tokens": 489563597133374,
-        "last30_tokens_t": 684.5,
-        "prev30_tokens_t": 489.6,
-        "mom_pct": 39.8,
-        "last_data_date": "2026-10-16",
+        "last30_tokens": 682929062749910,
+        "prev30_tokens": 496809461366334,
+        "last30_tokens_t": 682.9,
+        "prev30_tokens_t": 496.8,
+        "mom_pct": 37.5,
+        "last_data_date": "2026-10-17",
         "days_covered": 70,
         "daily_tail": [
-          {
-            "date": "2026-10-10",
-            "tokens_t": 24
-          },
           {
             "date": "2026-10-11",
             "tokens_t": 23.6
@@ -130,6 +126,10 @@
           {
             "date": "2026-10-16",
             "tokens_t": 22.4
+          },
+          {
+            "date": "2026-10-17",
+            "tokens_t": 18.3
           }
         ]
       },
@@ -138,7 +138,7 @@
     },
     "top5_weight": {
       "status": "ok",
-      "as_of": "2026-10-17",
+      "as_of": "2026-10-18",
       "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 28.18%（NVDA 7.88 / AAPL 7.48 / MSFT 6 / AMZN 3.75 / GOOGL 3.07）；含 Alphabet 双类约 30.64%；top10 38.63%",
       "data": {
         "top5_single_class_pct": 28.18,
@@ -229,11 +229,11 @@
       "summary": "Epoch ECI SOTA Claude Opus 5.5 166.82（2026-09-22）；90 天增幅 4.69；过去一年季均增幅 4.02",
       "data": {
         "basis": "Epoch ECI rolling maximum by model release date; historical cutoffs reconstructed from the same download",
-        "cutoff_date": "2026-10-17",
+        "cutoff_date": "2026-10-18",
         "baseline_cutoffs": {
-          "90d": "2026-07-19",
-          "180d": "2026-04-20",
-          "365d": "2025-10-17"
+          "90d": "2026-07-20",
+          "180d": "2026-04-21",
+          "365d": "2025-10-18"
         },
         "current_sota": {
           "model": "Claude Opus 5.5",
