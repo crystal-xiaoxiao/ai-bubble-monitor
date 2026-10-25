@@ -5,20 +5,20 @@
     "dedupe_rule": "borrower + amount 近似 + 公告日 ±7 天视为同一 deal，多篇报道只记一次",
     "coverage_note": "deals 为 2026 年内可公开追溯的大额 deal 流水（非完备清单，完备口径以 ms_anchor 为准）；单笔 ≥$10B 的新 deal 需同时写入 wow_changes 与飞书推送"
   },
-  "last_full_recon": "2026-09-06",
+  "last_full_recon": "2026-10-25",
   "ms_anchor": {
-    "numerator_usd_b": 600,
+    "numerator_usd_b": 570,
     "numerator_range_usd_b": [
-      570,
-      650
+      506,
+      600
     ],
-    "as_of": "2026-09-06",
-    "source": "Morgan Stanley 2026E all-in AI debt issuance ~$570B（公开债+私募信用+ABS+JV/SPV，6 月口径未修订）。2026-09-06 完整对账交叉：Goldman 9/4 将 2026 美元 IG 总发行预测由 $2.1T 上调至 $2.3T、AI 相关发行人约占 24%（≈$550B，仅公开 IG 层）、AI 相关债务 YTD 约 $500B；JPMorgan 9/1 六家 hyperscaler 美元债存量 >$360B、利差 50→80bp；Morningstar 7 月底 AI 债发行 >$250B。三块交叉后分子改为区间 $570-650B、中心 $600B（MS 锚仍为下沿）",
+    "as_of": "2026-10-25",
+    "source": "Morgan Stanley 2026 full-year all-in AI debt forecast $570B remains the scope-matched center. Full reconciliation on 2026-10-25 cross-checked the forecast against at least $466B issued through September plus the separately announced $40B SpaceX financing, and Goldman Sachs' nearly $500B YTD estimate. These checks are not added to the anchor when scope may overlap.",
     "offbs_spv_usd_b": 105,
     "offbs_spv_note": "Oracle (Abilene $10B 债/德州威州 Vantage $38B/新墨西哥 $18B)、xAI GPU SPV、CoreWeave-OpenAI SPV、Meta 外部算力承诺、**Nvidia-OpenAI 俄亥俄融资担保「最多 $105B」（2026-08-17 SEC 文件；由此前传闻的 $250B 正式下修，初期 4.25GW + 3.75GW 选择权，SB Energy 建设、OpenAI 20 年租约、2028 年起分期上线）**——Blue Owl/PIMCO/BlackRock/Apollo/JPM 出资"
   },
-  "capex_denominator_usd_b": 1080,
-  "denominator_note": "2026E 全口径 compute capex（2026-09-06 对账）：Big5 含 Oracle $775-800B（取 $790B）+ Apple $13B + neoclouds $60B + 中国 $80B + 主权 $60B + 其他 $77B ≈ $1,080B；S&P Global 六家 hyperscaler 口径 $870B 作交叉（2027E $1.3T）",
+  "capex_denominator_usd_b": 1000,
+  "denominator_note": "2026E comprehensive global AI infrastructure investment approximately $1.0T, using Goldman Sachs' August global estimate as the scope-matched denominator; Gartner's October nearly-$1T infrastructure forecast and TrendForce's $957B nine-CSP subset are cross-checks, not additive components. Leases are excluded where separable and overlapping tenant/developer spend is not double counted.",
   "deals": [
     {
       "date": "2026-04-15",
@@ -181,7 +181,31 @@
       "note": "历史台账记录日期9/22来自转载；本期官方原文核实实际交割日2026-08-27，定价8/12，金额$0.926B、Moody Baa2、SOFR+3%、2030-12-31到期。保留原记录键避免视为新增，实际事件日期以本note和actual_close_date为准。",
       "actual_close_date": "2026-08-27",
       "date_basis": "historical_record_date_not_closing_date"
+    },
+    {
+      "date": "2026-10-01",
+      "borrower": "Lambda",
+      "instrument": "loan",
+      "amount_usd_b": 1.008,
+      "source_url": "https://lambda.ai/blog/lambda-closes-1-billion-senior-secured-fixed-rate-financing",
+      "note": "$1.008B delayed-draw senior secured fixed-rate financing closed; 6.78%, A(low)/Baa1. Historical catch-up booked in the 2026-10-25 full reconciliation, not counted as this week's new issuance."
+    },
+    {
+      "date": "2026-09-25",
+      "borrower": "CleanSpark",
+      "instrument": "bond",
+      "amount_usd_b": 2.276,
+      "source_url": "https://investors.cleanspark.com/news/news-details/2026/CleanSpark-Inc--Announces-Closing-of-2-276-Billion-of-Senior-Secured-Notes/default.aspx",
+      "note": "$2.276B senior secured notes closed September 25 at 7.875%. Historical catch-up booked in the 2026-10-25 full reconciliation, not counted as this week's new issuance."
+    },
+    {
+      "date": "2026-10-25",
+      "borrower": "SpaceX",
+      "instrument": "private_credit",
+      "amount_usd_b": 40.0,
+      "source_url": "https://www.reuters.com/business/media-telecom/musk-says-spacex-has-closed-40-billion-debt-deal-2026-10-25/",
+      "note": "Elon Musk said the $40B callable debt financing had closed. Public reporting did not disclose tranche/pricing detail and noted that the precise meaning of closed was unclear; recorded at stated signed/closed amount with that limitation. Weekly new deal ≥$10B."
     }
   ],
-  "ledger_note": "2026-10-12扫描10/2–10/12无已核实新增deal；同一Broadcom在市指示70→60B，不作新增。台账200.147B/20笔含在市未定价，折年256.329B、比值23.73%只作不完备下限。Lambda10/1已交割1B在周窗外，记录于evidence.pending_reconciliation_deals，待完整对账补录；旧926M真实交割Aug27已修正note，保留9/22历史记录键。完整对账未完成、last_full_recon2026-09-06及600B中心/570–650B年度锚和1080B分母未刷新。"
+  "ledger_note": "2026-10-25 full reconciliation completed. Public-deal ledger totals $243.431B across 23 records and is an auditable, non-exhaustive lower-bound trail; annual ratio continues to use the scope-matched Morgan Stanley $570B all-in anchor over the $1.0T global AI-infrastructure denominator. Lambda $1.008B and CleanSpark $2.276B are historical catch-ups; SpaceX $40B is this week's only newly booked deal. Overlap checks prevent adding ledger sums to the annual anchor."
 }
