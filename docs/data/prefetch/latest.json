@@ -2,22 +2,22 @@
   "_meta": {
     "purpose": "GitHub Actions 每周六 13:23、周日 15:23 UTC 机械抓取的原始数据，供 routine 优先取用。routine 判定规则：_meta.fetched_at 距今 <3 天 且 对应 sources.*.status==\"ok\" 才可用；否则该指标按 INDICATORS.md 的备源链处理。partial = 数据可用但有缺口，须结合 error 字段人工判读。",
     "schema_version": 1,
-    "fetched_at": "2026-10-31T17:49:08.225Z",
-    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/41226311913"
+    "fetched_at": "2026-11-01T19:48:32.481Z",
+    "workflow_run": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/actions/runs/41343552029"
   },
   "sources": {
     "insider_sell_buy": {
       "status": "ok",
-      "as_of": "2026-10-31",
+      "as_of": "2026-11-01",
       "window": {
-        "start": "2026-10-01",
-        "end": "2026-10-31"
+        "start": "2026-10-02",
+        "end": "2026-11-01"
       },
-      "summary": "12 家 30 日（2026-10-01~2026-10-31）：卖出 $58.1M / 买入 $0.1M，比值 478.1x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 104 份）",
+      "summary": "12 家 30 日（2026-10-02~2026-11-01）：卖出 $57.6M / 买入 $0.1M，比值 474x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 104 份）",
       "data": {
-        "sell_usd": 58078980,
+        "sell_usd": 57573516,
         "buy_usd": 121467,
-        "ratio": 478.1,
+        "ratio": 474,
         "zero_buy": true,
         "form4_count": 104,
         "skipped_no_price": 0,
@@ -56,7 +56,7 @@
             "form4_count": 7
           },
           "AMZN": {
-            "sell_usd": 251500,
+            "sell_usd": 0,
             "buy_usd": 0,
             "form4_count": 1
           },
@@ -81,7 +81,7 @@
             "form4_count": 0
           },
           "PLTR": {
-            "sell_usd": 8247704,
+            "sell_usd": 7993741,
             "buy_usd": 0,
             "form4_count": 11
           }
@@ -92,21 +92,17 @@
     },
     "token_volume": {
       "status": "ok",
-      "as_of": "2026-10-30",
-      "summary": "OpenRouter 官方 API：近 30 日 762.7T tokens，前 30 日 575.9T，MoM +32.4%（全平台 top50+other 口径，数据截至 2026-10-30）",
+      "as_of": "2026-10-31",
+      "summary": "OpenRouter 官方 API：近 30 日 763.8T tokens，前 30 日 583.1T，MoM +31%（全平台 top50+other 口径，数据截至 2026-10-31）",
       "data": {
-        "last30_tokens": 762694058704154,
-        "prev30_tokens": 575897453150323,
-        "last30_tokens_t": 762.7,
-        "prev30_tokens_t": 575.9,
-        "mom_pct": 32.4,
-        "last_data_date": "2026-10-30",
+        "last30_tokens": 763758235871477,
+        "prev30_tokens": 583149863249938,
+        "last30_tokens_t": 763.8,
+        "prev30_tokens_t": 583.1,
+        "mom_pct": 31,
+        "last_data_date": "2026-10-31",
         "days_covered": 70,
         "daily_tail": [
-          {
-            "date": "2026-10-24",
-            "tokens_t": 23.4
-          },
           {
             "date": "2026-10-25",
             "tokens_t": 23.4
@@ -130,6 +126,10 @@
           {
             "date": "2026-10-30",
             "tokens_t": 30.4
+          },
+          {
+            "date": "2026-10-31",
+            "tokens_t": 24.5
           }
         ]
       },
@@ -138,7 +138,7 @@
     },
     "top5_weight": {
       "status": "ok",
-      "as_of": "2026-10-31",
+      "as_of": "2026-11-01",
       "summary": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 27.44%（NVDA 7.77 / AAPL 7.65 / MSFT 5.92 / AMZN 3.6 / GOOGL 2.5）；含 Alphabet 双类约 29.46%；top10 37.36%",
       "data": {
         "top5_single_class_pct": 27.44,
@@ -229,11 +229,11 @@
       "summary": "Epoch ECI SOTA GPT-6 Astra 169.06（2026-09-03）；90 天增幅 4.59；过去一年季均增幅 4.58",
       "data": {
         "basis": "Epoch ECI rolling maximum by model release date; historical cutoffs reconstructed from the same download",
-        "cutoff_date": "2026-10-31",
+        "cutoff_date": "2026-11-01",
         "baseline_cutoffs": {
-          "90d": "2026-08-02",
-          "180d": "2026-05-04",
-          "365d": "2025-10-31"
+          "90d": "2026-08-03",
+          "180d": "2026-05-05",
+          "365d": "2025-11-01"
         },
         "current_sota": {
           "model": "GPT-6 Astra",
