@@ -205,7 +205,31 @@
       "amount_usd_b": 40.0,
       "source_url": "https://www.reuters.com/business/media-telecom/musk-says-spacex-has-closed-40-billion-debt-deal-2026-10-25/",
       "note": "Elon Musk said the $40B callable debt financing had closed. Public reporting did not disclose tranche/pricing detail and noted that the precise meaning of closed was unclear; recorded at stated signed/closed amount with that limitation. Weekly new deal ≥$10B."
+    },
+    {
+      "date": "2026-10-17",
+      "borrower": "Nebius",
+      "instrument": "loan",
+      "amount_usd_b": 3.5,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_6k.htm",
+      "note": "$3.5B senior secured term loan facility signed October 17 and announced October 22; historical catch-up found in this week scan, not labeled current-week issuance."
+    },
+    {
+      "date": "2026-10-22",
+      "borrower": "Crusoe",
+      "instrument": "private_credit",
+      "amount_usd_b": 0.7,
+      "source_url": "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+      "note": "$700M asset-based facility announced October 22 to finance power infrastructure for Crusoe-built and owned AI factories; historical catch-up found this week."
+    },
+    {
+      "date": "2026-10-28",
+      "borrower": "EdgeCore Digital Infrastructure",
+      "instrument": "abs",
+      "amount_usd_b": 0.521,
+      "source_url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+      "note": "$521M green ABS completed, backed by fully stabilized SV01 Santa Clara data center; current-week new deal."
     }
   ],
-  "ledger_note": "2026-10-25 full reconciliation completed. Public-deal ledger totals $243.431B across 23 records and is an auditable, non-exhaustive lower-bound trail; annual ratio continues to use the scope-matched Morgan Stanley $570B all-in anchor over the $1.0T global AI-infrastructure denominator. Lambda $1.008B and CleanSpark $2.276B are historical catch-ups; SpaceX $40B is this week's only newly booked deal. Overlap checks prevent adding ledger sums to the annual anchor."
+  "ledger_note": "Incremental lower-bound deal ledger; not a replacement for the $570B annual all-in financing anchor. Total recorded amount $248.152B as of 2026-11-01; includes $4.2B historical catch-up and $0.521B current-week new debt."
 }

@@ -1,0 +1,1832 @@
+{
+  "schema_version": 1,
+  "cycle": "2026-11-01",
+  "attempt": 1,
+  "prepared_at": "2026-11-01T23:00:12Z",
+  "base_commit": "d106a35b17bf8c9f7fc71aa8db8b126030e5ab67",
+  "inputs": {
+    "INDICATORS.md": "2592f6068d06e563f699042cfeb3eaf879b5a010db0aabce450b204b8200ba72",
+    "ROUTINE_PROMPT.md": "5347ca5448c95616cf2c3fa66d8a8326bbe38a8505111f03484e73e46d78fa64",
+    "automation/task.json": "f53e4cd60f6e4f36d8d6b91d65414ff0eba5a14da2d521fd01c370e2aaf23a08",
+    "scripts/pipeline.py": "26eb466e384a389d4019823d9861e258dd48124144df41666007b185ac3ebac3",
+    "docs/data/latest.json": "6a330caca3b546a28ebbc939bfd9a34272ff350c2cd965e43c77a42e85f8dccc",
+    "docs/data/debt_ledger.json": "a23775df2249faab441b7ab19e9fd9c3dfba290b74938bf04030c7738689d0db",
+    "docs/data/raw_history.json": "afc1f35caf469b8a3de7fb9a6b84cc557e7f43ccb4ac60f37e1544cf431af1de",
+    "docs/data/prefetch/latest.json": "83a1e1123fc2e370d7e6bb188e5f48453b649da8f947bcbd1a42f9e75c382df0",
+    "docs/data/nvda_commitments.json": "3877b78fdf2128bac697ae03eb0fc3ed04b9b401642d41c8175198b8d7bdf6ca",
+    "docs/data/arr_ledger.json": "3c69f5b0eaf13acb767c485a99735056717083784f52bc8298b66e79af14b7a6"
+  },
+  "bundle_sha256": "4c4d3f6bc433ebb2135faf16513f5225add53e7fbea8217b0e9428183eca37ce",
+  "stale_ids": [],
+  "freshness_counts": {
+    "new": 20,
+    "current": 5,
+    "stale": 0
+  },
+  "evidence": {
+    "cape": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "multpl": 41.04,
+        "observation_close": "2026-10-28",
+        "prior_actual": 40.36,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.multpl.com/shiller-pe",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 81363
+          }
+        ]
+      },
+      "urls": [
+        "https://www.multpl.com/shiller-pe"
+      ],
+      "rationale": "Multpl实际页10/28读数41.04，仍为红。 The live Multpl page showed 41.04 on October 28, still red."
+    },
+    "nvda_fpe": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "forward_pe": 16.92,
+        "close_usd": 204.64,
+        "observation_close": "2026-10-30 16:00 EDT",
+        "this_run_source_audit": [
+          {
+            "url": "https://stockanalysis.com/stocks/nvda/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://stockanalysis.com/stocks/nvda/"
+      ],
+      "rationale": "10/30实际页Forward PE=16.92x，绿。 The live October 30 page showed 16.92x, green."
+    },
+    "top5_weight": {
+      "kind": "prefetch",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "top5_single_class_pct": 27.44,
+        "top5_with_dual_class_pct": 29.46,
+        "top10_pct": 37.36,
+        "constituents": [
+          {
+            "symbol": "NVDA",
+            "weight_pct": 7.77
+          },
+          {
+            "symbol": "AAPL",
+            "weight_pct": 7.65
+          },
+          {
+            "symbol": "MSFT",
+            "weight_pct": 5.92
+          },
+          {
+            "symbol": "AMZN",
+            "weight_pct": 3.6
+          },
+          {
+            "symbol": "GOOGL",
+            "weight_pct": 2.5
+          },
+          {
+            "symbol": "AVGO",
+            "weight_pct": 2.47
+          },
+          {
+            "symbol": "META",
+            "weight_pct": 2.07
+          },
+          {
+            "symbol": "GOOG",
+            "weight_pct": 2.02
+          },
+          {
+            "symbol": "TSLA",
+            "weight_pct": 1.71
+          },
+          {
+            "symbol": "LLY",
+            "weight_pct": 1.65
+          }
+        ]
+      },
+      "urls": [
+        "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json"
+      ],
+      "rationale": "slickcharts 不可用（curl: curl: (22) The requested URL returned error: 403），已切 SSGA SPY 官方持仓；前 5 单类权重合计 27.44%（NVDA 7.77 / AAPL 7.65 / MSFT 5.92 / AMZN 3.6 / GOOGL 2.5）；含 Alphabet 双类约 29.46%；top10 37.36%"
+    },
+    "insider_sell_buy": {
+      "kind": "prefetch",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "sell_usd": 57573516,
+        "buy_usd": 121467,
+        "ratio": 474,
+        "zero_buy": true,
+        "form4_count": 104,
+        "skipped_no_price": 0,
+        "skipped_amendments": 1,
+        "skipped_ad_mismatch": 0,
+        "skipped_non_xml": 0,
+        "by_ticker": {
+          "NVDA": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "AVGO": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "AMD": {
+            "sell_usd": 9333585,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "MSFT": {
+            "sell_usd": 3984303,
+            "buy_usd": 0,
+            "form4_count": 2
+          },
+          "GOOGL": {
+            "sell_usd": 23288,
+            "buy_usd": 0,
+            "form4_count": 15
+          },
+          "META": {
+            "sell_usd": 4664923,
+            "buy_usd": 0,
+            "form4_count": 7
+          },
+          "AMZN": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 1
+          },
+          "ORCL": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 14
+          },
+          "TSM": {
+            "sell_usd": 0,
+            "buy_usd": 121467,
+            "form4_count": 30
+          },
+          "MU": {
+            "sell_usd": 31573676,
+            "buy_usd": 0,
+            "form4_count": 21
+          },
+          "ARM": {
+            "sell_usd": 0,
+            "buy_usd": 0,
+            "form4_count": 0
+          },
+          "PLTR": {
+            "sell_usd": 7993741,
+            "buy_usd": 0,
+            "form4_count": 11
+          }
+        }
+      },
+      "urls": [
+        "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json"
+      ],
+      "rationale": "12 家 30 日（2026-10-02~2026-11-01）：卖出 $57.6M / 买入 $0.1M，比值 474x（买盘近零，比值对分母极敏感）（Form 4 公开市场 S/P 口径，共 104 份）"
+    },
+    "hy_oas": {
+      "kind": "prefetch",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "oas_bps": 326,
+        "obs_date": "2026-10-29",
+        "recent": [
+          {
+            "date": "2026-10-29",
+            "bps": 326
+          },
+          {
+            "date": "2026-10-28",
+            "bps": 314
+          },
+          {
+            "date": "2026-10-27",
+            "bps": 318
+          },
+          {
+            "date": "2026-10-26",
+            "bps": 330
+          },
+          {
+            "date": "2026-10-23",
+            "bps": 338
+          }
+        ]
+      },
+      "urls": [
+        "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json"
+      ],
+      "rationale": "FRED BAMLH0A0HYM2 = 326 bps（观测日 2026-10-29）"
+    },
+    "token_volume_mom": {
+      "kind": "prefetch",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "last30_tokens": 763758235871477,
+        "prev30_tokens": 583149863249938,
+        "last30_tokens_t": 763.8,
+        "prev30_tokens_t": 583.1,
+        "mom_pct": 31,
+        "last_data_date": "2026-10-31",
+        "days_covered": 70,
+        "daily_tail": [
+          {
+            "date": "2026-10-25",
+            "tokens_t": 23.4
+          },
+          {
+            "date": "2026-10-26",
+            "tokens_t": 26.3
+          },
+          {
+            "date": "2026-10-27",
+            "tokens_t": 27
+          },
+          {
+            "date": "2026-10-28",
+            "tokens_t": 29.4
+          },
+          {
+            "date": "2026-10-29",
+            "tokens_t": 33.1
+          },
+          {
+            "date": "2026-10-30",
+            "tokens_t": 30.4
+          },
+          {
+            "date": "2026-10-31",
+            "tokens_t": 24.5
+          }
+        ]
+      },
+      "urls": [
+        "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json"
+      ],
+      "rationale": "OpenRouter 官方 API：近 30 日 763.8T tokens，前 30 日 583.1T，MoM +31%（全平台 top50+other 口径，数据截至 2026-10-31）"
+    },
+    "breadth_50d": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "close_pct": 60.23,
+        "open_pct": 64.81,
+        "high_pct": 64.81,
+        "low_pct": 59.84,
+        "observation_close": "2026-10-30",
+        "prior_actual": 58.05,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.investing.com/indices/s-p-500-stocks-above-50-day-average-historical-data",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 956375
+          }
+        ],
+        "pct_above_50d": 60.23
+      },
+      "urls": [
+        "https://www.investing.com/indices/s-p-500-stocks-above-50-day-average-historical-data"
+      ],
+      "rationale": "实际历史表10/30收盘60.23%，绿。 Live historical table: 60.23% at the October 30 close, green."
+    },
+    "private_secondary_marks": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "Clarity via StockAnalysis private company pages; indicative secondary marks, not executed transactions",
+        "anthropic": {
+          "price_usd": 995.22,
+          "implied_valuation_usd_b": 842.18,
+          "primary_valuation_usd_b": 965,
+          "as_of": "2026-11-01",
+          "primary_date": "2026-05-28",
+          "discount_pct": -12.73
+        },
+        "openai": {
+          "price_usd": 938.11,
+          "implied_valuation_usd_b": 1104.33,
+          "primary_valuation_usd_b": 852,
+          "as_of": "2026-11-01",
+          "primary_date": "2026-03-31",
+          "premium_pct": 29.62
+        },
+        "this_run_source_audit": [
+          {
+            "url": "https://stockanalysis.com/private/anthropic/valuation/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 111989
+          },
+          {
+            "url": "https://stockanalysis.com/private/openai/valuation/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 114901
+          }
+        ]
+      },
+      "urls": [
+        "https://stockanalysis.com/private/anthropic/valuation/",
+        "https://stockanalysis.com/private/openai/valuation/"
+      ],
+      "rationale": "两家Clarity实际页于11/1抓取；Anthropic折价超过5%故红，OpenAI仍溢价。 Both live Clarity pages were fetched on November 1; Anthropic is more than 5% below its round and therefore red while OpenAI remains at a premium."
+    },
+    "hyperscaler_capex_yoy": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "Mag4 aligned calendar-Q3 actuals: operating cash flow minus gross cash purchases/additions of PP&E; excludes finance-lease principal/assets and asset-sale/incentive offsets.",
+        "basis_change": true,
+        "correction": false,
+        "correction_note": "All four companies now have calendar-Q3 actuals. The serialized basis label changes from the prior mixed-quarter description; cross-basis WoW is excluded even though the cash-capex measurement remains gross PP&E purchases/additions.",
+        "latest_release_date": "2026-10-29",
+        "reporting_period_end": "2026-09-30 for all four companies",
+        "next_expected": "下一轮四家公司季报。",
+        "components": [
+          {
+            "name": "MSFT",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "FY27Q1",
+            "release_date": "2026-10-28",
+            "ocf_2026_usd_m": 58000,
+            "ocf_2025_usd_m": 45057,
+            "cash_ppe_2026_usd_m": 39367,
+            "cash_ppe_2025_usd_m": 19394,
+            "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "fcf_2026_usd_m": 18633,
+            "fcf_2025_usd_m": 25663
+          },
+          {
+            "name": "META",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-21",
+            "ocf_2026_usd_m": 32786,
+            "ocf_2025_usd_m": 29999,
+            "cash_ppe_2026_usd_m": 33942,
+            "cash_ppe_2025_usd_m": 18829,
+            "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "fcf_2026_usd_m": -1156,
+            "fcf_2025_usd_m": 11170
+          },
+          {
+            "name": "GOOGL",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-28",
+            "ocf_2026_usd_m": 42290,
+            "ocf_2025_usd_m": 48414,
+            "cash_ppe_2026_usd_m": 51355,
+            "cash_ppe_2025_usd_m": 23953,
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+            "fcf_2026_usd_m": -9065,
+            "fcf_2025_usd_m": 24461
+          },
+          {
+            "name": "AMZN",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-29",
+            "ocf_2026_usd_m": 42422,
+            "ocf_2025_usd_m": 35525,
+            "cash_ppe_2026_usd_m": 77259,
+            "cash_ppe_2025_usd_m": 35095,
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+            "fcf_2026_usd_m": -34837,
+            "fcf_2025_usd_m": 430
+          }
+        ],
+        "current_aggregate_usd_m": 201923,
+        "prior_year_aggregate_usd_m": 97271,
+        "yoy_pct": 107.588079,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+        "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+        "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+        "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm"
+      ],
+      "rationale": "官方Q3现金流表逐项合计得现金PP&E同比+107.59%，黄；四家公司报告期已对齐。 Official Q3 cash-flow statements sum to +107.59% cash PP&E YoY, yellow, with aligned reporting periods."
+    },
+    "mag4_fcf_yoy": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "Mag4 aligned calendar-Q3 actuals: operating cash flow minus gross cash purchases/additions of PP&E; excludes finance-lease principal/assets and asset-sale/incentive offsets.",
+        "basis_change": true,
+        "correction": false,
+        "correction_note": "All four companies now have calendar-Q3 actuals. The serialized basis label changes from the prior mixed-quarter description; cross-basis WoW is excluded even though the cash-capex measurement remains gross PP&E purchases/additions.",
+        "latest_release_date": "2026-10-29",
+        "reporting_period_end": "2026-09-30 for all four companies",
+        "next_expected": "下一轮四家公司季报。",
+        "components": [
+          {
+            "name": "MSFT",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "FY27Q1",
+            "release_date": "2026-10-28",
+            "ocf_2026_usd_m": 58000,
+            "ocf_2025_usd_m": 45057,
+            "cash_ppe_2026_usd_m": 39367,
+            "cash_ppe_2025_usd_m": 19394,
+            "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "fcf_2026_usd_m": 18633,
+            "fcf_2025_usd_m": 25663
+          },
+          {
+            "name": "META",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-21",
+            "ocf_2026_usd_m": 32786,
+            "ocf_2025_usd_m": 29999,
+            "cash_ppe_2026_usd_m": 33942,
+            "cash_ppe_2025_usd_m": 18829,
+            "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "fcf_2026_usd_m": -1156,
+            "fcf_2025_usd_m": 11170
+          },
+          {
+            "name": "GOOGL",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-28",
+            "ocf_2026_usd_m": 42290,
+            "ocf_2025_usd_m": 48414,
+            "cash_ppe_2026_usd_m": 51355,
+            "cash_ppe_2025_usd_m": 23953,
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+            "fcf_2026_usd_m": -9065,
+            "fcf_2025_usd_m": 24461
+          },
+          {
+            "name": "AMZN",
+            "reporting_period_end": "2026-09-30",
+            "fiscal_period": "Q3 2026",
+            "release_date": "2026-10-29",
+            "ocf_2026_usd_m": 42422,
+            "ocf_2025_usd_m": 35525,
+            "cash_ppe_2026_usd_m": 77259,
+            "cash_ppe_2025_usd_m": 35095,
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+            "fcf_2026_usd_m": -34837,
+            "fcf_2025_usd_m": 430
+          }
+        ],
+        "current_aggregate_usd_m": 201923,
+        "prior_year_aggregate_usd_m": 97271,
+        "yoy_pct": -142.811548,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ],
+        "current_aggregate_fcf_usd_m": -26425,
+        "prior_year_aggregate_fcf_usd_m": 61724
+      },
+      "urls": [
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+        "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+        "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+        "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm"
+      ],
+      "rationale": "官方Q3现金流表逐项计算Mag4 FCF由$61,724M降至−$26,425M，−142.81%，红。 Official Q3 cash-flow statements show Mag4 FCF falling from $61,724m to −$26,425m, −142.81%, red."
+    },
+    "vc_ai_share": {
+      "kind": "current",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "ai_funding_usd_b": 102,
+        "total_funding_usd_b": 159,
+        "period": "2026Q3",
+        "basis": "crunchbase_global_quarterly",
+        "previous_basis": "PitchBook US",
+        "basis_change": false,
+        "release_date": "2026-10-05",
+        "fetch_method": "urllib public HTTPS source body HTTP 200",
+        "fetched_at": "2026-10-12T09:36:51.429853Z",
+        "source_http_status": 200,
+        "geography": "global",
+        "period_start": "2026-07-01",
+        "period_end": "2026-09-30",
+        "no_cross_basis_wow": true,
+        "reported_share_pct": 64,
+        "calculated_share_pct": 64.150943,
+        "next_expected": "下一季度报告具体日期尚未公布。",
+        "correction": false,
+        "checked_again_at": "2026-11-01T23:07:16Z",
+        "this_run_source_audit": [
+          {
+            "url": "https://news.crunchbase.com/venture/q3-2026-global-startup-funding-ai-billion-dollar-rounds-exits-data/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 166709
+          }
+        ],
+        "latest_release_date": "2026-10-05"
+      },
+      "urls": [
+        "https://news.crunchbase.com/venture/q3-2026-global-startup-funding-ai-billion-dollar-rounds-exits-data/"
+      ],
+      "rationale": "实际重读10/5最新季度披露，未见更新且未超龄，current/红。 Reopened the October 5 latest quarterly release; no newer filing and not over-age, current/red."
+    },
+    "nvda_invest_revenue": {
+      "kind": "current",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "signed_customer_financing_including_guarantees",
+        "basis_switch": true,
+        "ledger_path": "docs/data/nvda_commitments.json",
+        "ledger_sha256": "3877b78fdf2128bac697ae03eb0fc3ed04b9b401642d41c8175198b8d7bdf6ca",
+        "weekly_queries": [
+          "Nvidia signed customer investment guarantee October 26 November 1 2026",
+          "Nvidia Nscale Anthropic credit guarantee signed October 2026"
+        ],
+        "weekly_new_confirmed_quantified_commitments": [],
+        "scope_exclusions": [
+          "October 29 Nscale/Anthropic residual-value guarantee discussions were explicitly unsigned and had no disclosed amount; excluded."
+        ],
+        "ltm_quarters": [
+          {
+            "fiscal_period": "FY2026 Q3",
+            "period_end": "2025-10-26",
+            "revenue_usd_bn": 57.006,
+            "source_date": "2025-11-19",
+            "source_url": "https://investor.nvidia.com/news/press-release-details/2025/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2026/default.aspx",
+            "accessed_at": "2026-10-12T10:39:19.188Z"
+          },
+          {
+            "fiscal_period": "FY2026 Q4",
+            "period_end": "2026-01-25",
+            "revenue_usd_bn": 68.127,
+            "source_date": "2026-02-25",
+            "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/default.aspx",
+            "accessed_at": "2026-10-12T10:39:19.188Z"
+          },
+          {
+            "fiscal_period": "FY2027 Q1",
+            "period_end": "2026-04-26",
+            "revenue_usd_bn": 81.615,
+            "source_date": "2026-05-20",
+            "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "accessed_at": "2026-10-12T10:39:19.188Z"
+          },
+          {
+            "fiscal_period": "FY2027 Q2",
+            "period_end": "2026-07-26",
+            "revenue_usd_bn": 96.221,
+            "source_date": "2026-08-26",
+            "source_url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/default.aspx",
+            "accessed_at": "2026-10-12T10:39:19.188Z"
+          }
+        ],
+        "unknown_allocations_remain_unknown": true,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.reuters.com/technology/nvidia-talks-give-credit-support-nscales-deal-with-anthropic-information-reports-2026-10-30/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ],
+        "latest_release_date": "2026-09-17",
+        "next_expected": "NVIDIA下一季财报或新的已签定量融资承诺。",
+        "checked_again_at": "2026-11-01T23:07:16Z"
+      },
+      "urls": [
+        "https://www.reuters.com/technology/nvidia-talks-give-credit-support-nscales-deal-with-anthropic-information-reports-2026-10-30/",
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
+      ],
+      "rationale": "新报道明确Nscale担保未签且无金额，台账无新增；最新已签分子仍为9/17，current。 New reporting explicitly says the Nscale guarantee was unsigned and unquantified; no ledger addition and the latest signed numerator remains September 17, current."
+    },
+    "arr_2nd_deriv": {
+      "kind": "current",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "same_basis_disclosed_series_3m_vs_prior3m",
+        "basis_switch": true,
+        "arr_ledger_sha256": "3c69f5b0eaf13acb767c485a99735056717083784f52bc8298b66e79af14b7a6",
+        "latest_search_queries": [
+          "Anthropic S-1 run-rate revenue October 31 2026 actual",
+          "OpenAI actual annualized revenue run rate October 2026"
+        ],
+        "new_actual_comparable_run_rate_points": [],
+        "not_ledger_points": [
+          {
+            "company": "Anthropic",
+            "source_date": "2026-10-26",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+            "reason": "The S-1 contains a future-dated October 31 Run-Rate Revenue field but leaves the amount blank; no point is inserted."
+          },
+          {
+            "company": "Anthropic",
+            "period": "2026Q3",
+            "quarter_revenue_usd_bn": 16.8,
+            "reason": "Actual quarterly revenue is cross-check evidence, not a run-rate observation; no annualization inserted."
+          }
+        ],
+        "latest_openai_actual_as_of": "2026-09-30",
+        "latest_openai_actual_net_run_rate_usd_bn": 50,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.investing.com/news/stock-market-news/anthropic-revenue-run-rate-tops-65-billion-source-says-4864031",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ],
+        "latest_release_date": "2026-07-31",
+        "next_expected": "Anthropic S-1/A filling the blank October 31 run-rate field or another dated actual same-basis disclosure.",
+        "checked_again_at": "2026-11-01T23:07:16Z"
+      },
+      "urls": [
+        "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+        "https://www.investing.com/news/stock-market-news/anthropic-revenue-run-rate-tops-65-billion-source-says-4864031"
+      ],
+      "rationale": "S-1实际打开但run-rate金额为空，未新增或估算；7/31实际披露仍最新且未超龄，current。 The S-1 was opened but its run-rate amount is blank; nothing is inserted or estimated, and July 31 remains the latest actual within age, current."
+    },
+    "enterprise_deploy": {
+      "kind": "current",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "kpmg_significant_workforce_adoption",
+        "basis_switch": true,
+        "current_pct": 44,
+        "previous_pct": 23,
+        "current_quarter": "2026-Q3",
+        "previous_quarter": "2026-Q2",
+        "change_pp": 21,
+        "publication_date": "2026-09-24",
+        "survey_start": "2026-07-24",
+        "survey_end": "2026-08-25",
+        "sample_size": 314,
+        "population": "US executives at organizations with annual revenue >=$1bn",
+        "year_ago_pct": 10,
+        "latest_release_date": "2026-09-24",
+        "next_expected": "KPMG下一期AI Quarterly Pulse，具体日期尚未公布。",
+        "this_run_source_audit": [
+          {
+            "url": "https://kpmg.com/us/en/media/news/q3-ai-pulse-2026.html",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 227152
+          }
+        ],
+        "checked_again_at": "2026-11-01T23:07:16Z"
+      },
+      "urls": [
+        "https://kpmg.com/us/en/media/news/q3-ai-pulse-2026.html"
+      ],
+      "rationale": "实际重读KPMG 9/24发布，未见新季度且未超龄，current/绿。 Reopened the September 24 KPMG release; no newer quarter and within age, current/green."
+    },
+    "dc_abs_spread": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-08-03",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "data center ABS project finance default downgrade withdrawal repricing October 26 November 1 2026",
+          "Project Jupiter force majeure September 24 2026",
+          "EdgeCore 521 million ABS October 28 2026"
+        ],
+        "sources_checked": [
+          "https://www.datacenterdynamics.com/en/news/oracle-issues-force-majeure-notice-to-blue-owl-following-series-of-setbacks-at-project-jupiter-data-center-campus-report/",
+          "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing"
+        ],
+        "events": [
+          {
+            "date": "2026-09-24",
+            "what": "Project Jupiter force-majeure notice remains inside the 90-day window; Oracle said the project remained on schedule and it is not labeled a payment default.",
+            "url": "https://www.datacenterdynamics.com/en/news/oracle-issues-force-majeure-notice-to-blue-owl-following-series-of-setbacks-at-project-jupiter-data-center-campus-report/",
+            "event_type": "force_majeure",
+            "confirmed": true
+          },
+          {
+            "date": "2026-10-28",
+            "what": "EdgeCore completed a $521m green ABS backed by a fully stabilized 36MW Santa Clara data center leased to an investment-grade hyperscale tenant.",
+            "url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+            "event_type": "smooth_issuance",
+            "confirmed": true
+          }
+        ],
+        "basis": "dc_abs_project_finance_credit_status",
+        "basis_switch": false,
+        "excluded_proxies": [
+          "Corporate-bond secondary prices are not comparable ABS/project-loan spreads.",
+          "No same-security spread widening of at least 50bp was verified."
+        ],
+        "this_run_source_audit": [
+          {
+            "url": "https://www.datacenterdynamics.com/en/news/oracle-issues-force-majeure-notice-to-blue-owl-following-series-of-setbacks-at-project-jupiter-data-center-campus-report/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.datacenterdynamics.com/en/news/oracle-issues-force-majeure-notice-to-blue-owl-following-series-of-setbacks-at-project-jupiter-data-center-campus-report/",
+        "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing"
+      ],
+      "rationale": "90天窗口含确认force majeure故红；同时记录EdgeCore顺利ABS，避免只收集负面证据。 Red because the 90-day window contains a confirmed force majeure; EdgeCore’s smooth ABS is also recorded to avoid one-sided evidence."
+    },
+    "neocloud_credit": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-08-03",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "CoreWeave Nebius Nscale Lambda Crusoe default downgrade watch October 26 November 1 2026"
+        ],
+        "sources_checked": [
+          "https://www.reuters.com/legal/transactional/coreweave-shares-bonds-slide-further-ai-debt-fears-mount-2026-10-15/",
+          "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+          "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+          "https://www.reuters.com/technology/nvidia-talks-give-credit-support-nscales-deal-with-anthropic-information-reports-2026-10-30/"
+        ],
+        "events": [],
+        "basis": "Recorded issuer-specific searches and opened sources; absence is a due-diligence finding, not universal proof.",
+        "universe": [
+          "CoreWeave",
+          "Nebius",
+          "Nscale",
+          "Lambda",
+          "Crusoe"
+        ],
+        "qualifying_events_found": 0,
+        "important_nonqualifying_stress": {
+          "CoreWeave": "Secondary bond/CDS stress remains, but no new formal default/downgrade/Watch was verified.",
+          "Nscale": "NVIDIA residual-value guarantee discussions were unsigned; financing talks are not a formal credit event.",
+          "Nebius": "$3.5bn Citi facility signed; evidence of access rather than an adverse rating event.",
+          "Crusoe": "$700m facility announced; no formal adverse event."
+        },
+        "this_run_source_audit": [
+          {
+            "url": "https://www.reuters.com/legal/transactional/coreweave-shares-bonds-slide-further-ai-debt-fears-mount-2026-10-15/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.reuters.com/technology/nvidia-talks-give-credit-support-nscales-deal-with-anthropic-information-reports-2026-10-30/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.reuters.com/legal/transactional/coreweave-shares-bonds-slide-further-ai-debt-fears-mount-2026-10-15/",
+        "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+        "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+        "https://www.reuters.com/technology/nvidia-talks-give-credit-support-nscales-deal-with-anthropic-information-reports-2026-10-30/"
+      ],
+      "rationale": "具名90天扫描未见合同定义事件，绿；并保留重要非合格压力。 Named 90-day scan found no contract-defined event, green, while retaining material non-qualifying stress."
+    },
+    "ai_ipo_pipeline": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-10-26",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "AI IPO filing Anthropic Nscale DayOne SB Energy Switch October 26 November 1 2026"
+        ],
+        "sources_checked": [
+          "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/0001628280-26-067168-index.htm",
+          "https://stockanalysis.com/ipos/filings/",
+          "https://stockanalysis.com/ipos/calendar/"
+        ],
+        "events": [
+          {
+            "date": "2026-10-26",
+            "what": "Anthropic publicly filed Form S-1 and applied for Nasdaq symbol ANT; it replaces the prior confidential-filing status and does not add a duplicate company.",
+            "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/0001628280-26-067168-index.htm"
+          }
+        ],
+        "basis": "Recorded source searches and actual opened sources; absence is a due-diligence finding, not universal proof.",
+        "near_term_count": 5,
+        "forward_window": {
+          "start": "2026-10-18",
+          "end": "2027-04-18"
+        },
+        "list": [
+          {
+            "name": "DayOne",
+            "status": "F-1 filed; November target reported, subject to change",
+            "date": "2026-10-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/2118192/000119312526414188/0001193125-26-414188-index.html"
+          },
+          {
+            "name": "Nscale",
+            "status": "S-1 filed; active public filing",
+            "date": "2026-09-18",
+            "url": "https://stockanalysis.com/ipos/filings/"
+          },
+          {
+            "name": "SB Energy",
+            "status": "Publicly filed September1; marketing postponed September25, new timing unknown",
+            "date": "2026-09-25",
+            "url": "https://www.reuters.com/legal/transactional/data-center-ipo-hopefuls-brave-tougher-market-investor-scrutiny-grows-2026-09-25/"
+          },
+          {
+            "name": "Switch",
+            "status": "Confidential filing; expected after DayOne",
+            "date": "2026-09-25",
+            "url": "https://www.reuters.com/legal/transactional/data-center-ipo-hopefuls-brave-tougher-market-investor-scrutiny-grows-2026-09-25/"
+          },
+          {
+            "name": "Anthropic",
+            "status": "Public S-1 filed; Nasdaq symbol ANT; price range blank",
+            "date": "2026-10-26",
+            "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/0001628280-26-067168-index.htm"
+          }
+        ],
+        "exploratory_not_in_near_term_count": [
+          {
+            "name": "Vantage",
+            "status": "Reported exploring; no verified six-month timing",
+            "date": "2026-09-13",
+            "url": "https://www.bisnow.com/news/national/data-center-capital-markets/surging-ipo-pipeline-data-centers-return-wall-street?.tsrc=rss"
+          },
+          {
+            "name": "Blue Owl data-center REIT",
+            "status": "Reported exploring; no verified six-month timing",
+            "date": "2026-09-13",
+            "url": "https://www.bisnow.com/news/national/data-center-capital-markets/surging-ipo-pipeline-data-centers-return-wall-street?.tsrc=rss"
+          },
+          {
+            "name": "DataBank",
+            "status": "Reported exploring; no verified six-month timing",
+            "date": "2026-09-13",
+            "url": "https://www.bisnow.com/news/national/data-center-capital-markets/surging-ipo-pipeline-data-centers-return-wall-street?.tsrc=rss"
+          },
+          {
+            "name": "EdgeCore",
+            "status": "Reported exploring; no verified six-month timing",
+            "date": "2026-09-13",
+            "url": "https://www.bisnow.com/news/national/data-center-capital-markets/surging-ipo-pipeline-data-centers-return-wall-street?.tsrc=rss"
+          }
+        ],
+        "excluded": [
+          {
+            "name": "Cerebras",
+            "reason": "already listed; not future pipeline"
+          },
+          {
+            "name": "Lambda",
+            "reason": "2027 IPO planned, specific date inside six-month horizon unverified"
+          },
+          {
+            "name": "CyrusOne",
+            "reason": "2027 potential offering; six-month timing unverified"
+          },
+          {
+            "name": "Crusoe",
+            "reason": "previous exploration not independently verified this scan"
+          },
+          {
+            "name": "Firmus",
+            "reason": "IPO shelved October9; unspecified international alternatives not counted"
+          }
+        ],
+        "incremental_note": "Anthropic moved from confidential to public S-1; the deduplicated five-name forward list is unchanged. No tenth qualifying AI name was verified.",
+        "this_run_source_audit": [
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/0001628280-26-067168-index.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/0001628280-26-067168-index.htm",
+        "https://stockanalysis.com/ipos/filings/",
+        "https://stockanalysis.com/ipos/calendar/"
+      ],
+      "rationale": "实际打开Anthropic 10/26 SEC索引；去重名单仍5家，黄。 Opened Anthropic’s October 26 SEC filing index; deduplicated list remains five, yellow."
+    },
+    "cloud_rpo_growth": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "latest_release_date": "2026-10-29",
+        "next_expected": "Oracle下一财报及四家公司下一季披露。",
+        "orcl_rpo_usd_b": 664,
+        "orcl_asof": "2026-09-10",
+        "msft_commercial_rpo_usd_b": 677,
+        "msft_asof": "2026-09-30",
+        "msft_duration_years": 2.3,
+        "aws_rpo_usd_b": 578,
+        "aws_period_end": "2026-09-30",
+        "aws_duration_yrs": 6.1,
+        "google_cloud_backlog_usd_b": 560.8,
+        "google_period_end": "2026-09-30",
+        "combined_rpo_usd_t": 2.4798,
+        "previous_combined_rpo_usd_t": 2.3529,
+        "combined_change_pct": 5.393345,
+        "basis": "Mixed-date latest disclosed commercial RPO / cloud backlog levels; company definitions and durations differ, so the aggregate is a demand-stock cross-check, not realized revenue.",
+        "basis_change": false,
+        "correction": false,
+        "this_run_source_audit": [
+          {
+            "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.oracle.com/news/announcement/q1fy27-earnings-release-2026-09-10/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+        "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000093/goog-20260930.htm",
+        "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930.htm",
+        "https://www.oracle.com/news/announcement/q1fy27-earnings-release-2026-09-10/"
+      ],
+      "rationale": "实际Q3 SEC/IR披露合计$2.4798T，较上期台账高5.39%，绿。 Actual Q3 SEC/IR disclosures total $2.4798tn, 5.39% above the prior ledger, green."
+    },
+    "gpu_rental_price": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "getdeploying",
+        "h100_median_on_demand_usd_hr": 3.29,
+        "sample_count": 21,
+        "sample": [
+          2.59,
+          2.89,
+          3.99,
+          2.49,
+          2.73,
+          3.95,
+          6.0,
+          3.29,
+          4.29,
+          3.39,
+          3.8,
+          3.5,
+          2.19,
+          2.5,
+          3.2,
+          6.95,
+          1.98,
+          1.75,
+          3.37,
+          1.8,
+          3.49
+        ],
+        "filter": {
+          "gpu_count": 1,
+          "billing": "on-demand",
+          "availability": "In stock"
+        },
+        "method": "Parsed all live HTML tables and took the median of numeric single-GPU on-demand in-stock H100 rows.",
+        "prior_median_usd_hr": 3.39,
+        "sample_median_change_pct": -2.949853,
+        "limitations": [
+          "Listed prices are not executions.",
+          "Returned sample composition changed; not a matched-provider index."
+        ],
+        "this_run_source_audit": [
+          {
+            "url": "https://getdeploying.com/reference/cloud-gpu/nvidia-h100",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 933780
+          }
+        ]
+      },
+      "urls": [
+        "https://getdeploying.com/reference/cloud-gpu/nvidia-h100"
+      ],
+      "rationale": "实际页筛选21条后中位$3.29/hr，周变−2.95%，绿。 Live-page 21-row filter gives $3.29/hour median, −2.95% weekly, green."
+    },
+    "frontier_progress": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "Epoch ECI is the primary anchor; hard benchmarks and release density are auxiliary and not cross-spliced.",
+        "basis_change": false,
+        "window": {
+          "start": "2026-08-03",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "frontier model release hard benchmark October 26 November 1 2026 ECI HLE FrontierMath"
+        ],
+        "sources_checked": [
+          "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json",
+          "https://epoch.ai/data/benchmark_data.zip",
+          "https://epoch.ai/benchmarks/eci"
+        ],
+        "events": [
+          {
+            "date": "2026-09-01",
+            "what": "Claude Fable 5.1 entered the 90-day ECI frontier at 166.36",
+            "url": "https://epoch.ai/data/benchmark_data.zip"
+          },
+          {
+            "date": "2026-09-03",
+            "what": "GPT-6 Astra entered the 90-day ECI frontier at 169.06",
+            "url": "https://epoch.ai/data/benchmark_data.zip"
+          }
+        ],
+        "eci_prefetch": {
+          "basis": "Epoch ECI rolling maximum by model release date; historical cutoffs reconstructed from the same download",
+          "cutoff_date": "2026-11-01",
+          "baseline_cutoffs": {
+            "90d": "2026-08-03",
+            "180d": "2026-05-05",
+            "365d": "2025-11-01"
+          },
+          "current_sota": {
+            "model": "GPT-6 Astra",
+            "eci": 169.06,
+            "eci_ci_low": 165.88,
+            "eci_ci_high": 174.29,
+            "date": "2026-09-03",
+            "organization": "OpenAI"
+          },
+          "sota_90d_ago": {
+            "model": "Claude Opus 5",
+            "eci": 164.47,
+            "eci_ci_low": 161.69,
+            "eci_ci_high": 168.29,
+            "date": "2026-07-24",
+            "organization": "Anthropic"
+          },
+          "sota_180d_ago": {
+            "model": "GPT-5.5 Pro",
+            "eci": 163.11,
+            "eci_ci_low": 159.99,
+            "eci_ci_high": 166.63,
+            "date": "2026-04-23",
+            "organization": "OpenAI"
+          },
+          "sota_365d_ago": {
+            "model": "GPT-5 Pro",
+            "eci": 150.74,
+            "eci_ci_low": 148.89,
+            "eci_ci_high": 154.57,
+            "date": "2025-10-07",
+            "organization": "OpenAI"
+          },
+          "gain_90d": 4.59,
+          "gain_previous_90d": 1.36,
+          "gain_1y": 18.32,
+          "avg_quarterly_gain_1y": 4.58,
+          "gain_90d_to_quarterly_1y_ratio": 1.002183,
+          "frontier_entrants_90d": [
+            {
+              "model": "Claude Fable 5.1",
+              "eci": 166.36,
+              "eci_ci_low": 163.61,
+              "eci_ci_high": 170.75,
+              "date": "2026-09-01",
+              "organization": "Anthropic"
+            },
+            {
+              "model": "GPT-6 Astra",
+              "eci": 169.06,
+              "eci_ci_low": 165.88,
+              "eci_ci_high": 174.29,
+              "date": "2026-09-03",
+              "organization": "OpenAI"
+            }
+          ],
+          "models_covered": 271,
+          "models_missing_confidence_intervals": 2,
+          "models_missing_organization": 17,
+          "future_models_excluded": 0,
+          "earliest_model_date": "2023-02-24",
+          "latest_model_date": "2026-10-26"
+        },
+        "hard_benchmarks": {
+          "hle_note": "No new same-basis hard-benchmark SOTA was verified this week; publisher bases are not spliced.",
+          "frontiermath_note": "No new comparable unsaturated auxiliary reading was verified; auxiliary absence does not replace ECI."
+        },
+        "release_density": {
+          "flagship_or_restricted_events_in_90d": 2,
+          "limitation": "Count uses the ECI frontier-entrant list and is not a capability score."
+        },
+        "this_run_source_audit": [
+          {
+            "url": "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://epoch.ai/data/benchmark_data.zip",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened",
+            "bytes": 2350276
+          },
+          {
+            "url": "https://epoch.ai/benchmarks/eci",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://github.com/crystal-xiaoxiao/ai-bubble-monitor/blob/d106a35b17bf8c9f7fc71aa8db8b126030e5ab67/docs/data/prefetch/latest.json",
+        "https://epoch.ai/data/benchmark_data.zip",
+        "https://epoch.ai/benchmarks/eci"
+      ],
+      "rationale": "打开有效prefetch与Epoch ZIP；主锚90天增幅/年季均比1.002，绿。 Opened valid prefetch and Epoch ZIP; primary-anchor 90-day/annual-quarterly ratio is 1.002, green."
+    },
+    "accounting_events": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-10-26",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "AI accounting fraud restatement SEC October 26 November 1 2026",
+          "AI-native accounting investigation restatement October 2026"
+        ],
+        "sources_checked": [
+          "https://www.sec.gov/Archives/edgar/data/1682149/000110465926118772/tm2628100d1_8k.htm",
+          "https://www.sec.gov/Archives/edgar/data/1656081/000119312526435193/d400729dex991.htm"
+        ],
+        "events": [
+          {
+            "date": "2026-10-26",
+            "what": "Datavault AI filed an Item 4.02 non-reliance determination covering multiple 2025-2026 financial statements.",
+            "url": "https://www.sec.gov/Archives/edgar/data/1682149/000110465926118772/tm2628100d1_8k.htm",
+            "confirmed": true
+          },
+          {
+            "date": "2026-10-28",
+            "what": "Endava announced preliminary findings that certain customer/supplier arrangements lacked economic substance or were treated incorrectly and said FY2026 results would be restated.",
+            "url": "https://www.sec.gov/Archives/edgar/data/1656081/000119312526435193/d400729dex991.htm",
+            "confirmed": true
+          }
+        ],
+        "basis": "Recorded SEC list review and named searches; an empty result describes this scan, not universal proof.",
+        "this_run_source_audit": [
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1682149/000110465926118772/tm2628100d1_8k.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1656081/000119312526435193/d400729dex991.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.sec.gov/Archives/edgar/data/1682149/000110465926118772/tm2628100d1_8k.htm",
+        "https://www.sec.gov/Archives/edgar/data/1656081/000119312526435193/d400729dex991.htm"
+      ],
+      "rationale": "两份实际打开的发行人文件确认会计重述/不再可信，红。 Two opened issuer filings confirm restatement/non-reliance events, red."
+    },
+    "fed_policy": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "meeting_date": "2026-10-28",
+        "target_low_pct": 3.75,
+        "target_high_pct": 4.0,
+        "decision": "hold",
+        "vote": "10-2",
+        "dissent": "two preferred +25bp",
+        "next_meeting": "2026-12",
+        "this_run_source_audit": [
+          {
+            "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm"
+      ],
+      "rationale": "FOMC官方声明维持3.75%–4.00%，黄。 Official FOMC statement held 3.75%–4.00%, yellow."
+    },
+    "capex_reaction": {
+      "kind": "current",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "basis": "First full regular session after latest earnings announcement raising capex; close-to-close stock return minus QQQ. Yahoo publicly fetched chart used because opened StockAnalysis page only returned latest50rows; AmazonJuly31close271.58 also directly matches StockAnalysis. Earnings event study, not causal identification.",
+        "basis_change": false,
+        "correction": false,
+        "latest_release_date": "2026-10-21",
+        "latest_event_date": "2026-10-22",
+        "next_expected": "下一轮出现明确年度capex上调的Mag7财报。",
+        "events": [
+          {
+            "company": "GOOGL",
+            "announcement_date": "2026-07-22",
+            "event_date": "2026-07-23",
+            "previous_session": "2026-07-22",
+            "previous_close": 342.0899963378906,
+            "close": 317.69000244140625,
+            "qqq_previous_close": 705.3499755859375,
+            "qqq_close": 691.9600219726562,
+            "stock_return_pct": -7.1326,
+            "qqq_return_pct": -1.8983,
+            "excess_return_pp": -5.2343,
+            "guidance": "2026 capex raised from $180-190B to $195-205B",
+            "announcement_url": "https://www.investing.com/news/stock-market-news/google-quarterly-cloud-revenue-growth-beats-expectations-4806844",
+            "price_url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?period1=1784505600&period2=1785715200&interval=1d",
+            "qqq_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1784505600&period2=1785715200&interval=1d"
+          },
+          {
+            "company": "AMZN",
+            "announcement_date": "2026-07-30",
+            "event_date": "2026-07-31",
+            "previous_session": "2026-07-30",
+            "previous_close": 235.5,
+            "close": 271.5799865722656,
+            "qqq_previous_close": 683.5499877929688,
+            "qqq_close": 687.989990234375,
+            "stock_return_pct": 15.3206,
+            "qqq_return_pct": 0.6496,
+            "excess_return_pp": 14.671,
+            "guidance": "2026 capex raised10% from$200B to$220B",
+            "announcement_url": "https://www.investing.com/news/stock-market-news/amazon-beats-estimates-for-quarterly-cloud-revenue-growth-4826048",
+            "price_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?period1=1784505600&period2=1785715200&interval=1d",
+            "qqq_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1784505600&period2=1785715200&interval=1d"
+          },
+          {
+            "company": "META",
+            "announcement_date": "2026-10-21",
+            "event_date": "2026-10-22",
+            "previous_session": "2026-10-21",
+            "previous_close": 697.52,
+            "close": 648.84998,
+            "qqq_previous_close": 725.2,
+            "qqq_close": 704.46997,
+            "stock_return_pct": -6.977,
+            "qqq_return_pct": -2.8586,
+            "excess_return_pp": -4.1184,
+            "guidance": "2026 capex lower bound raised from $130B to $135B; range $135–145B",
+            "announcement_url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "price_url": "https://query1.finance.yahoo.com/v8/finance/chart/META?period1=1792540800&period2=1792800000&interval=1d",
+            "qqq_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1792540800&period2=1792800000&interval=1d"
+          }
+        ],
+        "price_retrievals": {
+          "AMZN": {
+            "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?period1=1784505600&period2=1785715200&interval=1d",
+            "checked_at": "2026-10-12T09:37:17.620717+00:00",
+            "rows": [
+              {
+                "date": "2026-07-20",
+                "close": 249.99000549316406
+              },
+              {
+                "date": "2026-07-21",
+                "close": 247.5500030517578
+              },
+              {
+                "date": "2026-07-22",
+                "close": 244.85000610351562
+              },
+              {
+                "date": "2026-07-23",
+                "close": 233.66000366210938
+              },
+              {
+                "date": "2026-07-24",
+                "close": 232.11000061035156
+              },
+              {
+                "date": "2026-07-27",
+                "close": 231.38999938964844
+              },
+              {
+                "date": "2026-07-28",
+                "close": 230.86000061035156
+              },
+              {
+                "date": "2026-07-29",
+                "close": 226.64999389648438
+              },
+              {
+                "date": "2026-07-30",
+                "close": 235.5
+              },
+              {
+                "date": "2026-07-31",
+                "close": 271.5799865722656
+              }
+            ]
+          },
+          "GOOGL": {
+            "url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?period1=1784505600&period2=1785715200&interval=1d",
+            "checked_at": "2026-10-12T09:37:22.746059+00:00",
+            "rows": [
+              {
+                "date": "2026-07-20",
+                "close": 351.989990234375
+              },
+              {
+                "date": "2026-07-21",
+                "close": 347.1499938964844
+              },
+              {
+                "date": "2026-07-22",
+                "close": 342.0899963378906
+              },
+              {
+                "date": "2026-07-23",
+                "close": 317.69000244140625
+              },
+              {
+                "date": "2026-07-24",
+                "close": 319.739990234375
+              },
+              {
+                "date": "2026-07-27",
+                "close": 326.55999755859375
+              },
+              {
+                "date": "2026-07-28",
+                "close": 333.7099914550781
+              },
+              {
+                "date": "2026-07-29",
+                "close": 336.7099914550781
+              },
+              {
+                "date": "2026-07-30",
+                "close": 333.6600036621094
+              },
+              {
+                "date": "2026-07-31",
+                "close": 356.1300048828125
+              }
+            ]
+          },
+          "META": {
+            "url": "https://query1.finance.yahoo.com/v8/finance/chart/META?period1=1784505600&period2=1785715200&interval=1d",
+            "checked_at": "2026-10-12T09:37:26.403270+00:00",
+            "rows": [
+              {
+                "date": "2026-07-20",
+                "close": 645.8499755859375
+              },
+              {
+                "date": "2026-07-21",
+                "close": 643.8099975585938
+              },
+              {
+                "date": "2026-07-22",
+                "close": 627.1699829101562
+              },
+              {
+                "date": "2026-07-23",
+                "close": 606.0999755859375
+              },
+              {
+                "date": "2026-07-24",
+                "close": 595.1900024414062
+              },
+              {
+                "date": "2026-07-27",
+                "close": 593.8699951171875
+              },
+              {
+                "date": "2026-07-28",
+                "close": 593.4099731445312
+              },
+              {
+                "date": "2026-07-29",
+                "close": 585.6099853515625
+              },
+              {
+                "date": "2026-07-30",
+                "close": 539.030029296875
+              },
+              {
+                "date": "2026-07-31",
+                "close": 556.7100219726562
+              }
+            ]
+          },
+          "MSFT": {
+            "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=1784505600&period2=1785715200&interval=1d",
+            "checked_at": "2026-10-12T09:37:30.952270+00:00",
+            "rows": [
+              {
+                "date": "2026-07-20",
+                "close": 402.2900085449219
+              },
+              {
+                "date": "2026-07-21",
+                "close": 397.75
+              },
+              {
+                "date": "2026-07-22",
+                "close": 390.3399963378906
+              },
+              {
+                "date": "2026-07-23",
+                "close": 381.5799865722656
+              },
+              {
+                "date": "2026-07-24",
+                "close": 381.70001220703125
+              },
+              {
+                "date": "2026-07-27",
+                "close": 389.1000061035156
+              },
+              {
+                "date": "2026-07-28",
+                "close": 393.3500061035156
+              },
+              {
+                "date": "2026-07-29",
+                "close": 390.5400085449219
+              },
+              {
+                "date": "2026-07-30",
+                "close": 451.1000061035156
+              },
+              {
+                "date": "2026-07-31",
+                "close": 464.7200012207031
+              }
+            ]
+          },
+          "QQQ": {
+            "url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1784505600&period2=1785715200&interval=1d",
+            "checked_at": "2026-10-12T09:37:33.935347+00:00",
+            "rows": [
+              {
+                "date": "2026-07-20",
+                "close": 696.0599975585938
+              },
+              {
+                "date": "2026-07-21",
+                "close": 708.969970703125
+              },
+              {
+                "date": "2026-07-22",
+                "close": 705.3499755859375
+              },
+              {
+                "date": "2026-07-23",
+                "close": 691.9600219726562
+              },
+              {
+                "date": "2026-07-24",
+                "close": 684.22998046875
+              },
+              {
+                "date": "2026-07-27",
+                "close": 682.1199951171875
+              },
+              {
+                "date": "2026-07-28",
+                "close": 675.489990234375
+              },
+              {
+                "date": "2026-07-29",
+                "close": 661.72998046875
+              },
+              {
+                "date": "2026-07-30",
+                "close": 683.5499877929688
+              },
+              {
+                "date": "2026-07-31",
+                "close": 687.989990234375
+              }
+            ]
+          }
+        },
+        "coverage": [
+          {
+            "company": "GOOGL",
+            "qualification": "Explicit annual capex guidance increase in latest earnings, included"
+          },
+          {
+            "company": "META",
+            "qualification": "Explicit annual capex guidance lower-bound increase in latest earnings, included"
+          },
+          {
+            "company": "AMZN",
+            "qualification": "Explicit annual capex guidance increase in latest earnings, included"
+          },
+          {
+            "company": "MSFT",
+            "qualification": "Latest earnings release reopened; no explicit annual capex guidance raise in that release; not used as a qualifying increase. Positive July30 return is only a cross-check."
+          },
+          {
+            "company": "TSLA",
+            "qualification": "Q1 and Q2 SEC filings both guide >$25B2026 capex, so annual threshold not raised in Q2; excluded"
+          },
+          {
+            "company": "AAPL",
+            "qualification": "Latest earnings release reopened; no capex guidance raise in that release; excluded"
+          },
+          {
+            "company": "NVDA",
+            "qualification": "Latest earnings release reopened; no capex guidance raise in that release; excluded"
+          }
+        ],
+        "checked_again_at": "2026-11-01T23:07:16Z",
+        "this_run_source_audit": [
+          {
+            "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://stockanalysis.com/stocks/googl/transcripts/712854-q3-2026/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ],
+        "coverage_updates": [
+          {
+            "company": "GOOGL",
+            "release_date": "2026-10-28",
+            "qualification": "Q3 call kept $195–205B FY2026 capex range unchanged; not a new raise."
+          },
+          {
+            "company": "AMZN",
+            "release_date": "2026-10-29",
+            "qualification": "Q3 did not create a new qualifying annual capex raise beyond the already tracked July event."
+          },
+          {
+            "company": "MSFT",
+            "release_date": "2026-10-28",
+            "qualification": "No new explicit annual capex raise in the Q3 release; excluded."
+          }
+        ]
+      },
+      "urls": [
+        "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/",
+        "https://stockanalysis.com/stocks/googl/transcripts/712854-q3-2026/",
+        "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
+      ],
+      "rationale": "实际重读最新三家披露，未形成新合格上调事件；最近合格Meta事件未超龄，current/黄。 Reopened the latest three releases; no new qualifying raise, while the latest Meta event is within age, current/yellow."
+    },
+    "ceo_hedging": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-09-03",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "Sam Altman Sundar Pichai Jamie Dimon Satya Nadella Mark Zuckerberg AI bubble October 26 November 1 2026"
+        ],
+        "sources_checked": [
+          "https://www.tradingview.com/news/benzinga%3A55dba8aee094b%3A0-sam-altman-flags-first-signs-of-a-bubble-neoclouds-on-watch/",
+          "https://www.kiplinger.com/business/what-2026-tech-leaders-have-said-about-an-ai-bubble"
+        ],
+        "events": [],
+        "basis": "Recorded source searches and actual opened sources; absence is a due-diligence finding, not universal proof.",
+        "universe": [
+          "Sam Altman",
+          "Sundar Pichai",
+          "Jamie Dimon",
+          "Satya Nadella",
+          "Mark Zuckerberg"
+        ],
+        "qualifying_hedging_count": 0,
+        "carryover_context": "Altman September 2 statement rolled just outside the 60-day window on November 1; no replacement qualifying statement was found.",
+        "this_run_source_audit": [
+          {
+            "url": "https://www.tradingview.com/news/benzinga%3A55dba8aee094b%3A0-sam-altman-flags-first-signs-of-a-bubble-neoclouds-on-watch/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.kiplinger.com/business/what-2026-tech-leaders-have-said-about-an-ai-bubble",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://www.tradingview.com/news/benzinga%3A55dba8aee094b%3A0-sam-altman-flags-first-signs-of-a-bubble-neoclouds-on-watch/",
+        "https://www.kiplinger.com/business/what-2026-tech-leaders-have-said-about-an-ai-bubble"
+      ],
+      "rationale": "60天窗口起点9/3；9/2旧表态滚出且无新合格事件，绿。 The 60-day window starts September 3; the September 2 statement rolled out and no new qualifying event was found, green."
+    },
+    "debt_capex_ratio": {
+      "kind": "web",
+      "checked_at": "2026-11-01T23:07:16Z",
+      "raw": {
+        "window": {
+          "start": "2026-10-26",
+          "end": "2026-11-01"
+        },
+        "queries": [
+          "AI data center debt financing closed October 26 November 1 2026",
+          "GPU-backed ABS bond loan data center October 2026",
+          "EdgeCore 521 million ABS Nebius 3.5 billion Crusoe 700 million"
+        ],
+        "sources_checked": [
+          "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+          "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+          "https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_6k.htm",
+          "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+          "https://www.reuters.com/business/finance/neocloud-firm-argentum-ai-talks-5-billion-ai-chip-financing-sources-say-2026-10-27/"
+        ],
+        "events": [
+          {
+            "date": "2026-10-28",
+            "what": "EdgeCore completed $521m ABS financing.",
+            "url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+            "amount_usd_b": 0.521
+          }
+        ],
+        "historical_catchups": [
+          {
+            "date": "2026-10-17",
+            "what": "Nebius $3.5B signed senior secured facility.",
+            "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_6k.htm",
+            "amount_usd_b": 3.5
+          },
+          {
+            "date": "2026-10-22",
+            "what": "Crusoe $0.7B asset-based facility.",
+            "url": "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+            "amount_usd_b": 0.7
+          }
+        ],
+        "basis": "Recorded source searches and actual opened sources; absence is a due-diligence finding, not universal proof.",
+        "reconciliation_incomplete": false,
+        "reconciliation_attempt_at": "2026-11-01T23:07:16Z",
+        "days_since_last_full_recon": 7,
+        "overdue_days": 0,
+        "annual_financing": {
+          "anchor_usd_b": 570,
+          "range_usd_b": [
+            506,
+            600
+          ],
+          "as_of": "2026-10-25",
+          "scope": "Morgan Stanley all-in 2026 forecast; preserved because full recon is not due"
+        },
+        "capex_denominator": {
+          "usd_b": 1000,
+          "scope": "Comprehensive global 2026 AI investment; preserved because full recon is not due"
+        },
+        "weekly_new_booked_usd_b": 0.521,
+        "historical_catchup_usd_b": 4.2,
+        "ledger_total_usd_b": 248.152,
+        "this_run_source_audit": [
+          {
+            "url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_6k.htm",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.reuters.com/business/finance/neocloud-firm-argentum-ai-talks-5-billion-ai-chip-financing-sources-say-2026-10-27/",
+            "checked_at": "2026-11-01T23:07:16Z",
+            "status": "opened"
+          }
+        ]
+      },
+      "urls": [
+        "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
+        "https://nebius.com/newsroom/nebius-secures-3-5-billion-financing-facility-with-citi",
+        "https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_6k.htm",
+        "https://www.crusoe.ai/resources/newsroom/neuberger-and-crusoe-announce-700-million-facility",
+        "https://www.reuters.com/business/finance/neocloud-firm-argentum-ai-talks-5-billion-ai-chip-financing-sources-say-2026-10-27/"
+      ],
+      "rationale": "周度增量扫描新增$0.521B并补录$4.2B历史漏记；年度锚/分母未变，完整对账未到期。 Weekly scan adds $0.521bn current debt and $4.2bn historical catch-up; annual anchor and denominator are unchanged and full recon is not due."
+    }
+  },
+  "delivery": "queued_only; inspect Feishu Relay result",
+  "ledger_sha256": {
+    "nvda_commitments": "3877b78fdf2128bac697ae03eb0fc3ed04b9b401642d41c8175198b8d7bdf6ca",
+    "arr_ledger": "3c69f5b0eaf13acb767c485a99735056717083784f52bc8298b66e79af14b7a6"
+  },
+  "status": "validated_release",
+  "issue_number": 31,
+  "as_of_date": "2026-11-01",
+  "latest_sha256": "cc827d4fae475e3e1e06833110d14d820890541736a22deacff4298eea65b958",
+  "verdict_reasons": [
+    "category_resonance"
+  ]
+}
