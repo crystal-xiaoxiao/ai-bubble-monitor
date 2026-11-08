@@ -229,6 +229,14 @@
       "amount_usd_b": 0.521,
       "source_url": "https://edgecore.com/resources/press-releases/edgecore-digital-infrastructure-completes-521-million-abs-financing",
       "note": "$521M green ABS completed, backed by fully stabilized SV01 Santa Clara data center; current-week new deal."
+    },
+    {
+      "date": "2026-11-02",
+      "borrower": "Cipher Digital (Barber Lake funding)",
+      "instrument": "convertible",
+      "amount_usd_b": 0.85,
+      "source_url": "https://ciphermining.gcs-web.com/static-files/2fbbb1c7-59b4-4f0c-8a01-1868499d05cd",
+      "note": "$850M 0.000% convertible senior notes due 2032 completed; proceeds fund additional Barber Lake equity investment. Current-week new deal, below $10B."
     }
   ],
   "ledger_note": "Incremental lower-bound deal ledger; not a replacement for the $570B annual all-in financing anchor. Total recorded amount $248.152B as of 2026-11-01; includes $4.2B historical catch-up and $0.521B current-week new debt."
